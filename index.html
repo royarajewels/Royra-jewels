@@ -318,10 +318,17 @@
     </section>
 
     <section class="section" id="collections">
-      <div class="section-title">
-        <p>OUR COLLECTIONS</p>
-        <h2>Discover Royra Jewels</h2>
-      </div>
+  <div class="section-title">
+    <p>OUR COLLECTIONS</p>
+    <h2>Discover Royra Jewels</h2>
+  </div>
+
+  <div class="products" id="productList">
+    <p style="text-align:center; color:#aaa;">
+      Loading products...
+    </p>
+  </div>
+</section>
 
       <div class="products" id="productList">
         <div class="product-card">
@@ -389,6 +396,74 @@
   <footer>
     © 2026 ROYRA JEWELS. ALL RIGHTS RESERVED.
   </footer>
+<script>
+  const SUPABASE_URL = 'https://luuxwoyonmloapaqmfch.supabase.co';
 
+  const SUPABASE_KEY = 'sb_publishable_Jma6bXVGtEBleLtB6jh-IA_Nkqj7Jk9';
+
+  const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  async function loadProducts() {
+    const productList = document.getElementById('productList');
+
+    const { data: products, error } = await supabaseClient
+      .from('products')
+      .select('*')
+      .eq('status', 'active')
+      .order('id', { ascending: false });
+
+    if (error) {
+      console.error(error);
+      productList.innerHTML =
+        '<p style="text-align:center;color:#e57373;">Unable to load products.</p>';
+      return;
+    }
+
+    if (!products || products.length === 0) {
+      productList.innerHTML =
+        '<p style="text-align:center;color:#aaa;">No products available yet.</p>';
+      return;
+    }
+
+    productList.innerHTML = products.map(product => `
+      <div class="product-card">
+        <div class="product-image">
+          ${
+            product.image_url
+              ? `<img src="${product.image_url}" alt="${product.name}">`
+              : `<span>${product.name}</span>`
+          }
+        </div>
+
+        <div class="product-info">
+          <h3>${product.name}</h3>
+
+          ${product.sku ? `<p>SKU: ${product.sku}</p>` : ''}
+
+          ${
+            product.description
+              ? `<p>${product.description}</p>`
+              : ''
+          }
+
+          ${
+            product.price
+              ? `<p style="margin-top:12px;color:#c9aa72;font-size:18px;">
+                   ₹${Number(product.price).toLocaleString('en-IN')}
+                 </p>`
+              : ''
+          }
+        </div>
+      </div>
+    `).join('');
+  }
+
+  loadProducts();
+</script>
+  
 </body>
 </html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
