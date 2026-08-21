@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <!-- Supabase JS Client CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Admin Stylesheet -->
   <link rel="stylesheet" href="admin.css" />
 </head>
 <body class="admin-login-body">
@@ -26,7 +27,7 @@
     </div>
 
     <!-- ERROR & NOTIFICATION ALERT -->
-    <div id="login-error-alert" class="login-error-alert"></div>
+    <div id="login-error-alert" class="login-error-alert" style="display: none;"></div>
 
     <!-- ADMIN LOGIN FORM (SUPABASE AUTH) -->
     <form id="admin-login-form">
@@ -60,7 +61,7 @@
         Supabase Project Configuration
       </div>
       <p style="font-size: 11.5px; color: var(--admin-text-secondary); margin-bottom: 12px;">
-        Connect your Supabase project using your Project URL and public Anon Key (never use the Service Role Key).
+        Connect your Supabase project using your Project URL and public Anon Key.
       </p>
 
       <div class="form-group" style="margin-bottom: 10px;">
@@ -86,7 +87,10 @@
 
   <div id="admin-toast-container" class="admin-toast-container"></div>
 
+  <!-- Correct script loading order for GitHub Pages -->
+  <script src="../config.js"></script>
   <script src="../supabase.js"></script>
+  <script src="admin.js"></script>
   <script>
     // Check if user is already signed in via Supabase Auth
     document.addEventListener('DOMContentLoaded', async () => {
@@ -99,7 +103,7 @@
         const errorEl = document.getElementById('login-error-alert');
 
         if (reason === 'forbidden') {
-          errorEl.textContent = 'Access Denied: You do not have administrator permissions (role: admin). Run the promotion SQL in Supabase or log in with an administrator account.';
+          errorEl.textContent = 'You do not have administrator access.';
           errorEl.style.display = 'block';
         } else if (reason === 'unauthorized') {
           errorEl.textContent = 'Please log in with your administrator credentials to access the Royra Admin Panel.';
@@ -119,10 +123,17 @@
             }
           }
         } catch (e) {}
+      } else {
+        const errorEl = document.getElementById('login-error-alert');
+        if (errorEl) {
+          errorEl.textContent = 'Supabase client could not be loaded. Please ensure ../supabase.js is present.';
+          errorEl.style.display = 'block';
+        }
       }
     });
 
     function updateConfigUI() {
+      if (!window.RoyraDB) return;
       const config = window.RoyraDB.getConfig();
       const statusDot = document.getElementById('supabase-status-dot');
       const statusText = document.getElementById('supabase-status-text');
@@ -133,11 +144,11 @@
       if (keyInput) keyInput.value = config.anonKey || '';
 
       if (window.RoyraDB.isConfigured()) {
-        statusDot.className = 'status-dot online';
-        statusText.textContent = 'Supabase Connected';
+        if (statusDot) statusDot.className = 'status-dot online';
+        if (statusText) statusText.textContent = 'Supabase Connected';
       } else {
-        statusDot.className = 'status-dot offline';
-        statusText.textContent = 'Supabase Configuration Needed';
+        if (statusDot) statusDot.className = 'status-dot offline';
+        if (statusText) statusText.textContent = 'Supabase Configuration Needed';
       }
     }
 
@@ -154,46 +165,61 @@
       const errorEl = document.getElementById('login-error-alert');
 
       if (!url || !key) {
-        errorEl.textContent = 'Please enter both Supabase URL and Anon Key.';
-        errorEl.style.display = 'block';
+        if (errorEl) {
+          errorEl.textContent = 'Please enter both Supabase URL and Anon Key.';
+          errorEl.style.display = 'block';
+        }
         return;
       }
 
-      window.RoyraDB.setCredentials(url, key);
-      updateConfigUI();
-      toggleSupabaseSettings();
-      errorEl.style.display = 'none';
-      alert('Supabase credentials saved successfully. You can now log in with your Supabase Auth user.');
+      if (window.RoyraDB) {
+        window.RoyraDB.setCredentials(url, key);
+        updateConfigUI();
+        toggleSupabaseSettings();
+        if (errorEl) errorEl.style.display = 'none';
+        if (window.showAdminToast) {
+          window.showAdminToast('Supabase credentials saved successfully.', 'success');
+        } else {
+          alert('Supabase credentials saved successfully. You can now log in with your Supabase Auth user.');
+        }
+      }
     }
 
     // Login Form Handler (Pure Supabase Auth)
     document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('admin-email').value;
+      const email = document.getElementById('admin-email').value.trim();
       const password = document.getElementById('admin-password').value;
       const errorEl = document.getElementById('login-error-alert');
       const submitBtn = document.getElementById('admin-login-submit');
 
+      if (!window.RoyraDB) {
+        errorEl.textContent = 'Supabase client is not loaded.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
       submitBtn.disabled = true;
-      submitBtn.textContent = 'AUTHENTICATING WITH SUPABASE...';
+      submitBtn.textContent = 'Signing in...';
       errorEl.style.display = 'none';
 
       try {
         const res = await window.RoyraDB.login(email, password);
-        if (res.success) {
+        if (res && res.success) {
           window.location.href = 'index.html';
         } else {
-          errorEl.textContent = res.error || 'Invalid credentials or user not authorized.';
+          const errorMsg = (res && res.error) ? res.error : 'Invalid credentials or user not authorized.';
+          errorEl.textContent = errorMsg;
           errorEl.style.display = 'block';
           submitBtn.disabled = false;
           submitBtn.textContent = 'SIGN IN WITH SUPABASE AUTH →';
 
-          if (res.needsConfig) {
+          if (res && res.needsConfig) {
             toggleSupabaseSettings();
           }
         }
       } catch (err) {
-        errorEl.textContent = err.message || 'Authentication error connecting to Supabase.';
+        errorEl.textContent = (err && err.message) ? err.message : 'Authentication error connecting to Supabase.';
         errorEl.style.display = 'block';
         submitBtn.disabled = false;
         submitBtn.textContent = 'SIGN IN WITH SUPABASE AUTH →';
