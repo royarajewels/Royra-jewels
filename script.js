@@ -11,7 +11,7 @@
    - Necklaces (Solitaire pendants, Chokers, Layered necklaces, Lariats)
    ========================================================================== */
 
-const ROYRA_PRODUCTS = [
+let ROYRA_PRODUCTS = [
   // --------------------------------------------------------------------------
   // RINGS (8 PIECES ACROSS SIZES, FINISHES, STONES & TYPES)
   // --------------------------------------------------------------------------
@@ -788,6 +788,56 @@ const ROYRA_PRODUCTS = [
     isIconic: false
   }
 ];
+
+// EXPOSE TO GLOBAL SCOPE & SYNC WITH SUPABASE / ADMIN DATABASE
+window.ROYRA_PRODUCTS = ROYRA_PRODUCTS;
+
+function syncLiveCatalog() {
+  try {
+    const raw = localStorage.getItem('royra_db_products_v2');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Active products are shown on public storefront
+        ROYRA_PRODUCTS = parsed.filter(p => (p.status || 'Active').toLowerCase() === 'active');
+        window.ROYRA_PRODUCTS = ROYRA_PRODUCTS;
+      }
+    }
+  } catch (e) {
+    console.warn('Sync live catalog error:', e);
+  }
+}
+
+// Initial sync
+syncLiveCatalog();
+
+// Listen for updates from Admin Panel (same-tab and cross-tab storage events)
+window.addEventListener('royra:products-updated', () => {
+  syncLiveCatalog();
+  refreshCurrentPageView();
+});
+
+window.addEventListener('storage', (e) => {
+  if (e.key === 'royra_db_products_v2') {
+    syncLiveCatalog();
+    refreshCurrentPageView();
+  }
+});
+
+function refreshCurrentPageView() {
+  const path = window.location.pathname;
+  if (path.endsWith('shop.html')) {
+    if (typeof renderFilteredShop === 'function') renderFilteredShop();
+  } else if (path.endsWith('product.html')) {
+    if (typeof initProductPage === 'function') initProductPage();
+  } else if (path.endsWith('cart.html')) {
+    if (typeof renderCartPage === 'function') renderCartPage();
+  } else if (path.endsWith('wishlist.html')) {
+    if (typeof renderWishlistPage === 'function') renderWishlistPage();
+  } else {
+    if (typeof initHomePage === 'function') initHomePage();
+  }
+}
 
 // STATE MANAGEMENT (CART & WISHLIST)
 const StorageKeys = {
