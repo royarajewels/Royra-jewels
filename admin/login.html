@@ -74,9 +74,12 @@
         <input type="password" id="cfg-supabase-key" class="form-input" style="font-size: 12px;" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." />
       </div>
 
-      <div style="display: flex; gap: 8px;">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <button type="button" class="btn-admin-primary" style="flex: 1; padding: 8px 12px; font-size: 12px;" onclick="saveSupabaseCredentials()">
           Save & Connect
+        </button>
+        <button type="button" class="btn-admin-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="resetSupabaseCredentials()">
+          Reset to config.js
         </button>
         <button type="button" class="btn-admin-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="toggleSupabaseSettings()">
           Close
@@ -109,7 +112,7 @@
           errorEl.textContent = 'Please log in with your administrator credentials to access the Royra Admin Panel.';
           errorEl.style.display = 'block';
         } else if (reason === 'unconfigured') {
-          errorEl.textContent = 'Please configure your Supabase Project URL and Public Anon Key.';
+          errorEl.textContent = 'Please configure your Supabase Project URL and Public Anon Key in /config.js.';
           errorEl.style.display = 'block';
           toggleSupabaseSettings();
         }
@@ -178,9 +181,21 @@
         toggleSupabaseSettings();
         if (errorEl) errorEl.style.display = 'none';
         if (window.showAdminToast) {
-          window.showAdminToast('Supabase credentials saved successfully.', 'success');
+          window.showAdminToast('Supabase credentials saved locally.', 'success');
         } else {
-          alert('Supabase credentials saved successfully. You can now log in with your Supabase Auth user.');
+          alert('Supabase credentials saved locally. You can now log in with your Supabase Auth user.');
+        }
+      }
+    }
+
+    function resetSupabaseCredentials() {
+      if (window.RoyraDB) {
+        window.RoyraDB.clearCredentials();
+        updateConfigUI();
+        if (window.showAdminToast) {
+          window.showAdminToast('Reset to config.js defaults.', 'success');
+        } else {
+          alert('Reset to config.js defaults.');
         }
       }
     }
