@@ -1633,10 +1633,22 @@ CREATE TRIGGER on_auth_user_created
     },
 
     async getCoupons({ search='' }={}) { const c=this.getClient(); if(!c)return[]; let q=c.from('coupons').select('*').order('created_at',{ascending:false}); if(search)q=q.ilike('code',`%${search}%`); const {data,error}=await q; if(error){console.error(error);return[]} return data||[]; },
-    async saveCoupon(coupon) { const c=this.getClient(); if(!c)return{success:false,error:'Supabase is not configured.'}; const payload={...coupon,code:String(coupon.code||'').trim().toUpperCase(),discount_value:Number(coupon.discount_value||0),minimum_order_value:Number(coupon.minimum_order_value||0),maximum_discount:coupon.maximum_discount?Number(coupon.maximum_discount):null,usage_limit:coupon.usage_limit?Number(coupon.usage_limit):null,per_customer_limit:coupon.per_customer_limit?Number(coupon.per_customer_limit):null}; const {data,error}=await c.from('coupons').upsert(payload).select().single(); return error?{success:false,error:error.message}:{success:true,coupon:data}; },
+    async saveCoupon(coupon) {
+      const c=this.getClient(); if(!c)return{success:false,error:'Supabase is not configured.'};
+      const payload={...coupon,code:String(coupon.code||'').trim().toUpperCase(),discount_value:Number(coupon.discount_value||0),minimum_order_value:Number(coupon.minimum_order_value||0),maximum_discount:coupon.maximum_discount?Number(coupon.maximum_discount):null,usage_limit:coupon.usage_limit?Number(coupon.usage_limit):null,per_customer_limit:coupon.per_customer_limit?Number(coupon.per_customer_limit):null};
+      if(!payload.id) delete payload.id;
+      const {data,error}=await c.from('coupons').upsert(payload).select().single();
+      return error?{success:false,error:error.message}:{success:true,coupon:data};
+    },
     async deleteCoupon(id){const c=this.getClient();if(!c)return{success:false,error:'Supabase is not configured.'};const{error}=await c.from('coupons').delete().eq('id',id);return error?{success:false,error:error.message}:{success:true};},
     async getOffers(){const c=this.getClient();if(!c)return[];const{data,error}=await c.from('offers').select('*').order('priority',{ascending:true});if(error){console.error(error);return[]}return data||[];},
-    async saveOffer(offer){const c=this.getClient();if(!c)return{success:false,error:'Supabase is not configured.'};const payload={...offer,discount_value:Number(offer.discount_value||0),minimum_order_value:Number(offer.minimum_order_value||0),minimum_quantity:Number(offer.minimum_quantity||1),priority:Number(offer.priority||100)};const{data,error}=await c.from('offers').upsert(payload).select().single();return error?{success:false,error:error.message}:{success:true,offer:data};},
+    async saveOffer(offer){
+      const c=this.getClient();if(!c)return{success:false,error:'Supabase is not configured.'};
+      const payload={...offer,discount_value:Number(offer.discount_value||0),minimum_order_value:Number(offer.minimum_order_value||0),minimum_quantity:Number(offer.minimum_quantity||1),priority:Number(offer.priority||100)};
+      if(!payload.id) delete payload.id;
+      const{data,error}=await c.from('offers').upsert(payload).select().single();
+      return error?{success:false,error:error.message}:{success:true,offer:data};
+    },
     async deleteOffer(id){const c=this.getClient();if(!c)return{success:false,error:'Supabase is not configured.'};const{error}=await c.from('offers').delete().eq('id',id);return error?{success:false,error:error.message}:{success:true};},
     async validateCoupon(code, subtotal=0){const c=this.getClient();if(!c)return{valid:false,error:'Supabase is not configured.'};const{data,error}=await c.rpc('validate_coupon_secure',{p_code:String(code||'').trim().toUpperCase(),p_subtotal:Number(subtotal||0)});return error?{valid:false,error:error.message}:(data||{valid:false,error:'Invalid coupon'});},
     async getInventory(){const c=this.getClient();if(!c)return[];const{data,error}=await c.from('products').select('id,name,sku,category,stock_quantity,low_stock_alert,status,price').order('name');if(error){console.error(error);return[]}return data||[];},
