@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Story & Atelier | Royra Jewels</title>
+  <meta name="description" content="Learn about Royra Jewels, our commitment to artisanal handcraftsmanship, ethical sourcing, BIS 916 certified gold, and timeless luxury jewelry design." />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ANNOUNCEMENT BAR -->
+  <div class="announcement-bar">
+    <span>✨ HANDCRAFTED IN 18K BIS HALLMARKED GOLD • LIFETIME WARRANTY ✨</span>
+  </div>
+
+  <!-- STICKY HEADER -->
+  <div class="header-wrapper">
+    <div class="container">
+      <header class="site-header">
+        
+        <button class="mobile-toggle" onclick="toggleMobileMenu()" aria-label="Open Navigation Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
+        <a href="index.html" class="site-logo">
+          <span class="logo-text">ROYRA</span>
+          <span class="logo-subtext">JEWELS</span>
+        </a>
+
+        <nav class="desktop-nav">
+          <a href="shop.html" class="nav-link">All Jewellery</a>
+          <a href="shop.html?category=rings" class="nav-link">Rings</a>
+          <a href="shop.html?category=earrings" class="nav-link">Earrings</a>
+          <a href="shop.html?category=bracelets" class="nav-link">Bracelets</a>
+          <a href="shop.html?category=necklaces" class="nav-link">Necklaces</a>
+          <a href="about.html" class="nav-link active">Our Story</a>
+          <a href="contact.html" class="nav-link">Concierge</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="action-btn" onclick="openSearchModal()" title="Search Jewels">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <a href="contact.html" class="action-btn" title="Concierge Assistance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </a>
+          <a href="wishlist.html" class="action-btn" title="Saved Jewels">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span class="badge-count wishlist-count-badge" style="display: none;">0</span>
+          </a>
+          <button class="action-btn" onclick="openCartDrawer()" title="Shopping Bag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span class="badge-count cart-count-badge" style="display: none;">0</span>
+          </button>
+        </div>
+
+      </header>
+    </div>
+  </div>
+
+  <!-- MOBILE MENU DRAWER -->
+  <div class="mobile-drawer" id="royra-mobile-drawer">
+    <div class="drawer-header">
+      <a href="index.html" class="site-logo">
+        <span class="logo-text" style="font-size: 22px;">ROYRA</span>
+        <span class="logo-subtext">JEWELS</span>
+      </a>
+      <button onclick="toggleMobileMenu()" style="padding: 8px; font-size: 20px; color: #171717;">✕</button>
+    </div>
+    <div class="drawer-nav">
+      <a href="shop.html" class="drawer-link" onclick="toggleMobileMenu()"><span>All Jewellery</span> <span>→</span></a>
+      <a href="shop.html?category=rings" class="drawer-link" onclick="toggleMobileMenu()"><span>Rings</span> <span>→</span></a>
+      <a href="shop.html?category=earrings" class="drawer-link" onclick="toggleMobileMenu()"><span>Earrings</span> <span>→</span></a>
+      <a href="shop.html?category=bracelets" class="drawer-link" onclick="toggleMobileMenu()"><span>Bracelets</span> <span>→</span></a>
+      <a href="shop.html?category=necklaces" class="drawer-link" onclick="toggleMobileMenu()"><span>Necklaces</span> <span>→</span></a>
+      <a href="about.html" class="drawer-link active" onclick="toggleMobileMenu()"><span>Our Story</span> <span>→</span></a>
+      <a href="contact.html" class="drawer-link" onclick="toggleMobileMenu()"><span>Concierge</span> <span>→</span></a>
+    </div>
+  </div>
+  <div class="drawer-overlay" id="royra-drawer-overlay" onclick="toggleMobileMenu(); closeCartDrawer();"></div>
+
+  <!-- ABOUT HERO -->
+  <div class="shop-page-header" style="background-color: var(--bg-secondary); padding: 80px 0;">
+    <div class="container">
+      <span class="section-tag">ATELIER PHILOSOPHY</span>
+      <h1 style="font-size: 42px; text-transform: uppercase; margin-bottom: 12px;">OUR STORY</h1>
+      <p style="color: #666; max-width: 620px; margin: 0 auto; font-size: 16px; line-height: 1.7;">
+        Crafting modern heirlooms in 18K solid gold and certified diamonds — designed to be worn, cherished, and passed down through generations.
+      </p>
+    </div>
+  </div>
+
+  <!-- STORY SECTION -->
+  <section style="padding: 80px 0; background: #FFFFFF;">
+    <div class="container">
+      <div class="about-editorial-grid">
+        <div class="about-img-wrap">
+          <img src="assets/images/about-artisan.svg" alt="Master Jeweler at Royra Jewels" />
+        </div>
+        <div class="about-content">
+          <span class="section-tag">THE FOUNDATION</span>
+          <h2 class="about-title">TIMELESS DESIGN, REFINED WITH PURPOSE</h2>
+          <p class="about-text">
+            ROYRA JEWELS was founded on a singular conviction: fine jewellery shouldn't be locked away in vaults for rare occasions. It should accompany you through your everyday triumphs, quiet reflections, and milestone memories.
+          </p>
+          <p class="about-text">
+            Rooted in India's rich artisanal heritage and influenced by contemporary European minimalism, our atelier blends age-old hand-setting techniques with state-of-the-art metallurgical refinement.
+          </p>
+          <p class="about-text">
+            Every curve, prong, and setting is engineered for tactile comfort, lasting structural integrity, and maximum light refraction.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CRAFTSMANSHIP PILLARS -->
+  <section id="craft" style="padding: 80px 0; background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">UNCOMPROMISING STANDARDS</span>
+        <h2 class="section-title">THE ROYRA PILLARS</h2>
+        <p class="section-subtitle">What sets every piece of Royra fine jewellery apart.</p>
+      </div>
+
+      <div class="collection-grid">
+        <div class="collection-card" style="padding: 36px 28px; text-align: center;">
+          <div style="width: 56px; height: 56px; background: #FAF7F2; border: 1px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--gold-primary);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <h3 style="font-size: 18px; margin-bottom: 12px; text-transform: uppercase;">18K BIS 916 Hallmarked</h3>
+          <p style="font-size: 13px; color: #666; line-height: 1.6;">We work exclusively in solid 18K yellow, rose, and white gold, tested and hallmarked under the strict government BIS framework.</p>
+        </div>
+
+        <div class="collection-card" style="padding: 36px 28px; text-align: center;">
+          <div style="width: 56px; height: 56px; background: #FAF7F2; border: 1px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--gold-primary);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
+          </div>
+          <h3 style="font-size: 18px; margin-bottom: 12px; text-transform: uppercase;">Certified Stones</h3>
+          <p style="font-size: 13px; color: #666; line-height: 1.6;">Every diamond and gemstone is rigorously hand-inspected for optical brilliance, color uniformity, and conflict-free origin.</p>
+        </div>
+
+        <div class="collection-card" style="padding: 36px 28px; text-align: center;">
+          <div style="width: 56px; height: 56px; background: #FAF7F2; border: 1px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--gold-primary);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 style="font-size: 18px; margin-bottom: 12px; text-transform: uppercase;">Lifetime Service</h3>
+          <p style="font-size: 13px; color: #666; line-height: 1.6;">We stand behind our creations with complimentary lifetime ultrasonic cleaning, prong inspections, and polishing support.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUSTAINABILITY & ETHICS -->
+  <section id="sustainability" style="padding: 80px 0; background: #FFFFFF;">
+    <div class="container">
+      <div style="max-width: 760px; margin: 0 auto; text-align: center;">
+        <span class="section-tag">CONSCIOUS LUXURY</span>
+        <h2 class="section-title">ETHICAL SOURCING & CIRCULAR GOLD</h2>
+        <p style="color: #666; line-height: 1.8; margin-bottom: 24px; font-size: 15px;">
+          At Royra Jewels, luxury and ecological responsibility exist in complete harmony. Over 85% of the gold used across our atelier is recycled and re-refined, radically reducing our environmental footprint.
+        </p>
+        <p style="color: #666; line-height: 1.8; margin-bottom: 36px; font-size: 15px;">
+          All stones conform with the Kimberley Process and responsible mineral governance. Furthermore, our signature presentation cases are crafted from FSC-certified sustainable timber and biodegradable velvet linings.
+        </p>
+        <a href="shop.html" class="btn btn-primary">EXPLORE THE CREATIONS</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col-brand">
+          <a href="index.html" class="site-logo">
+            <span class="logo-text">ROYRA</span>
+            <span class="logo-subtext">JEWELS</span>
+          </a>
+          <p>Timeless jewellery for every story. Handcrafted in 18K BIS hallmarked gold and certified stones with unmatched precision.</p>
+        </div>
+        <div>
+          <h4 class="footer-heading">SHOP</h4>
+          <div class="footer-links">
+            <a href="shop.html">All Jewellery</a>
+            <a href="shop.html?category=rings">Rings</a>
+            <a href="shop.html?category=earrings">Earrings</a>
+            <a href="shop.html?category=bracelets">Bracelets</a>
+            <a href="shop.html?category=necklaces">Necklaces</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">SERVICES</h4>
+          <div class="footer-links">
+            <a href="contact.html">Contact Concierge</a>
+            <a href="contact.html#shipping">Insured Shipping</a>
+            <a href="contact.html#returns">Easy Returns</a>
+            <a href="contact.html#sizeguide">Ring Size Chart</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">ABOUT</h4>
+          <div class="footer-links">
+            <a href="about.html">Our Story</a>
+            <a href="about.html#craft">Artisanal Craft</a>
+            <a href="about.html#sustainability">Ethical Sourcing</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 Royra Jewels. All Rights Reserved.</div>
+        <div class="payment-badges">
+          <span class="payment-pill">UPI</span>
+          <span class="payment-pill">VISA</span>
+          <span class="payment-pill">MASTERCARD</span>
+          <span class="payment-pill">RUPAY</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SEARCH OVERLAY MODAL -->
+  <div class="search-modal" id="royra-search-modal" onclick="if(event.target === this) closeSearchModal()">
+    <div class="search-container">
+      <div class="search-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="royra-search-input" class="search-input" placeholder="Search by jewel, ring, bracelet, emerald..." oninput="handleSearchQuery(this.value)" />
+        <button class="search-close-btn" onclick="closeSearchModal()">✕</button>
+      </div>
+      <div class="search-results" id="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- CART SLIDE-OUT DRAWER -->
+  <div class="cart-drawer" id="royra-cart-drawer">
+    <div class="cart-header">
+      <div class="cart-title">YOUR SHOPPING BAG</div>
+      <button onclick="closeCartDrawer()" style="font-size: 20px; color: #171717; padding: 4px;">✕</button>
+    </div>
+    <div class="free-shipping-bar">
+      <div id="shipping-progress-text">Add ₹999 or more for FREE insured delivery!</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="shipping-progress-fill"></div>
+      </div>
+    </div>
+    <div class="cart-items-list" id="cart-drawer-items"></div>
+    <div class="cart-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal:</span>
+        <span id="cart-drawer-subtotal">₹0</span>
+      </div>
+      <div class="cart-actions-box">
+        <a href="cart.html" class="btn btn-primary" onclick="closeCartDrawer()">VIEW BAG & CHECKOUT</a>
+        <button class="btn btn-outline" onclick="closeCartDrawer()">CONTINUE BROWSING</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

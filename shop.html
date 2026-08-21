@@ -3,17 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Royra Jewels | Timeless Jewellery for Every Story</title>
-  <meta name="description" content="Discover handcrafted luxury jewelry by ROYRA JEWELS. Explore 18K gold rings, solitaires, tennis bracelets, diamond earrings, and bespoke fine jewelry collections." />
-  <meta name="keywords" content="Royra Jewels, fine jewellery, 18k gold rings, solitaire diamond, tennis bracelet, pearl earrings, Indian luxury jewelry" />
+  <title>Shop All Fine Jewellery | Royra Jewels</title>
+  <meta name="description" content="Explore the complete collection of handcrafted fine jewelry by Royra Jewels. Rings, diamond earrings, tennis bracelets, and gold necklaces in 18K gold." />
   
-  <!-- Open Graph / Meta -->
-  <meta property="og:title" content="Royra Jewels | Timeless Jewellery for Every Story" />
-  <meta property="og:description" content="Handcrafted fine jewelry in 18K BIS hallmarked gold and certified diamonds." />
+  <meta property="og:title" content="Shop All Fine Jewellery | Royra Jewels" />
+  <meta property="og:description" content="Handcrafted 18K Gold and Diamond Jewelry Collection." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/images/banners/hero-1.svg" />
 
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -57,7 +54,7 @@
           <a href="shop.html?category=earrings" class="nav-link">Earrings</a>
           <a href="shop.html?category=bracelets" class="nav-link">Bracelets</a>
           <a href="shop.html?category=necklaces" class="nav-link">Necklaces</a>
-          <a href="shop.html" class="nav-link">Fine Jewellery</a>
+          <a href="shop.html" class="nav-link active">Fine Jewellery</a>
           <a href="about.html" class="nav-link">Our Story</a>
         </nav>
 
@@ -96,7 +93,7 @@
     <div class="drawer-nav">
       <a href="shop.html?category=new" class="drawer-link" onclick="toggleMobileMenu()"><span>NEW ARRIVALS</span> <span class="arrow">›</span></a>
       <a href="shop.html?filter=bestseller" class="drawer-link" onclick="toggleMobileMenu()"><span>BEST SELLERS</span> <span class="arrow">›</span></a>
-      <a href="shop.html" class="drawer-link" onclick="toggleMobileMenu()"><span>ALL JEWELLERY</span> <span class="arrow">›</span></a>
+      <a href="shop.html" class="drawer-link active" onclick="toggleMobileMenu()"><span>ALL JEWELLERY</span> <span class="arrow">›</span></a>
       <a href="shop.html?category=rings" class="drawer-link" onclick="toggleMobileMenu()"><span>RINGS</span> <span class="arrow">›</span></a>
       <a href="shop.html?category=earrings" class="drawer-link" onclick="toggleMobileMenu()"><span>EARRINGS</span> <span class="arrow">›</span></a>
       <a href="shop.html?category=bracelets" class="drawer-link" onclick="toggleMobileMenu()"><span>BRACELETS</span> <span class="arrow">›</span></a>
@@ -129,312 +126,285 @@
       <a href="contact.html" class="btn btn-outline" style="width: 100%; font-size: 11px;" onclick="toggleMobileMenu()">Book Boutique Consultation</a>
     </div>
   </div>
-  <div class="drawer-overlay" id="royra-drawer-overlay" onclick="toggleMobileMenu(); closeCartDrawer(); closeSupportModal(); closeQuickSizeModal();"></div>
+  <div class="drawer-overlay" id="royra-drawer-overlay" onclick="toggleMobileMenu(); closeCartDrawer(); closeSupportModal(); closeQuickSizeModal(); closeMobileFilters();"></div>
 
-  <!-- HERO LUXURY EDITORIAL BANNER -->
-  <section class="hero-section" id="hero-banner">
-    <div class="hero-banner-container">
-      <img 
-        src="assets/images/banners/royra-hero-banner.webp" 
-        alt="ROYRA JEWELS Timeless Fine Jewellery Collection" 
-        class="hero-bg-img" 
-        fetchpriority="high"
-      />
-      <div class="hero-overlay-gradient"></div>
+  <!-- EDITORIAL LUXURY COLLECTION HEADER -->
+  <div class="shop-page-header">
+    <div class="container text-center">
+      <h1 id="shop-page-heading" class="collection-hero-title">RINGS</h1>
+      <p id="shop-page-desc" class="collection-hero-subtitle">Discover timeless rings designed to be worn every day.</p>
+    </div>
+  </div>
+
+  <!-- MAIN SHOP COLLECTION CONTAINER -->
+  <div class="container">
+    <div class="shop-main-container">
       
-      <div class="container hero-container">
-        <div class="hero-content">
-          <span class="hero-eyebrow">NEW COLLECTION</span>
-          <h1 class="hero-title">TIMELESS JEWELLERY.<br/>MADE TO SHINE.</h1>
-          <p class="hero-subtitle">Discover elegant pieces designed for every occasion.</p>
-          
-          <div class="hero-action-row">
-            <a href="shop.html?category=new" class="btn btn-hero-luxury" id="hero-shop-now-btn">SHOP NOW →</a>
-          </div>
-          
-          <div class="hero-trust-proof">
-            <div class="hero-trust-stars">★★★★★</div>
-            <div class="hero-trust-caption">TRUSTED BY JEWELLERY LOVERS</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- NEW & BEST DYNAMIC TABBED SECTION -->
-  <section class="new-and-best-section" id="new-and-best-section">
-    <div class="container">
-      <div class="section-header-compact">
-        <h2 class="section-title-large">NEW & BEST</h2>
-      </div>
-
-      <!-- Two Large Mobile-Friendly Tabs -->
-      <div class="new-best-tabs-wrapper">
-        <div class="new-best-tabs" role="tablist">
-          <button type="button" class="new-best-tab active" id="tab-new-arrivals" onclick="switchNewBestTab('new', this)" role="tab" aria-selected="true">
-            NEW ARRIVALS
-          </button>
-          <button type="button" class="new-best-tab" id="tab-best-sellers" onclick="switchNewBestTab('best', this)" role="tab" aria-selected="false">
-            BEST SELLERS
-          </button>
-        </div>
-      </div>
-
-      <!-- 2-Column Mobile Product Grid -->
-      <div class="product-grid" id="new-and-best-grid">
-        <!-- Loaded dynamically via script.js -->
-      </div>
-
-      <div class="section-action-footer">
-        <a href="shop.html" class="btn btn-outline-dark">VIEW ALL JEWELLERY →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- SHOP BY CATEGORY (2-COLUMN MOBILE CARDS) -->
-  <section class="category-section" id="categories-section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">DISCOVER BY DESIGN</span>
-        <h2 class="section-title">SHOP BY CATEGORY</h2>
-        <p class="section-subtitle">Explore carefully categorized fine jewellery designed for every mood, occasion, and statement.</p>
-      </div>
-
-      <div class="category-grid">
-        <!-- Rings -->
-        <a href="shop.html?category=rings" class="category-card" id="cat-rings">
-          <img src="assets/products/roy-wh00829.webp" alt="Royra Rings" class="category-img" loading="lazy" />
-          <div class="category-overlay"></div>
-          <div class="category-info">
-            <h3 class="category-name">RINGS</h3>
-            <span class="category-btn">SHOP NOW →</span>
-          </div>
-        </a>
-
-        <!-- Earrings -->
-        <a href="shop.html?category=earrings" class="category-card" id="cat-earrings">
-          <img src="assets/products/roy-earring-5.jpg" alt="Royra Earrings" class="category-img" loading="lazy" />
-          <div class="category-overlay"></div>
-          <div class="category-info">
-            <h3 class="category-name">EARRINGS</h3>
-            <span class="category-btn">SHOP NOW →</span>
-          </div>
-        </a>
-
-        <!-- Bracelets -->
-        <a href="shop.html?category=bracelets" class="category-card" id="cat-bracelets">
-          <img src="assets/products/roy-ig-1.jpg" alt="Royra Bracelets" class="category-img" loading="lazy" />
-          <div class="category-overlay"></div>
-          <div class="category-info">
-            <h3 class="category-name">BRACELETS</h3>
-            <span class="category-btn">SHOP NOW →</span>
-          </div>
-        </a>
-
-        <!-- Necklaces -->
-        <a href="shop.html?category=necklaces" class="category-card" id="cat-necklaces">
-          <img src="assets/products/roy-necklace-1.jpg" alt="Royra Necklaces" class="category-img" loading="lazy" />
-          <div class="category-overlay"></div>
-          <div class="category-info">
-            <h3 class="category-name">NECKLACES</h3>
-            <span class="category-btn">SHOP NOW →</span>
-          </div>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURED EDITORIAL COLLECTION: THE ROYRA COLLECTION -->
-  <section class="editorial-collection-banner" id="editorial-collection-banner">
-    <div class="editorial-banner-media">
-      <img src="assets/images/banners/editorial-promo-banner.jpg" alt="The Royra Collection" class="editorial-collection-bg" loading="lazy" />
-      <div class="editorial-collection-overlay"></div>
-    </div>
-    <div class="container editorial-collection-container">
-      <div class="editorial-collection-box">
-        <span class="editorial-tag">THE ROYRA COLLECTION</span>
-        <h2 class="editorial-title">Timeless pieces.<br/>Made for your story.</h2>
-        <p class="editorial-desc">Artisanal gold and certified stones meticulously sculpted for daily wear and cherished milestone celebrations.</p>
-        <a href="shop.html" class="btn btn-hero-pill">EXPLORE COLLECTION →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHY ROYRA (TRUST SECTION - 4 COMPACT ITEMS) -->
-  <section class="why-royra-section">
-    <div class="container">
-      <div class="section-header-compact" style="text-align: center; margin-bottom: 28px;">
-        <span class="section-tag">OUR PROMISE</span>
-        <h2 class="section-title">WHY ROYRA</h2>
-      </div>
-
-      <div class="why-royra-grid">
-        <!-- Item 1 -->
-        <div class="why-royra-card">
-          <div class="why-royra-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </div>
-          <div class="why-royra-content">
-            <h3 class="why-royra-title">Premium Quality</h3>
-            <p class="why-royra-desc">100% BIS Hallmarked 18K solid gold and certified gemstones.</p>
-          </div>
-        </div>
-
-        <!-- Item 2 -->
-        <div class="why-royra-card">
-          <div class="why-royra-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          </div>
-          <div class="why-royra-content">
-            <h3 class="why-royra-title">Secure Payments</h3>
-            <p class="why-royra-desc">256-bit encrypted checkout via UPI, Cards and NetBanking.</p>
-          </div>
-        </div>
-
-        <!-- Item 3 -->
-        <div class="why-royra-card">
-          <div class="why-royra-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.8"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-          </div>
-          <div class="why-royra-content">
-            <h3 class="why-royra-title">Fast Shipping</h3>
-            <p class="why-royra-desc">Complimentary insured express delivery on orders over ₹999.</p>
-          </div>
-        </div>
-
-        <!-- Item 4 -->
-        <div class="why-royra-card">
-          <div class="why-royra-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.8"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-          </div>
-          <div class="why-royra-content">
-            <h3 class="why-royra-title">Easy Returns</h3>
-            <p class="why-royra-desc">30-day effortless doorstep return and exchange guarantee.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CUSTOMER REVIEWS (HORIZONTAL SWIPE CAROUSEL) -->
-  <section class="reviews-section" id="reviews-section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">VERIFIED TESTIMONIALS</span>
-        <h2 class="section-title">LOVED BY OUR CUSTOMERS</h2>
-        <p class="section-subtitle">Real experiences shared by cherished patrons across India.</p>
-      </div>
-
-      <div class="reviews-carousel-wrap">
-        <div class="reviews-scroll-track">
-          
-          <div class="review-luxury-card">
-            <div class="review-stars-row">★★★★★</div>
-            <p class="review-body-text">"The finish and sparkle of the Curved Oval Ring Set are breathtaking. The unboxing experience felt truly royal and high end."</p>
-            <div class="review-author-meta">
-              <strong class="author-name">Ananya Sharma</strong>
-              <span class="author-location">Mumbai • Verified Purchase</span>
-            </div>
-          </div>
-
-          <div class="review-luxury-card">
-            <div class="review-stars-row">★★★★★</div>
-            <p class="review-body-text">"Ordered the Classic Tennis Bracelet. The diamonds catch the light brilliantly and the double safety lock makes it so secure for daily wear."</p>
-            <div class="review-author-meta">
-              <strong class="author-name">Pooja Singhania</strong>
-              <span class="author-location">New Delhi • Verified Purchase</span>
-            </div>
-          </div>
-
-          <div class="review-luxury-card">
-            <div class="review-stars-row">★★★★★</div>
-            <p class="review-body-text">"Beautiful quality and elegant packaging. Customer concierge helped me verify my ring size within 5 minutes over WhatsApp."</p>
-            <div class="review-author-meta">
-              <strong class="author-name">Meera Nair</strong>
-              <span class="author-location">Bengaluru • Verified Purchase</span>
-            </div>
-          </div>
-
-          <div class="review-luxury-card">
-            <div class="review-stars-row">★★★★★</div>
-            <p class="review-body-text">"Impeccable craftsmanship and authentic BIS hallmarking. Royra has become my go-to luxury gifting destination."</p>
-            <div class="review-author-meta">
-              <strong class="author-name">Rhea Kapoor</strong>
-              <span class="author-location">Hyderabad • Verified Purchase</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- INSTAGRAM SOCIAL SECTION (MOBILE GRID) -->
-  <section class="social-section" id="social-section">
-    <div class="container">
-      <div class="section-header" style="margin-bottom: 24px;">
-        <span class="section-tag">JOIN THE COMMUNITY</span>
-        <h2 class="section-title">FOLLOW @ROYRAJEWELS</h2>
-        <p class="section-subtitle">Tag #RoyraGlow to be featured in our fine jewellery gallery.</p>
-      </div>
-    </div>
-
-    <div class="social-grid">
-      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
-        <img src="assets/images/social/social-1.svg" alt="Royra Jewels Look 1" loading="lazy" />
-        <div class="social-overlay">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-        </div>
-      </a>
-      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
-        <img src="assets/images/social/social-2.svg" alt="Royra Jewels Look 2" loading="lazy" />
-        <div class="social-overlay">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-        </div>
-      </a>
-      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
-        <img src="assets/images/social/social-3.svg" alt="Royra Jewels Look 3" loading="lazy" />
-        <div class="social-overlay">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-        </div>
-      </a>
-      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
-        <img src="assets/images/social/social-4.svg" alt="Royra Jewels Look 4" loading="lazy" />
-        <div class="social-overlay">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-        </div>
-      </a>
-      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
-        <img src="assets/images/social/social-5.svg" alt="Royra Jewels Look 5" loading="lazy" />
-        <div class="social-overlay">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-        </div>
-      </a>
-      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
-        <img src="assets/images/social/social-6.svg" alt="Royra Jewels Look 6" loading="lazy" />
-        <div class="social-overlay">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <!-- NEWSLETTER -->
-  <section class="newsletter-section">
-    <div class="container">
-      <div class="newsletter-box">
-        <span class="section-tag">JOIN THE ROYRA CIRCLE</span>
-        <h2 class="section-title">EXCLUSIVE PRIVILEGES</h2>
-        <p class="section-subtitle">Get new arrivals, exclusive offers and jewellery inspiration.</p>
+      <!-- TOP COLLECTION TOOLBAR -->
+      <div class="collection-toolbar">
         
-        <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
-          <input type="email" class="newsletter-input" placeholder="Enter your email" required />
-          <button type="submit" class="btn btn-primary">SUBSCRIBE</button>
-        </form>
-        <p class="newsletter-privacy">We respect your privacy. Enjoy 10% off your first order with code ROYRA10.</p>
+        <!-- Left: Filter Toggle Button -->
+        <div class="toolbar-left">
+          <button type="button" class="filter-toggle-btn" id="filter-toggle-btn" onclick="toggleDesktopFilters()" aria-expanded="true" aria-controls="horizontal-filters-bar">
+            <svg class="filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line>
+              <line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line>
+              <line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line>
+              <line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+            <span id="filter-toggle-text">Hide Filter</span>
+          </button>
+        </div>
+
+        <!-- Center / Right Group -->
+        <div class="toolbar-right">
+          <div class="product-count-text" id="shop-product-count">8 Products</div>
+
+          <!-- View Grid Switcher -->
+          <div class="grid-view-switcher" role="group" aria-label="Product Grid Columns">
+            <button type="button" class="view-btn active" id="view-col-4-btn" onclick="setGridColumns(4)" title="4 Columns" aria-label="4 columns">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="2" y="3" width="3.5" height="18" rx="0.5" fill="currentColor"></rect>
+                <rect x="7.5" y="3" width="3.5" height="18" rx="0.5" fill="currentColor"></rect>
+                <rect x="13" y="3" width="3.5" height="18" rx="0.5" fill="currentColor"></rect>
+                <rect x="18.5" y="3" width="3.5" height="18" rx="0.5" fill="currentColor"></rect>
+              </svg>
+            </button>
+            <button type="button" class="view-btn" id="view-col-3-btn" onclick="setGridColumns(3)" title="3 Columns" aria-label="3 columns">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="2" y="3" width="5" height="18" rx="0.5" fill="currentColor"></rect>
+                <rect x="9.5" y="3" width="5" height="18" rx="0.5" fill="currentColor"></rect>
+                <rect x="17" y="3" width="5" height="18" rx="0.5" fill="currentColor"></rect>
+              </svg>
+            </button>
+            <button type="button" class="view-btn" id="view-col-2-btn" onclick="setGridColumns(2)" title="2 Columns" aria-label="2 columns">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="2" y="3" width="8.5" height="18" rx="0.5" fill="currentColor"></rect>
+                <rect x="13.5" y="3" width="8.5" height="18" rx="0.5" fill="currentColor"></rect>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Sort Select -->
+          <div class="sort-control-wrap">
+            <select id="shop-sort-select" class="sort-dropdown-select" aria-label="Sort products">
+              <option value="featured">Sort by: Featured</option>
+              <option value="bestseller">Sort by: Best Selling</option>
+              <option value="newest">Sort by: Newest</option>
+              <option value="price-low">Sort by: Price: Low to High</option>
+              <option value="price-high">Sort by: Price: High to Low</option>
+              <option value="rating">Sort by: Highest Rated</option>
+            </select>
+            <span class="sort-select-chevron">▼</span>
+          </div>
+        </div>
+
       </div>
+
+      <!-- HORIZONTAL DROPDOWN FILTER BUTTONS (DESKTOP) -->
+      <div class="horizontal-filters-bar" id="horizontal-filters-bar">
+        
+        <!-- Filter 1: Product Type -->
+        <div class="filter-dropdown-container" id="filter-dd-type">
+          <button type="button" class="filter-dd-btn" onclick="toggleFilterDropdown('type')">
+            <span class="filter-dd-title">Product Type</span>
+            <span class="filter-dd-badge" id="badge-count-type" style="display: none;">0</span>
+            <span class="filter-dd-arrow">▼</span>
+          </button>
+          <div class="filter-dd-menu">
+            <div class="filter-dd-options">
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-type" value="Solitaire" class="shop-filter-input" />
+                <span>Solitaire</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-type" value="Statement" class="shop-filter-input" />
+                <span>Statement & Cocktail</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-type" value="Stackable" class="shop-filter-input" />
+                <span>Stackable & Sets</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-type" value="Band" class="shop-filter-input" />
+                <span>Eternity Bands</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-type" value="Halo" class="shop-filter-input" />
+                <span>Pavé Halo</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-type" value="Drop" class="shop-filter-input" />
+                <span>Drops & Danglers</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-type" value="Tennis" class="shop-filter-input" />
+                <span>Tennis Bracelets</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter 2: Finish -->
+        <div class="filter-dropdown-container" id="filter-dd-finish">
+          <button type="button" class="filter-dd-btn" onclick="toggleFilterDropdown('finish')">
+            <span class="filter-dd-title">Finish</span>
+            <span class="filter-dd-badge" id="badge-count-finish" style="display: none;">0</span>
+            <span class="filter-dd-arrow">▼</span>
+          </button>
+          <div class="filter-dd-menu">
+            <div class="filter-dd-options">
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-finish" value="Gold" class="shop-filter-input" />
+                <span>18K Yellow Gold</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-finish" value="Silver" class="shop-filter-input" />
+                <span>925 Sterling Silver</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-finish" value="Rose Gold" class="shop-filter-input" />
+                <span>18K Rose Gold</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter 3: Stone Name -->
+        <div class="filter-dropdown-container" id="filter-dd-stone">
+          <button type="button" class="filter-dd-btn" onclick="toggleFilterDropdown('stone')">
+            <span class="filter-dd-title">Stone Name</span>
+            <span class="filter-dd-badge" id="badge-count-stone" style="display: none;">0</span>
+            <span class="filter-dd-arrow">▼</span>
+          </button>
+          <div class="filter-dd-menu">
+            <div class="filter-dd-options">
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-stone" value="Diamond" class="shop-filter-input" />
+                <span>Certified Diamond / Moissanite</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-stone" value="Emerald" class="shop-filter-input" />
+                <span>Emerald Gemstones</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-stone" value="Sapphire" class="shop-filter-input" />
+                <span>Sapphire</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-stone" value="Ruby" class="shop-filter-input" />
+                <span>Ruby</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-stone" value="CZ" class="shop-filter-input" />
+                <span>Cubic Zirconia</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter 4: Ring Size -->
+        <div class="filter-dropdown-container" id="filter-dd-size">
+          <button type="button" class="filter-dd-btn" onclick="toggleFilterDropdown('size')">
+            <span class="filter-dd-title">Ring Size</span>
+            <span class="filter-dd-badge" id="badge-count-size" style="display: none;">0</span>
+            <span class="filter-dd-arrow">▼</span>
+          </button>
+          <div class="filter-dd-menu size-menu-wide">
+            <div class="filter-size-grid">
+              <label class="size-filter-chip">
+                <input type="checkbox" name="filter-size" value="4" class="shop-filter-input" />
+                <span>4</span>
+              </label>
+              <label class="size-filter-chip">
+                <input type="checkbox" name="filter-size" value="5" class="shop-filter-input" />
+                <span>5</span>
+              </label>
+              <label class="size-filter-chip">
+                <input type="checkbox" name="filter-size" value="6" class="shop-filter-input" />
+                <span>6</span>
+              </label>
+              <label class="size-filter-chip">
+                <input type="checkbox" name="filter-size" value="7" class="shop-filter-input" />
+                <span>7</span>
+              </label>
+              <label class="size-filter-chip">
+                <input type="checkbox" name="filter-size" value="8" class="shop-filter-input" />
+                <span>8</span>
+              </label>
+              <label class="size-filter-chip">
+                <input type="checkbox" name="filter-size" value="9" class="shop-filter-input" />
+                <span>9</span>
+              </label>
+              <label class="size-filter-chip">
+                <input type="checkbox" name="filter-size" value="10" class="shop-filter-input" />
+                <span>10</span>
+              </label>
+              <label class="size-filter-chip">
+                <input type="checkbox" name="filter-size" value="11" class="shop-filter-input" />
+                <span>11</span>
+              </label>
+              <label class="size-filter-chip">
+                <input type="checkbox" name="filter-size" value="12" class="shop-filter-input" />
+                <span>12</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter 5: Price Range -->
+        <div class="filter-dropdown-container" id="filter-dd-price">
+          <button type="button" class="filter-dd-btn" onclick="toggleFilterDropdown('price')">
+            <span class="filter-dd-title">Price</span>
+            <span class="filter-dd-badge" id="badge-count-price" style="display: none;">0</span>
+            <span class="filter-dd-arrow">▼</span>
+          </button>
+          <div class="filter-dd-menu">
+            <div class="filter-dd-options">
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-price" value="under-5k" class="shop-filter-input" />
+                <span>Under ₹5,000</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-price" value="5k-10k" class="shop-filter-input" />
+                <span>₹5,000 – ₹10,000</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-price" value="10k-20k" class="shop-filter-input" />
+                <span>₹10,000 – ₹20,000</span>
+              </label>
+              <label class="filter-option-row">
+                <input type="checkbox" name="filter-price" value="above-20k" class="shop-filter-input" />
+                <span>Above ₹20,000</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Reset Link -->
+        <button type="button" class="filter-reset-link" id="filter-reset-link" onclick="resetShopFilters()" style="display: none;">
+          Clear All
+        </button>
+
+      </div>
+
+      <!-- ACTIVE FILTER TAGS BAR -->
+      <div class="active-filter-chips-bar" id="active-filter-chips" style="display: none;"></div>
+
+      <!-- MAIN EDITORIAL PRODUCT GRID (4 COLUMNS DESKTOP) -->
+      <main class="collection-main-grid-wrap">
+        <div class="product-grid grid-col-4" id="shop-products-grid">
+          <!-- Dynamically rendered via script.js -->
+        </div>
+      </main>
+
     </div>
-  </section>
+  </div>
 
   <!-- MOBILE-OPTIMIZED COLLAPSIBLE FOOTER -->
   <footer class="site-footer">
@@ -626,19 +596,18 @@
     </div>
   </div>
 
-  <!-- QUICK VIEW BOTTOM SHEET MODAL -->
+  <!-- QUICK VIEW MODAL -->
   <div class="quickview-modal" id="royra-quickview-modal" onclick="if(event.target === this) closeQuickView()">
     <div class="quickview-card" id="quickview-content"></div>
   </div>
 
-  <!-- QUICK SIZE SELECTOR BOTTOM SHEET MODAL (FOR CARD CART ICON) -->
+  <!-- QUICK SIZE SELECTOR BOTTOM SHEET MODAL -->
   <div class="quicksize-modal" id="royra-quicksize-modal" onclick="if(event.target === this) closeQuickSizeModal()">
     <div class="quicksize-sheet" id="quicksize-sheet-content">
       <!-- Injected dynamically by script.js -->
     </div>
   </div>
 
-  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
