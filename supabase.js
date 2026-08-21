@@ -872,6 +872,160 @@
     },
 
     // ========================================================================
+    // ========================================================================
+    // 5. CONTENT MANAGEMENT SYSTEM (MEDIA / BANNERS / COLLECTIONS / SETTINGS)
+    // ========================================================================
+
+    async getMedia({ search = '', mediaType = 'all' } = {}) {
+      const client = this.getClient();
+      if (!client) return [];
+      let q = client.from('media').select('*').order('created_at', { ascending: false });
+      if (search) q = q.ilike('file_name', `%${search}%`);
+      if (mediaType && mediaType !== 'all') q = q.eq('media_type', mediaType);
+      const { data, error } = await q;
+      if (error) { console.error('[Supabase getMedia Error]:', error); return []; }
+      return data || [];
+    },
+
+    async uploadMedia(file, mediaType = 'general') {
+      if (!file) return { success: false, error: 'No file provided.' };
+      const client = this.getClient();
+      if (!client || !this.isConfigured()) return { success: false, error: 'Supabase is not configured.' };
+      try {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const path = `${mediaType}/${Date.now()}_${safeName}`;
+        const { data, error } = await client.storage.from('media').upload(path, file, { cacheControl: '3600', upsert: false });
+        if (error) throw error;
+        const { data: publicData } = client.storage.from('media').getPublicUrl(path);
+        const row = { file_name: file.name, storage_path: data.path, public_url: publicData.publicUrl, media_type: mediaType, alt_text: file.name.replace(/\.[^.]+$/, '') };
+        const { data: saved, error: dbError } = await client.from('media').insert(row).select().single();
+        if (dbError) throw dbError;
+        return { success: true, media: saved, url: saved.public_url, path: saved.storage_path };
+      } catch (e) {
+        return { success: false, error: e.message || 'Upload failed.' };
+      }
+    },
+
+    async deleteMedia(id) {
+      const client = this.getClient();
+      if (!client) return { success: false, error: 'Supabase is not configured.' };
+      try {
+        const { data: row } = await client.from('media').select('storage_path').eq('id', id).maybeSingle();
+        if (row?.storage_path) await client.storage.from('media').remove([row.storage_path]);
+        const { error } = await client.from('media').delete().eq('id', id);
+        if (error) throw error;
+        return { success: true };
+      } catch (e) { return { success: false, error: e.message }; }
+    },
+
+    async getBanners({ includeInactive = false } = {}) {
+      const client = this.getClient();
+      if (!client) return [];
+      let q = client.from('banners').select('*').order('display_order', { ascending: true }).order('created_at', { ascending: false });
+      if (!includeInactive) q = q.eq('status', 'Active');
+      const { data, error } = await q;
+      if (error) { console.error('[Supabase getBanners Error]:', error); return []; }
+      return data || [];
+    },
+
+    async saveBanner(banner, isEdit = false) {
+      const client = this.getClient();
+      if (!client) return { success: false, error: 'Supabase is not configured.' };
+      const payload = { name: banner.name, title: banner.title || '', subtitle: banner.subtitle || '', description: banner.description || '', desktop_image_url: banner.desktop_image_url || '', mobile_image_url: banner.mobile_image_url || '', button_text: banner.button_text || 'SHOP NOW →', button_link: banner.button_link || 'shop.html', status: banner.status || 'Active', display_order: Number(banner.display_order || 1), updated_at: new Date().toISOString() };
+      try {
+        if (isEdit && banner.id) payload.id = banner.id;
+        const { data, error } = await client.from('banners').upsert(payload).select().single();
+        if (error) throw error;
+        return { success: true, banner: data };
+      } catch (e) { return { success: false, error: e.message }; }
+    },
+
+    async deleteBanner(id) {
+      const client = this.getClient();
+      try { const { error } = await client.from('banners').delete().eq('id', id); if (error) throw error; return { success: true }; }
+      catch (e) { return { success: false, error: e.message }; }
+    },
+
+    async getCollections({ includeInactive = false } = {}) {
+      const client = this.getClient();
+      if (!client) return [];
+      let q = client.from('collections').select('*').order('display_order', { ascending: true }).order('name', { ascending: true });
+      if (!includeInactive) q = q.eq('status', 'Active');
+      const { data, error } = await q;
+      if (error) { console.error('[Supabase getCollections Error]:', error); return []; }
+      const rows = data || [];
+      if (!rows.length) return [];
+      const ids = rows.map(r => r.id);
+      const { data: links } = await client.from('collection_products').select('collection_id, product_id, display_order').in('collection_id', ids).order('display_order', { ascending: true });
+      return rows.map(r => ({ ...r, product_ids: (links || []).filter(x => String(x.collection_id) === String(r.id)).map(x => x.product_id), product_count: (links || []).filter(x => String(x.collection_id) === String(r.id)).length }));
+    },
+
+    async saveCollection(collection, isEdit = false) {
+      const client = this.getClient();
+      if (!client) return { success: false, error: 'Supabase is not configured.' };
+      const base = { name: collection.name, slug: collection.slug, description: collection.description || '', short_description: collection.short_description || '', collection_image_url: collection.collection_image_url || '', banner_image_url: collection.banner_image_url || '', status: collection.status || 'Active', display_order: Number(collection.display_order || 1), featured: !!collection.featured, updated_at: new Date().toISOString() };
+      try {
+        if (isEdit && collection.id) base.id = collection.id;
+        const { data: saved, error } = await client.from('collections').upsert(base).select().single();
+        if (error) throw error;
+        await client.from('collection_products').delete().eq('collection_id', saved.id);
+        const productIds = Array.isArray(collection.product_ids) ? collection.product_ids : [];
+        if (productIds.length) {
+          const rows = productIds.map((productId, index) => ({ collection_id: saved.id, product_id: productId, display_order: index + 1 }));
+          const { error: linkError } = await client.from('collection_products').insert(rows);
+          if (linkError) throw linkError;
+        }
+        return { success: true, collection: saved };
+      } catch (e) { return { success: false, error: e.message }; }
+    },
+
+    async getCollectionBySlug(slug) {
+      const client = this.getClient();
+      if (!client || !slug) return null;
+      const { data, error } = await client.from('collections').select('*').eq('slug', slug).eq('status', 'Active').maybeSingle();
+      if (error || !data) return null;
+      return data;
+    },
+
+    async getCollectionProducts(collectionId) {
+      const client = this.getClient();
+      if (!client || !collectionId) return [];
+      const { data: links, error: linkError } = await client.from('collection_products').select('product_id, display_order').eq('collection_id', collectionId).order('display_order', { ascending: true });
+      if (linkError || !Array.isArray(links) || !links.length) return [];
+      const ids = links.map(x => x.product_id);
+      const { data, error } = await client.from('products').select('*, product_images(*)').in('id', ids).eq('status', 'Active');
+      if (error || !Array.isArray(data)) return [];
+      const mapped = data.map(item => this.mapSupabaseProduct(item));
+      return links.map(link => mapped.find(p => String(p.id) === String(link.product_id))).filter(Boolean);
+    },
+
+    async deleteCollection(id) {
+      const client = this.getClient();
+      try { const { error } = await client.from('collections').delete().eq('id', id); if (error) throw error; return { success: true }; }
+      catch (e) { return { success: false, error: e.message }; }
+    },
+
+    async getSiteSettings(keys = []) {
+      const client = this.getClient();
+      if (!client) return {};
+      let q = client.from('site_settings').select('setting_key,setting_value');
+      if (keys.length) q = q.in('setting_key', keys);
+      const { data, error } = await q;
+      if (error) { console.error('[Supabase getSiteSettings Error]:', error); return {}; }
+      return Object.fromEntries((data || []).map(r => [r.setting_key, r.setting_value]));
+    },
+
+    async saveSiteSettings(values) {
+      const client = this.getClient();
+      if (!client) return { success: false, error: 'Supabase is not configured.' };
+      try {
+        const rows = Object.entries(values || {}).map(([setting_key, setting_value]) => ({ setting_key, setting_value: String(setting_value ?? ''), updated_at: new Date().toISOString() }));
+        const { error } = await client.from('site_settings').upsert(rows, { onConflict: 'setting_key' });
+        if (error) throw error;
+        return { success: true };
+      } catch (e) { return { success: false, error: e.message }; }
+    },
+
     // 5. HELPER DATA MAPPERS & LOCAL STATE SYNCHRONIZATION
     // ========================================================================
 
@@ -1420,7 +1574,74 @@ CREATE TRIGGER on_auth_user_created
 -- SET role = 'admin', updated_at = NOW()
 -- WHERE email = 'YOUR_ADMIN_EMAIL';
       `.trim();
-    }
+    },
+
+    // ========================================================================
+    // COMMERCE OPERATIONS
+    // ========================================================================
+    async placeOrderSecure(customer, items, couponCode = null, paymentMethod = 'COD') {
+      const client = this.getClient();
+      if (!client) return { success:false, error:'Supabase is not configured.' };
+      const { data, error } = await client.rpc('place_order_secure', {
+        p_customer: customer,
+        p_items: items,
+        p_coupon_code: couponCode || null,
+        p_payment_method: paymentMethod || 'COD'
+      });
+      if (error) return { success:false, error:error.message };
+      return data || { success:false, error:'No order response returned.' };
+    },
+
+    async getOrders({ search = '', status='all', paymentStatus='all' } = {}) {
+      const client=this.getClient(); if(!client) return [];
+      let q=client.from('orders').select('*').order('created_at',{ascending:false});
+      if(status!=='all') q=q.eq('order_status',status);
+      if(paymentStatus!=='all') q=q.eq('payment_status',paymentStatus);
+      if(search){ const term=search.replace(/,/g,''); q=q.or(`order_number.ilike.%${term}%,customer_email.ilike.%${term}%,customer_name.ilike.%${term}%,customer_phone.ilike.%${term}%`); }
+      const {data,error}=await q; if(error){console.error(error);return [];} return data||[];
+    },
+
+    async getOrder(id) {
+      const client=this.getClient(); if(!client) return null;
+      const {data,error}=await client.from('orders').select('*, order_items(*), order_status_history(*), payments(*), shipments(*)').eq('id',id).maybeSingle();
+      if(error){console.error(error);return null;} return data;
+    },
+
+    async updateOrderStatus(id,status,note='') {
+      const client=this.getClient(); if(!client) return {success:false,error:'Supabase is not configured.'};
+      const {data,error}=await client.rpc('update_order_status_secure',{p_order_id:id,p_status:status,p_note:note||null});
+      return error ? {success:false,error:error.message} : (data||{success:true});
+    },
+
+    async updatePaymentStatus(id,status,reference='') {
+      const client=this.getClient(); if(!client) return {success:false,error:'Supabase is not configured.'};
+      const {data:order,error:orderErr}=await client.from('orders').select('id,total_amount').eq('id',id).maybeSingle();
+      if(orderErr||!order) return {success:false,error:orderErr?.message||'Order not found'};
+      const {error}=await client.from('orders').update({payment_status:status,payment_reference:reference||null,updated_at:new Date().toISOString()}).eq('id',id);
+      if(error) return {success:false,error:error.message};
+      await client.from('payments').update({status,transaction_id:reference||null,paid_at:status==='Paid'?new Date().toISOString():null,updated_at:new Date().toISOString()}).eq('order_id',id);
+      return {success:true};
+    },
+
+    async getCoupons({ search='' }={}) { const c=this.getClient(); if(!c)return[]; let q=c.from('coupons').select('*').order('created_at',{ascending:false}); if(search)q=q.ilike('code',`%${search}%`); const {data,error}=await q; if(error){console.error(error);return[]} return data||[]; },
+    async saveCoupon(coupon) { const c=this.getClient(); if(!c)return{success:false,error:'Supabase is not configured.'}; const payload={...coupon,code:String(coupon.code||'').trim().toUpperCase(),discount_value:Number(coupon.discount_value||0),minimum_order_value:Number(coupon.minimum_order_value||0),maximum_discount:coupon.maximum_discount?Number(coupon.maximum_discount):null,usage_limit:coupon.usage_limit?Number(coupon.usage_limit):null,per_customer_limit:coupon.per_customer_limit?Number(coupon.per_customer_limit):null}; const {data,error}=await c.from('coupons').upsert(payload).select().single(); return error?{success:false,error:error.message}:{success:true,coupon:data}; },
+    async deleteCoupon(id){const c=this.getClient();if(!c)return{success:false,error:'Supabase is not configured.'};const{error}=await c.from('coupons').delete().eq('id',id);return error?{success:false,error:error.message}:{success:true};},
+    async getOffers(){const c=this.getClient();if(!c)return[];const{data,error}=await c.from('offers').select('*').order('priority',{ascending:true});if(error){console.error(error);return[]}return data||[];},
+    async saveOffer(offer){const c=this.getClient();if(!c)return{success:false,error:'Supabase is not configured.'};const payload={...offer,discount_value:Number(offer.discount_value||0),minimum_order_value:Number(offer.minimum_order_value||0),minimum_quantity:Number(offer.minimum_quantity||1),priority:Number(offer.priority||100)};const{data,error}=await c.from('offers').upsert(payload).select().single();return error?{success:false,error:error.message}:{success:true,offer:data};},
+    async deleteOffer(id){const c=this.getClient();if(!c)return{success:false,error:'Supabase is not configured.'};const{error}=await c.from('offers').delete().eq('id',id);return error?{success:false,error:error.message}:{success:true};},
+    async validateCoupon(code, subtotal=0){const c=this.getClient();if(!c)return{valid:false,error:'Supabase is not configured.'};const{data,error}=await c.rpc('validate_coupon_secure',{p_code:String(code||'').trim().toUpperCase(),p_subtotal:Number(subtotal||0)});return error?{valid:false,error:error.message}:(data||{valid:false,error:'Invalid coupon'});},
+    async getInventory(){const c=this.getClient();if(!c)return[];const{data,error}=await c.from('products').select('id,name,sku,category,stock_quantity,low_stock_alert,status,price').order('name');if(error){console.error(error);return[]}return data||[];},
+    async adjustStock(productId, quantityChange, reason='Manual adjustment'){const c=this.getClient();if(!c)return{success:false,error:'Supabase is not configured.'};const q=Number(quantityChange||0);const{data:product,error:e}=await c.from('products').select('stock_quantity').eq('id',productId).maybeSingle();if(e||!product)return{success:false,error:e?.message||'Product not found'};const next=Math.max(0,Number(product.stock_quantity||0)+q);const{error}=await c.from('products').update({stock_quantity:next,status:next===0?'Out of Stock':'Active',updated_at:new Date().toISOString()}).eq('id',productId);if(error)return{success:false,error:error.message};await c.from('inventory_movements').insert({product_id:productId,quantity_change:q,movement_type:'ADJUSTMENT',reason});return{success:true,stock:next};},
+    async getSuppliers(){const c=this.getClient();if(!c)return[];const{data,error}=await c.from('suppliers').select('*').order('name');if(error){console.error(error);return[]}return data||[];},
+    async saveSupplier(row){const c=this.getClient();if(!c)return{success:false,error:'Supabase is not configured.'};const{data,error}=await c.from('suppliers').upsert(row).select().single();return error?{success:false,error:error.message}:{success:true,supplier:data};},
+    async getPurchaseOrders(){const c=this.getClient();if(!c)return[];const{data,error}=await c.from('purchase_orders').select('*, suppliers(name)').order('created_at',{ascending:false});if(error){console.error(error);return[]}return data||[];},
+    async savePurchaseOrder(row){const c=this.getClient();if(!c)return{success:false,error:'Supabase is not configured.'};const payload={...row};if(!payload.po_number)payload.po_number='PO-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+Math.floor(Date.now()%100000);const{data,error}=await c.from('purchase_orders').insert(payload).select().single();return error?{success:false,error:error.message}:{success:true,purchaseOrder:data};},
+    async getPayments(){const c=this.getClient();if(!c)return[];const{data,error}=await c.from('payments').select('*, orders(order_number,customer_name)').order('created_at',{ascending:false});if(error){console.error(error);return[]}return data||[];},
+    async getReturns(){const c=this.getClient();if(!c)return[];const{data,error}=await c.from('returns').select('*, orders(order_number,customer_name)').order('created_at',{ascending:false});if(error){console.error(error);return[]}return data||[];},
+    async getRefunds(){const c=this.getClient();if(!c)return[];const{data,error}=await c.from('refunds').select('*, orders(order_number,customer_name)').order('created_at',{ascending:false});if(error){console.error(error);return[]}return data||[];},
+    async getShipments(){const c=this.getClient();if(!c)return[];const{data,error}=await c.from('shipments').select('*, orders(order_number,customer_name)').order('created_at',{ascending:false});if(error){console.error(error);return[]}return data||[];},
+    async getCustomersFromOrders(){const orders=await this.getOrders();const map=new Map();for(const o of orders){const key=(o.customer_email||'').toLowerCase();if(!map.has(key))map.set(key,{name:o.customer_name,email:o.customer_email,phone:o.customer_phone,orders:0,total_spent:0,last_order:o.created_at});const c=map.get(key);c.orders+=1;if(o.payment_status==='Paid')c.total_spent+=Number(o.total_amount||0);if(new Date(o.created_at)>new Date(c.last_order))c.last_order=o.created_at;}return Array.from(map.values()).sort((a,b)=>b.total_spent-a.total_spent);}
+
   };
 
   // Auto-detect and forward recovery sessions if they land on storefront pages

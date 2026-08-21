@@ -2157,11 +2157,10 @@ function renderCartPage() {
   const subtotal = CartStore.getSubtotal();
   const appliedCoupon = localStorage.getItem(StorageKeys.APPLIED_COUPON);
 
-  let discount = 0;
-  if (appliedCoupon === "ROYRA10") {
-    discount = Math.round(subtotal * 0.10);
-  } else if (appliedCoupon === "WELCOME500") {
-    discount = Math.min(500, subtotal);
+  let discount = Number(localStorage.getItem('royra_applied_coupon_discount') || 0);
+  if (!discount) {
+    if (appliedCoupon === "ROYRA10") discount = Math.round(subtotal * 0.10);
+    else if (appliedCoupon === "WELCOME500") discount = Math.min(500, subtotal);
   }
 
   const grandTotal = Math.max(0, subtotal - discount);
@@ -2215,25 +2214,30 @@ function renderCartPage() {
   }
 }
 
-function applyCouponCode() {
+async function applyCouponCode() {
   const input = document.getElementById("coupon-code-input");
   const msg = document.getElementById("coupon-msg");
   if (!input) return;
-
   const code = input.value.trim().toUpperCase();
-  if (code === "ROYRA10") {
-    localStorage.setItem(StorageKeys.APPLIED_COUPON, "ROYRA10");
-    if (msg) msg.innerHTML = `<span style="color: #10B981;">Coupon applied! 10% instant discount unlocked.</span>`;
-    showToast("Coupon ROYRA10 Applied! 10% OFF");
-    renderCartPage();
-  } else if (code === "WELCOME500") {
-    localStorage.setItem(StorageKeys.APPLIED_COUPON, "WELCOME500");
-    if (msg) msg.innerHTML = `<span style="color: #10B981;">Welcome coupon applied! ₹500 off your order.</span>`;
-    showToast("Coupon WELCOME500 Applied!");
-    renderCartPage();
-  } else {
-    if (msg) msg.innerHTML = `<span style="color: #8B2635;">Invalid coupon code. Try ROYRA10 for 10% off.</span>`;
+  if (!code) return;
+  const subtotal = CartStore.getSubtotal();
+  if (window.RoyraDB && RoyraDB.isConfigured()) {
+    const result = await RoyraDB.validateCoupon(code, subtotal);
+    if (result.valid) {
+      localStorage.setItem(StorageKeys.APPLIED_COUPON, code);
+      localStorage.setItem('royra_applied_coupon_discount', String(result.discount || 0));
+      if (msg) msg.innerHTML = `<span style="color:#10B981;">Coupon applied! Discount ${formatINR(result.discount || 0)}.</span>`;
+      showToast(`Coupon ${code} Applied!`);
+      renderCartPage();
+      return;
+    }
+    if (msg) msg.innerHTML = `<span style="color:#8B2635;">${result.error || 'Invalid coupon code.'}</span>`;
+    return;
   }
+  if (code === "ROYRA10") { localStorage.setItem(StorageKeys.APPLIED_COUPON, code); localStorage.setItem('royra_applied_coupon_discount', String(Math.round(subtotal*0.10))); }
+  else if (code === "WELCOME500") { localStorage.setItem(StorageKeys.APPLIED_COUPON, code); localStorage.setItem('royra_applied_coupon_discount', String(Math.min(500, subtotal))); }
+  else { if(msg)msg.innerHTML='<span style="color:#8B2635;">Invalid coupon code.</span>'; return; }
+  if(msg)msg.innerHTML='<span style="color:#10B981;">Coupon applied.</span>'; showToast(`Coupon ${code} Applied!`); renderCartPage();
 }
 
 function simulateCheckout() {
@@ -2258,14 +2262,29 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove("open");
 }
 
-function confirmSimulatedOrder() {
-  CartStore.saveItems([]);
-  localStorage.removeItem(StorageKeys.APPLIED_COUPON);
-  closeCheckoutModal();
-  showToast("Order Confirmed! Tracking details sent to your phone.");
-  setTimeout(() => {
-    window.location.href = "index.html";
-  }, 1500);
+async function confirmSimulatedOrder() {
+  const items = CartStore.getItems();
+  if (!items.length) { showToast("Your shopping bag is empty"); return; }
+  const name = document.getElementById('checkout-name')?.value?.trim();
+  const address = document.getElementById('checkout-address')?.value?.trim();
+  const cityState = document.getElementById('checkout-citystate')?.value?.trim();
+  const pincode = document.getElementById('checkout-pincode')?.value?.trim();
+  const paymentMethod = document.querySelector('input[name="pay-method"]:checked')?.value || 'COD';
+  if (!name || !address || !cityState || !/^\d{6}$/.test(pincode || '')) { showToast('Please complete your delivery details'); return; }
+  if (paymentMethod === 'ONLINE') { showToast('Online payment gateway is not connected yet. Choose Manual/COD or configure a provider first.','error'); return; }
+  if (!(window.RoyraDB && RoyraDB.isConfigured())) { showToast('Supabase is not configured on this browser.','error'); return; }
+  const customerEmail = localStorage.getItem('royra_checkout_email') || window.prompt('Enter your email for order confirmation:') || '';
+  if (!customerEmail) { showToast('Email is required for the order'); return; }
+  localStorage.setItem('royra_checkout_email',customerEmail);
+  const payloadItems = items.map(i => ({ product_id: Number(i.id), quantity: Number(i.quantity), size: i.size || '', metal: i.metal || '' }));
+  const customer = { full_name:name, email:customerEmail, phone:localStorage.getItem('royra_checkout_phone')||'', shipping_address:{address,city_state:cityState,pincode}, billing_address:{address,city_state:cityState,pincode} };
+  const coupon = localStorage.getItem(StorageKeys.APPLIED_COUPON) || null;
+  const result = await RoyraDB.placeOrderSecure(customer,payloadItems,coupon,paymentMethod);
+  if (!result.success) { showToast(result.error || 'Unable to place order','error'); return; }
+  CartStore.saveItems([]); localStorage.removeItem(StorageKeys.APPLIED_COUPON); localStorage.removeItem('royra_applied_coupon_discount'); closeCheckoutModal();
+  localStorage.setItem('royra_last_order', JSON.stringify({order_number:result.order_number,total:result.total,payment_status:result.payment_status,name}));
+  showToast(`Order ${result.order_number} placed successfully.`);
+  setTimeout(()=>{ window.location.href = `order-confirmation.html?order=${encodeURIComponent(result.order_number)}`; }, 900);
 }
 
 // WISHLIST PAGE LOGIC
