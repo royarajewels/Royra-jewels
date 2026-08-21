@@ -861,13 +861,13 @@ const CartStore = {
     renderCartDrawer();
   },
   addItem(productId, quantity = 1, size = null, metal = null) {
-    const product = ROYRA_PRODUCTS.find(p => p.id === productId);
+    const product = ROYRA_PRODUCTS.find(p => p.id === productId || String(p.id) === String(productId) || p.slug === productId);
     if (!product) return;
 
     const items = this.getItems();
     const chosenSize = size || (product.sizes && product.sizes[0]) || "Standard";
     const chosenMetal = metal || product.material;
-    const cartItemId = `${productId}_${chosenSize}_${chosenMetal}`;
+    const cartItemId = `${product.id}_${chosenSize}_${chosenMetal}`;
 
     const existingIndex = items.findIndex(item => item.cartItemId === cartItemId);
     if (existingIndex > -1) {
@@ -940,15 +940,16 @@ const WishlistStore = {
   },
   toggleItem(productId) {
     const items = this.getItems();
-    const product = ROYRA_PRODUCTS.find(p => p.id === productId);
+    const product = ROYRA_PRODUCTS.find(p => p.id === productId || String(p.id) === String(productId) || p.slug === productId);
     if (!product) return;
 
-    const index = items.indexOf(productId);
+    const targetId = product.id;
+    const index = items.findIndex(id => id === targetId || String(id) === String(targetId));
     if (index > -1) {
       items.splice(index, 1);
       showToast(`Removed "${product.name}" from your wishlist`);
     } else {
-      items.push(productId);
+      items.push(targetId);
       showToast(`Saved "${product.name}" to your wishlist`);
     }
     this.saveItems(items);
@@ -957,7 +958,7 @@ const WishlistStore = {
     }
   },
   has(productId) {
-    return this.getItems().includes(productId);
+    return this.getItems().some(id => id === productId || String(id) === String(productId));
   },
   hasItem(productId) {
     return this.has(productId);
@@ -1164,7 +1165,7 @@ let qvSelectedFinish = "Gold";
 let qvSelectedSize = "6";
 
 function openQuickView(productId) {
-  const product = ROYRA_PRODUCTS.find(p => p.id === productId);
+  const product = ROYRA_PRODUCTS.find(p => p.id === productId || String(p.id) === String(productId) || p.slug === productId);
   if (!product) return;
 
   const modal = document.getElementById("royra-quickview-modal");
@@ -1828,7 +1829,7 @@ function initProductPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get("id") || "royra-ring-01";
 
-  const product = ROYRA_PRODUCTS.find(p => p.id === productId) || ROYRA_PRODUCTS[0];
+  const product = ROYRA_PRODUCTS.find(p => p.id === productId || String(p.id) === String(productId) || p.slug === productId) || ROYRA_PRODUCTS[0];
   currentPdpProduct = product;
   
   // Set default size

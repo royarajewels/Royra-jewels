@@ -440,10 +440,10 @@
       const now = new Date().toISOString();
       const client = this.getClient();
 
-      // Generate unique product ID if new
-      const id = isEdit && productData.id ? productData.id : `royra-${Date.now().toString(36)}-${Math.random().toString(36).substr(2, 4)}`;
-      const slug = productData.slug || (productData.name ? productData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') : id);
-      const sku = (productData.sku || `ROY-${id.toUpperCase()}`).toUpperCase().trim();
+      const isNumericId = productData.id !== undefined && productData.id !== null && !isNaN(Number(productData.id)) && String(productData.id).trim() !== '';
+      const existingNumericId = isNumericId ? Number(productData.id) : null;
+      const slug = productData.slug || (productData.name ? productData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') : `product-${Date.now()}`);
+      const sku = (productData.sku || `ROY-${Date.now().toString(36).toUpperCase()}`).toUpperCase().trim();
 
       // Gallery and image URLs
       const imagesList = Array.isArray(productData.images) && productData.images.length > 0
@@ -454,7 +454,6 @@
 
       // 1. Database Payload for 'products' table
       const dbProductPayload = {
-        id,
         name: productData.name,
         slug,
         sku,
@@ -479,45 +478,75 @@
         updated_at: now
       };
 
-      if (!isEdit) {
-        dbProductPayload.created_at = now;
-      }
+      let finalProductId = productData.id || `royra-${Date.now()}`;
 
       // Execute Supabase PostgreSQL write
       if (client) {
         try {
-          const { error: prodError } = await client
-            .from('products')
-            .upsert(dbProductPayload);
+          let savedRow = null;
 
-          if (prodError) {
-            console.error('[Supabase Product Upsert Error]:', prodError);
-            return { success: false, error: prodError.message };
+          if (isEdit && existingNumericId) {
+            // Update existing BIGINT record
+            dbProductPayload.id = existingNumericId;
+            const { data, error: updateError } = await client
+              .from('products')
+              .update(dbProductPayload)
+              .eq('id', existingNumericId)
+              .select('*')
+              .maybeSingle();
+
+            if (updateError) {
+              console.error('[Supabase Product Update Error]:', updateError);
+              return { success: false, error: updateError.message };
+            }
+            savedRow = data || { id: existingNumericId };
+          } else {
+            // Insert new product (PostgreSQL auto-generates the BIGINT Identity ID)
+            if (existingNumericId) {
+              dbProductPayload.id = existingNumericId;
+            }
+            dbProductPayload.created_at = now;
+
+            const { data, error: insertError } = await client
+              .from('products')
+              .insert(dbProductPayload)
+              .select('*')
+              .single();
+
+            if (insertError) {
+              console.error('[Supabase Product Insert Error]:', insertError);
+              return { success: false, error: insertError.message };
+            }
+            savedRow = data;
           }
 
-          // Write records into 'product_images' table
-          if (imagesList.length > 0) {
-            // Delete existing images for this product before re-inserting ordered set
-            await client
-              .from('product_images')
-              .delete()
-              .eq('product_id', id);
+          if (savedRow && savedRow.id !== undefined) {
+            finalProductId = savedRow.id;
+            const numericFkId = Number(savedRow.id);
 
-            const imageRows = imagesList.map((img, idx) => ({
-              product_id: id,
-              image_url: typeof img === 'string' ? img : img.url,
-              storage_path: img.path || null,
-              display_order: idx,
-              is_primary: idx === 0 || Boolean(img.isPrimary),
-              created_at: now
-            }));
+            // Write records into 'product_images' table using BIGINT product_id
+            if (imagesList.length > 0 && !isNaN(numericFkId)) {
+              await client
+                .from('product_images')
+                .delete()
+                .eq('product_id', numericFkId);
 
-            const { error: imgError } = await client
-              .from('product_images')
-              .insert(imageRows);
+              const imageRows = imagesList.map((img, idx) => ({
+                product_id: numericFkId,
+                image_url: typeof img === 'string' ? img : img.url,
+                storage_path: img.path || null,
+                display_order: idx,
+                is_primary: idx === 0 || Boolean(img.isPrimary),
+                created_at: now
+              }));
 
-            if (imgError) {
-              console.warn('[Supabase product_images insert warning]:', imgError);
+              const { error: imgError } = await client
+                .from('product_images')
+                .insert(imageRows);
+
+              if (imgError) {
+                console.warn('[Supabase product_images insert warning]:', imgError);
+              }
             }
           }
         } catch (err) {
@@ -529,7 +558,7 @@
       // Also keep local sync for instant storefront preview
       this.syncLocalProduct({
         ...productData,
-        id,
+        id: finalProductId,
         slug,
         sku,
         image: primaryImage,
@@ -540,7 +569,7 @@
 
       return {
         success: true,
-        productId: id
+        productId: finalProductId
       };
     },
 
@@ -548,15 +577,21 @@
      * Deletes a product from Supabase PostgreSQL (Foreign keys cascade to product_images)
      */
     async deleteProduct(productId) {
-      if (!productId) return { success: false, error: 'Product ID is required.' };
+      if (!productId && productId !== 0) return { success: false, error: 'Product ID is required.' };
 
       const client = this.getClient();
       if (client) {
         try {
-          const { error } = await client
-            .from('products')
-            .delete()
-            .eq('id', productId);
+          const isNumeric = !isNaN(Number(productId)) && String(productId).trim() !== '';
+          let query = client.from('products').delete();
+
+          if (isNumeric) {
+            query = query.eq('id', Number(productId));
+          } else {
+            query = query.eq('slug', String(productId));
+          }
+
+          const { error } = await query;
 
           if (error) {
             console.error('[Supabase deleteProduct Error]:', error);
@@ -886,9 +921,9 @@ CREATE TABLE IF NOT EXISTS public.categories (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. PRODUCTS TABLE
+-- 3. PRODUCTS TABLE (BIGINT Identity Primary Key)
 CREATE TABLE IF NOT EXISTS public.products (
-  id TEXT PRIMARY KEY,
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   sku TEXT UNIQUE NOT NULL,
@@ -914,16 +949,29 @@ CREATE TABLE IF NOT EXISTS public.products (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. PRODUCT IMAGES TABLE (One-to-Many Relationship with products)
+-- 4. PRODUCT IMAGES TABLE (BIGINT product_id matches products.id identically)
 CREATE TABLE IF NOT EXISTS public.product_images (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  product_id TEXT NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
+  product_id BIGINT NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
   image_url TEXT NOT NULL,
   storage_path TEXT,
   display_order INTEGER DEFAULT 0,
   is_primary BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Safety check: If product_images already existed with a TEXT product_id, alter it safely
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'product_images' AND column_name = 'product_id' AND data_type = 'text'
+  ) THEN
+    ALTER TABLE public.product_images ALTER COLUMN product_id TYPE BIGINT USING (product_id::bigint);
+  END IF;
+EXCEPTION
+  WHEN OTHERS THEN NULL;
+END $$;
 
 -- 5. PERFORMANCE INDEXES
 CREATE INDEX IF NOT EXISTS idx_products_category ON public.products(category);
