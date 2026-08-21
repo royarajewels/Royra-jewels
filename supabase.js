@@ -23,32 +23,44 @@
   };
 
   // Safe credentials retrieval
+  // 1. Primary Source of Truth: window.__ENV__ (from /config.js on GitHub Pages or static host)
+  // 2. Secondary/Fallback: localStorage (only if developer set a local override)
   function getSupabaseConfig() {
-    const customUrl = localStorage.getItem(SUPABASE_STORAGE_KEYS.URL);
-    const customKey = localStorage.getItem(SUPABASE_STORAGE_KEYS.ANON_KEY);
-
-    // Browser environment configuration (supports window.__ENV__, window.ENV, config.js, and globals)
     const envObj = (typeof window !== 'undefined' && (window.__ENV__ || window.ENV || window._ENV || {})) || {};
-    const winUrl = (typeof window !== 'undefined' && (window.SUPABASE_URL || window.VITE_SUPABASE_URL)) ||
-                   envObj.SUPABASE_URL ||
-                   envObj.VITE_SUPABASE_URL ||
-                   '';
-    const winKey = (typeof window !== 'undefined' && (window.SUPABASE_ANON_KEY || window.VITE_SUPABASE_ANON_KEY)) ||
-                   envObj.SUPABASE_ANON_KEY ||
-                   envObj.VITE_SUPABASE_ANON_KEY ||
-                   '';
+    const defaultUrl = (typeof window !== 'undefined' && (window.SUPABASE_URL || window.VITE_SUPABASE_URL)) ||
+                       envObj.SUPABASE_URL ||
+                       envObj.VITE_SUPABASE_URL ||
+                       '';
+    const defaultKey = (typeof window !== 'undefined' && (window.SUPABASE_ANON_KEY || window.VITE_SUPABASE_ANON_KEY)) ||
+                       envObj.SUPABASE_ANON_KEY ||
+                       envObj.VITE_SUPABASE_ANON_KEY ||
+                       '';
 
-    const url = customUrl || winUrl || '';
-    const anonKey = customKey || winKey || '';
+    let localOverrideUrl = '';
+    let localOverrideKey = '';
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localOverrideUrl = localStorage.getItem(SUPABASE_STORAGE_KEYS.URL) || '';
+        localOverrideKey = localStorage.getItem(SUPABASE_STORAGE_KEYS.ANON_KEY) || '';
+      }
+    } catch (e) {}
+
+    // Priority: Local override if explicitly set in modal, otherwise public default from config.js
+    const finalUrl = (localOverrideUrl || defaultUrl || '').trim();
+    const finalAnonKey = (localOverrideKey || defaultKey || '').trim();
 
     return {
-      url: url.trim(),
-      anonKey: anonKey.trim(),
-      storageBucket: SUPABASE_STORAGE_KEYS.BUCKET
+      url: finalUrl,
+      anonKey: finalAnonKey,
+      defaultUrl: (defaultUrl || '').trim(),
+      defaultAnonKey: (defaultKey || '').trim(),
+      storageBucket: SUPABASE_STORAGE_KEYS.BUCKET,
+      hasDefaultConfig: Boolean(defaultUrl && defaultKey),
+      hasLocalOverride: Boolean(localOverrideUrl && localOverrideKey)
     };
   }
 
-  // Check if Supabase connection credentials exist
+  // Check if Supabase connection credentials exist and are valid
   function isSupabaseConfigured() {
     const config = getSupabaseConfig();
     return Boolean(
@@ -59,7 +71,7 @@
     );
   }
 
-  // Supabase Client Instance
+  // Supabase Client Instance (Singleton)
   let supabase = null;
 
   function initSupabaseClient() {
@@ -81,7 +93,7 @@
     return null;
   }
 
-  // Initial client creation
+  // Initial client creation on script load
   initSupabaseClient();
 
   // --------------------------------------------------------------------------
@@ -115,10 +127,14 @@
     },
 
     clearCredentials() {
-      localStorage.removeItem(SUPABASE_STORAGE_KEYS.URL);
-      localStorage.removeItem(SUPABASE_STORAGE_KEYS.ANON_KEY);
-      localStorage.removeItem(SUPABASE_STORAGE_KEYS.SESSION_CACHE);
+      try {
+        localStorage.removeItem(SUPABASE_STORAGE_KEYS.URL);
+        localStorage.removeItem(SUPABASE_STORAGE_KEYS.ANON_KEY);
+        localStorage.removeItem(SUPABASE_STORAGE_KEYS.SESSION_CACHE);
+      } catch (e) {}
       supabase = null;
+      initSupabaseClient();
+      return { success: true };
     },
 
     // ========================================================================
@@ -269,6 +285,103 @@
         return user;
       } catch (err) {
         return null;
+      }
+    },
+
+    /**
+     * Constructs the exact absolute redirect URL for password resets,
+     * supporting GitHub Pages (/Royra-jewels/admin/reset-password.html),
+     * local dev (http://localhost:3000/admin/reset-password.html), and previews.
+     */
+    getResetPasswordRedirectUrl() {
+      if (typeof window === 'undefined') return '';
+      const origin = window.location.origin;
+      const pathname = window.location.pathname || '';
+      
+      let basePath = '';
+      if (pathname.includes('/admin/')) {
+        basePath = pathname.substring(0, pathname.indexOf('/admin/'));
+      } else {
+        const lastSlash = pathname.lastIndexOf('/');
+        if (lastSlash > 0) {
+          basePath = pathname.substring(0, lastSlash);
+        }
+      }
+
+      // Ensure no double slashes in base path
+      basePath = basePath.replace(/\/+$/, '');
+      return `${origin}${basePath}/admin/reset-password.html`;
+    },
+
+    /**
+     * Sends a Supabase password reset email to the admin with explicit redirectTo URL
+     */
+    async requestPasswordReset(email, customRedirectUrl = null) {
+      if (!this.isConfigured()) {
+        return {
+          success: false,
+          error: 'Supabase is not configured. Please configure your project in /config.js.'
+        };
+      }
+
+      const client = this.getClient();
+      if (!client) {
+        return { success: false, error: 'Failed to initialize Supabase client.' };
+      }
+
+      const redirectTo = customRedirectUrl || this.getResetPasswordRedirectUrl();
+      console.log('[Supabase Password Reset]: Requesting email reset with redirectTo:', redirectTo);
+
+      try {
+        const { data, error } = await client.auth.resetPasswordForEmail(email.trim(), {
+          redirectTo: redirectTo
+        });
+
+        if (error) {
+          return { success: false, error: error.message };
+        }
+
+        return { success: true, data: data, redirectTo: redirectTo };
+      } catch (err) {
+        console.error('[Supabase requestPasswordReset Error]:', err);
+        return { success: false, error: err.message || 'Error sending password reset email.' };
+      }
+    },
+
+    /**
+     * Updates user's password during an active Supabase recovery session.
+     * Uses client.auth.updateUser({ password })
+     */
+    async updatePassword(newPassword) {
+      if (!this.isConfigured()) {
+        return {
+          success: false,
+          error: 'Supabase is not configured. Please configure your project in /config.js.'
+        };
+      }
+
+      const client = this.getClient();
+      if (!client) {
+        return { success: false, error: 'Failed to initialize Supabase client.' };
+      }
+
+      if (!newPassword || newPassword.length < 8) {
+        return { success: false, error: 'Password must be at least 8 characters.' };
+      }
+
+      try {
+        const { data, error } = await client.auth.updateUser({
+          password: newPassword
+        });
+
+        if (error) {
+          return { success: false, error: error.message };
+        }
+
+        return { success: true, user: data.user };
+      } catch (err) {
+        console.error('[Supabase updatePassword Error]:', err);
+        return { success: false, error: err.message || 'Error updating password.' };
       }
     },
 
@@ -1309,6 +1422,20 @@ CREATE TRIGGER on_auth_user_created
       `.trim();
     }
   };
+
+  // Auto-detect and forward recovery sessions if they land on storefront pages
+  if (typeof window !== 'undefined') {
+    const hash = window.location.hash || '';
+    const search = window.location.search || '';
+    const isRecovery = hash.includes('type=recovery') || search.includes('type=recovery');
+    const isAlreadyOnResetPage = window.location.pathname.includes('reset-password.html');
+
+    if (isRecovery && !isAlreadyOnResetPage) {
+      console.log('[Supabase Auth]: Detected password recovery token on storefront page. Redirecting to admin/reset-password.html...');
+      const targetUrl = RoyraDB.getResetPasswordRedirectUrl() + hash + (hash ? '' : search);
+      window.location.replace(targetUrl);
+    }
+  }
 
   // Export to global namespace
   window.RoyraDB = RoyraDB;
