@@ -9,7 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <!-- Supabase JS Client CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Admin Stylesheet -->
   <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="ops.css" />
 </head>
 <body class="admin-login-body">
 
@@ -26,7 +28,7 @@
     </div>
 
     <!-- ERROR & NOTIFICATION ALERT -->
-    <div id="login-error-alert" class="login-error-alert"></div>
+    <div id="login-error-alert" class="login-error-alert" style="display: none;"></div>
 
     <!-- ADMIN LOGIN FORM (SUPABASE AUTH) -->
     <form id="admin-login-form">
@@ -36,7 +38,12 @@
       </div>
 
       <div class="form-group" style="margin-bottom: 24px;">
-        <label for="admin-password" class="form-label">Admin Password <span class="required">*</span></label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label for="admin-password" class="form-label" style="margin-bottom: 0;">Admin Password <span class="required">*</span></label>
+          <button type="button" onclick="showForgotPasswordForm()" style="background: none; border: none; color: var(--admin-accent); font-size: 12px; cursor: pointer; text-decoration: underline; font-weight: 500;">
+            Forgot Password?
+          </button>
+        </div>
         <input type="password" id="admin-password" class="form-input" placeholder="••••••••••••" required autocomplete="current-password" />
       </div>
 
@@ -54,13 +61,38 @@
       </div>
     </form>
 
+    <!-- ADMIN FORGOT PASSWORD FORM (RECOVERY FLOW) -->
+    <form id="admin-forgot-form" style="display: none;">
+      <div style="font-weight: 600; font-size: 14px; color: var(--admin-text); margin-bottom: 6px;">
+        Reset Admin Password
+      </div>
+      <p style="font-size: 12.5px; color: var(--admin-text-secondary); margin-bottom: 18px; line-height: 1.5;">
+        Enter your admin email address and we'll send you a secure link to reset your password.
+      </p>
+
+      <div class="form-group" style="margin-bottom: 24px;">
+        <label for="forgot-email" class="form-label">Admin Email Address <span class="required">*</span></label>
+        <input type="email" id="forgot-email" class="form-input" placeholder="admin@royrajewels.com" required autocomplete="email" />
+      </div>
+
+      <button type="submit" id="admin-forgot-submit" class="btn-admin-primary" style="width: 100%; padding: 13px; font-size: 14px; margin-bottom: 16px;">
+        SEND RESET LINK →
+      </button>
+
+      <div style="text-align: center;">
+        <button type="button" onclick="showLoginForm()" style="background: none; border: none; color: var(--admin-text-secondary); font-size: 12.5px; cursor: pointer; text-decoration: none;">
+          ← Back to Login
+        </button>
+      </div>
+    </form>
+
     <!-- SUPABASE CREDENTIALS MODAL / EXPANDABLE DRAWER -->
     <div id="supabase-settings-drawer" style="display: none; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--admin-border);">
       <div style="font-weight: 600; font-size: 13px; color: var(--admin-text); margin-bottom: 8px;">
         Supabase Project Configuration
       </div>
       <p style="font-size: 11.5px; color: var(--admin-text-secondary); margin-bottom: 12px;">
-        Connect your Supabase project using your Project URL and public Anon Key (never use the Service Role Key).
+        Connect your Supabase project using your Project URL and public Anon Key.
       </p>
 
       <div class="form-group" style="margin-bottom: 10px;">
@@ -73,9 +105,12 @@
         <input type="password" id="cfg-supabase-key" class="form-input" style="font-size: 12px;" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." />
       </div>
 
-      <div style="display: flex; gap: 8px;">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <button type="button" class="btn-admin-primary" style="flex: 1; padding: 8px 12px; font-size: 12px;" onclick="saveSupabaseCredentials()">
           Save & Connect
+        </button>
+        <button type="button" class="btn-admin-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="resetSupabaseCredentials()">
+          Reset to config.js
         </button>
         <button type="button" class="btn-admin-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="toggleSupabaseSettings()">
           Close
@@ -86,7 +121,11 @@
 
   <div id="admin-toast-container" class="admin-toast-container"></div>
 
+  <!-- Correct script loading order for GitHub Pages -->
+  <script src="../config.js"></script>
   <script src="../supabase.js"></script>
+  <script src="admin.js"></script>
+  <script src="ops.js"></script>
   <script>
     // Check if user is already signed in via Supabase Auth
     document.addEventListener('DOMContentLoaded', async () => {
@@ -99,13 +138,13 @@
         const errorEl = document.getElementById('login-error-alert');
 
         if (reason === 'forbidden') {
-          errorEl.textContent = 'Access Denied: You do not have administrator permissions (role: admin). Run the promotion SQL in Supabase or log in with an administrator account.';
+          errorEl.textContent = 'You do not have administrator access.';
           errorEl.style.display = 'block';
         } else if (reason === 'unauthorized') {
           errorEl.textContent = 'Please log in with your administrator credentials to access the Royra Admin Panel.';
           errorEl.style.display = 'block';
         } else if (reason === 'unconfigured') {
-          errorEl.textContent = 'Please configure your Supabase Project URL and Public Anon Key.';
+          errorEl.textContent = 'Please configure your Supabase Project URL and Public Anon Key in /config.js.';
           errorEl.style.display = 'block';
           toggleSupabaseSettings();
         }
@@ -119,10 +158,17 @@
             }
           }
         } catch (e) {}
+      } else {
+        const errorEl = document.getElementById('login-error-alert');
+        if (errorEl) {
+          errorEl.textContent = 'Supabase client could not be loaded. Please ensure ../supabase.js is present.';
+          errorEl.style.display = 'block';
+        }
       }
     });
 
     function updateConfigUI() {
+      if (!window.RoyraDB) return;
       const config = window.RoyraDB.getConfig();
       const statusDot = document.getElementById('supabase-status-dot');
       const statusText = document.getElementById('supabase-status-text');
@@ -133,11 +179,11 @@
       if (keyInput) keyInput.value = config.anonKey || '';
 
       if (window.RoyraDB.isConfigured()) {
-        statusDot.className = 'status-dot online';
-        statusText.textContent = 'Supabase Connected';
+        if (statusDot) statusDot.className = 'status-dot online';
+        if (statusText) statusText.textContent = 'Supabase Connected';
       } else {
-        statusDot.className = 'status-dot offline';
-        statusText.textContent = 'Supabase Configuration Needed';
+        if (statusDot) statusDot.className = 'status-dot offline';
+        if (statusText) statusText.textContent = 'Supabase Configuration Needed';
       }
     }
 
@@ -154,46 +200,153 @@
       const errorEl = document.getElementById('login-error-alert');
 
       if (!url || !key) {
-        errorEl.textContent = 'Please enter both Supabase URL and Anon Key.';
-        errorEl.style.display = 'block';
+        if (errorEl) {
+          errorEl.textContent = 'Please enter both Supabase URL and Anon Key.';
+          errorEl.style.display = 'block';
+        }
         return;
       }
 
-      window.RoyraDB.setCredentials(url, key);
-      updateConfigUI();
-      toggleSupabaseSettings();
-      errorEl.style.display = 'none';
-      alert('Supabase credentials saved successfully. You can now log in with your Supabase Auth user.');
+      if (window.RoyraDB) {
+        window.RoyraDB.setCredentials(url, key);
+        updateConfigUI();
+        toggleSupabaseSettings();
+        if (errorEl) errorEl.style.display = 'none';
+        if (window.showAdminToast) {
+          window.showAdminToast('Supabase credentials saved locally.', 'success');
+        } else {
+          alert('Supabase credentials saved locally. You can now log in with your Supabase Auth user.');
+        }
+      }
     }
+
+    function resetSupabaseCredentials() {
+      if (window.RoyraDB) {
+        window.RoyraDB.clearCredentials();
+        updateConfigUI();
+        if (window.showAdminToast) {
+          window.showAdminToast('Reset to config.js defaults.', 'success');
+        } else {
+          alert('Reset to config.js defaults.');
+        }
+      }
+    }
+
+    function showForgotPasswordForm() {
+      const loginForm = document.getElementById('admin-login-form');
+      const forgotForm = document.getElementById('admin-forgot-form');
+      const errorEl = document.getElementById('login-error-alert');
+      const adminEmail = document.getElementById('admin-email').value;
+      const forgotEmail = document.getElementById('forgot-email');
+
+      if (adminEmail && forgotEmail) {
+        forgotEmail.value = adminEmail;
+      }
+
+      if (loginForm) loginForm.style.display = 'none';
+      if (forgotForm) forgotForm.style.display = 'block';
+      if (errorEl) errorEl.style.display = 'none';
+    }
+
+    function showLoginForm() {
+      const loginForm = document.getElementById('admin-login-form');
+      const forgotForm = document.getElementById('admin-forgot-form');
+      const errorEl = document.getElementById('login-error-alert');
+
+      if (forgotForm) forgotForm.style.display = 'none';
+      if (loginForm) loginForm.style.display = 'block';
+      if (errorEl) errorEl.style.display = 'none';
+    }
+
+    // Forgot Password Form Handler
+    document.getElementById('admin-forgot-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('forgot-email').value.trim();
+      const errorEl = document.getElementById('login-error-alert');
+      const submitBtn = document.getElementById('admin-forgot-submit');
+
+      if (!window.RoyraDB || !window.RoyraDB.isConfigured()) {
+        errorEl.textContent = 'Supabase is not configured. Please enter your Supabase Project URL and Anon Key.';
+        errorEl.style.display = 'block';
+        toggleSupabaseSettings();
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending Reset Link...';
+      errorEl.style.display = 'none';
+
+      try {
+        const res = await window.RoyraDB.requestPasswordReset(email);
+        if (res && res.success) {
+          if (window.showAdminToast) {
+            window.showAdminToast('Password reset email sent. Check your inbox.', 'success');
+          }
+          errorEl.className = 'login-error-alert';
+          errorEl.style.backgroundColor = 'var(--admin-success-bg)';
+          errorEl.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+          errorEl.style.color = 'var(--admin-success)';
+          errorEl.innerHTML = `<strong>Password reset email sent.</strong><br/>Please check <em>${email}</em> for your secure recovery link to update your password.`;
+          errorEl.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'SEND RESET LINK →';
+        } else {
+          errorEl.className = 'login-error-alert';
+          errorEl.style.backgroundColor = 'var(--admin-danger-bg)';
+          errorEl.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+          errorEl.style.color = 'var(--admin-danger)';
+          errorEl.textContent = (res && res.error) ? res.error : 'Failed to send password reset email.';
+          errorEl.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'SEND RESET LINK →';
+        }
+      } catch (err) {
+        errorEl.className = 'login-error-alert';
+        errorEl.style.backgroundColor = 'var(--admin-danger-bg)';
+        errorEl.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+        errorEl.style.color = 'var(--admin-danger)';
+        errorEl.textContent = (err && err.message) ? err.message : 'Error sending password reset email.';
+        errorEl.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'SEND RESET LINK →';
+      }
+    });
 
     // Login Form Handler (Pure Supabase Auth)
     document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('admin-email').value;
+      const email = document.getElementById('admin-email').value.trim();
       const password = document.getElementById('admin-password').value;
       const errorEl = document.getElementById('login-error-alert');
       const submitBtn = document.getElementById('admin-login-submit');
 
+      if (!window.RoyraDB) {
+        errorEl.textContent = 'Supabase client is not loaded.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
       submitBtn.disabled = true;
-      submitBtn.textContent = 'AUTHENTICATING WITH SUPABASE...';
+      submitBtn.textContent = 'Signing in...';
       errorEl.style.display = 'none';
 
       try {
         const res = await window.RoyraDB.login(email, password);
-        if (res.success) {
+        if (res && res.success) {
           window.location.href = 'index.html';
         } else {
-          errorEl.textContent = res.error || 'Invalid credentials or user not authorized.';
+          const errorMsg = (res && res.error) ? res.error : 'Invalid credentials or user not authorized.';
+          errorEl.textContent = errorMsg;
           errorEl.style.display = 'block';
           submitBtn.disabled = false;
           submitBtn.textContent = 'SIGN IN WITH SUPABASE AUTH →';
 
-          if (res.needsConfig) {
+          if (res && res.needsConfig) {
             toggleSupabaseSettings();
           }
         }
       } catch (err) {
-        errorEl.textContent = err.message || 'Authentication error connecting to Supabase.';
+        errorEl.textContent = (err && err.message) ? err.message : 'Authentication error connecting to Supabase.';
         errorEl.style.display = 'block';
         submitBtn.disabled = false;
         submitBtn.textContent = 'SIGN IN WITH SUPABASE AUTH →';
