@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#FCFAF7" />
+      <stop offset="70%" stop-color="#F2EDE3" />
+      <stop offset="100%" stop-color="#E3DAC7" />
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDF1D6" />
+      <stop offset="35%" stop-color="#D4AF37" />
+      <stop offset="70%" stop-color="#996515" />
+      <stop offset="100%" stop-color="#E5C158" />
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4EBA7E" />
+      <stop offset="35%" stop-color="#0F8043" />
+      <stop offset="75%" stop-color="#07522A" />
+      <stop offset="100%" stop-color="#032D16" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bgGrad)" />
+  <circle cx="400" cy="400" r="320" fill="none" stroke="#EFE9DC" stroke-width="1.5" />
+  <ellipse cx="400" cy="580" rx="180" ry="22" fill="#3D311A" opacity="0.1" />
+  <ellipse cx="400" cy="460" rx="150" ry="130" fill="none" stroke="url(#gold)" stroke-width="28" />
+  <!-- Side baguettes -->
+  <g transform="translate(400, 275)">
+    <polygon points="-75,-25 -45,-20 -45,20 -75,25" fill="#E0F2FE" stroke="url(#gold)" stroke-width="3" />
+    <polygon points="75,-25 45,-20 45,20 75,25" fill="#E0F2FE" stroke="url(#gold)" stroke-width="3" />
+    <!-- Center Emerald cut gem -->
+    <rect x="-42" y="-55" width="84" height="110" rx="10" fill="url(#emeraldGrad)" stroke="url(#gold)" stroke-width="5" />
+    <rect x="-30" y="-42" width="60" height="84" fill="#159853" opacity="0.6" stroke="#4EBA7E" stroke-width="1.5" />
+    <rect x="-18" y="-28" width="36" height="56" fill="#62CE93" opacity="0.45" />
+    <line x1="-42" y1="-55" x2="-30" y2="-42" stroke="#6BE09F" stroke-width="2" />
+    <line x1="42" y1="-55" x2="30" y2="-42" stroke="#6BE09F" stroke-width="2" />
+    <line x1="-42" y1="55" x2="-30" y2="42" stroke="#053B1D" stroke-width="2" />
+    <line x1="42" y1="55" x2="30" y2="42" stroke="#053B1D" stroke-width="2" />
+    <!-- Prongs -->
+    <circle cx="-38" cy="-50" r="5" fill="url(#gold)" />
+    <circle cx="38" cy="-50" r="5" fill="url(#gold)" />
+    <circle cx="-38" cy="50" r="5" fill="url(#gold)" />
+    <circle cx="38" cy="50" r="5" fill="url(#gold)" />
+  </g>
+  <text x="400" y="740" text-anchor="middle" font-family="'Playfair Display', serif" font-size="14" letter-spacing="6" fill="#B08D57" opacity="0.85">ROYRA JEWELS • ROYAL EMERALD</text>
+</svg>

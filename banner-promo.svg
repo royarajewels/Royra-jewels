@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="promoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A1816" />
+      <stop offset="50%" stop-color="#2D261E" />
+      <stop offset="100%" stop-color="#181512" />
+    </linearGradient>
+    <linearGradient id="goldText" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDF1D6" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA7C11" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="600" fill="url(#promoGrad)" />
+  <circle cx="1200" cy="300" r="280" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.25" stroke-dasharray="8,6" />
+  <circle cx="1200" cy="300" r="200" fill="none" stroke="#D4AF37" stroke-width="1.5" opacity="0.3" />
+  <!-- Abstract Gold Sparkles & Orbit -->
+  <g transform="translate(1200, 300)">
+    <ellipse cx="0" cy="0" rx="160" ry="80" fill="none" stroke="url(#goldText)" stroke-width="12" opacity="0.8" />
+    <circle cx="0" cy="0" r="30" fill="url(#goldText)" />
+    <polygon points="0,-18 6,-5 18,0 6,5 0,18 -6,5 -18,0 -6,-5" fill="#FFFFFF" />
+  </g>
+  <!-- Background Glow -->
+  <circle cx="1200" cy="300" r="140" fill="#D4AF37" opacity="0.08" filter="blur(40px)" />
+</svg>
