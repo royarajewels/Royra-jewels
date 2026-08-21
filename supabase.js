@@ -1008,21 +1008,30 @@
     async getSiteSettings(keys = []) {
       const client = this.getClient();
       if (!client) return {};
-      let q = client.from('site_settings').select('setting_key,setting_value');
-      if (keys.length) q = q.in('setting_key', keys);
-      const { data, error } = await q;
+      const { data, error } = await client.from('site_settings').select('*').order('id', { ascending: true }).limit(1).maybeSingle();
       if (error) { console.error('[Supabase getSiteSettings Error]:', error); return {}; }
-      return Object.fromEntries((data || []).map(r => [r.setting_key, r.setting_value]));
+      if (!data) return {};
+      const result = {};
+      const wanted = Array.isArray(keys) && keys.length ? keys : Object.keys(data);
+      wanted.forEach(k => { if (Object.prototype.hasOwnProperty.call(data, k)) result[k] = data[k] ?? ''; });
+      return result;
     },
 
     async saveSiteSettings(values) {
       const client = this.getClient();
       if (!client) return { success: false, error: 'Supabase is not configured.' };
       try {
-        const rows = Object.entries(values || {}).map(([setting_key, setting_value]) => ({ setting_key, setting_value: String(setting_value ?? ''), updated_at: new Date().toISOString() }));
-        const { error } = await client.from('site_settings').upsert(rows, { onConflict: 'setting_key' });
-        if (error) throw error;
-        return { success: true };
+        const { data: existing, error: readError } = await client.from('site_settings').select('id').order('id', { ascending: true }).limit(1).maybeSingle();
+        if (readError) throw readError;
+        const payload = { ...values, updated_at: new Date().toISOString() };
+        let result;
+        if (existing?.id != null) {
+          result = await client.from('site_settings').update(payload).eq('id', existing.id).select().maybeSingle();
+        } else {
+          result = await client.from('site_settings').insert(payload).select().maybeSingle();
+        }
+        if (result.error) throw result.error;
+        return { success: true, data: result.data || null };
       } catch (e) { return { success: false, error: e.message }; }
     },
 

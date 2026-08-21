@@ -3,221 +3,659 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROYRA JEWELS ADMIN | Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Supabase JS Client CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="admin.css" />
-  <link rel="stylesheet" href="ops.css" />
+  <title>Royra Jewels | Timeless Jewellery for Every Story</title>
+  <meta name="description" content="Discover handcrafted luxury jewelry by ROYRA JEWELS. Explore 18K gold rings, solitaires, tennis bracelets, diamond earrings, and bespoke fine jewelry collections." />
+  <meta name="keywords" content="Royra Jewels, fine jewellery, 18k gold rings, solitaire diamond, tennis bracelet, pearl earrings, Indian luxury jewelry" />
+  
+  <!-- Open Graph / Meta -->
+  <meta property="og:title" content="Royra Jewels | Timeless Jewellery for Every Story" />
+  <meta property="og:description" content="Handcrafted fine jewelry in 18K BIS hallmarked gold and certified diamonds." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/images/banners/hero-1.svg" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="admin-body">
+<body>
 
-  <div class="admin-layout">
-    <!-- MOBILE OVERLAY -->
-    <div id="admin-sidebar-overlay" class="admin-sidebar-overlay" onclick="toggleAdminSidebar()"></div>
-
-    <!-- SIDEBAR -->
-    <aside id="admin-sidebar" class="admin-sidebar">
-      <div class="sidebar-header">
-        <a href="index.html" class="sidebar-logo">
-          <span class="sidebar-logo-text">ROYRA</span>
-          <span class="sidebar-badge">ADMIN</span>
-        </a>
-      </div>
-
-      <nav class="sidebar-nav">
-        <div class="nav-section-title">Store Management</div>
-        <a href="index.html" class="nav-link">Dashboard</a>
-        <a href="products.html" class="nav-link">Products</a>
-        <a href="categories.html" class="nav-link">Categories</a>
-        <a href="collections.html" class="nav-link">Collections</a>
-        <a href="product-form.html" class="nav-link">Add Product</a>
-        <div class="nav-section-title" style="margin-top:18px">Content</div>
-        <a href="media.html" class="nav-link">Media Library</a>
-        <a href="banners.html" class="nav-link">Banners</a>
-        <div class="nav-section-title" style="margin-top:18px">Sales</div>
-        <a href="orders.html" class="nav-link">Orders</a>
-        <a href="customers.html" class="nav-link">Customers</a>
-        <a href="coupons.html" class="nav-link">Coupons</a>
-        <a href="offers.html" class="nav-link">Offers</a>
-        <div class="nav-section-title" style="margin-top:18px">Inventory</div>
-        <a href="inventory.html" class="nav-link">Inventory</a>
-        <a href="purchase-orders.html" class="nav-link">Purchase Orders</a>
-        <a href="suppliers.html" class="nav-link">Suppliers</a>
-        <div class="nav-section-title" style="margin-top:18px">Finance & Operations</div>
-        <a href="payments.html" class="nav-link">Payments</a>
-        <a href="refunds.html" class="nav-link">Refunds</a>
-        <a href="returns.html" class="nav-link">Returns</a>
-        <a href="shipping.html" class="nav-link">Shipping</a>
-        <a href="reports.html" class="nav-link">Reports</a>
-        <div class="nav-section-title" style="margin-top:18px">System</div>
-        <a href="users.html" class="nav-link">Admin Users</a>
-        <a href="settings.html" class="nav-link">Settings</a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <a href="../index.html" target="_blank" class="sidebar-view-store">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          View Public Store
-        </a>
-        <div class="sidebar-user">
-          <div class="sidebar-user-avatar">AD</div>
-          <div class="sidebar-user-info">
-            <div class="sidebar-user-name">Royra Administrator</div>
-            <div class="sidebar-user-role" id="admin-user-display-email">Admin Session</div>
-          </div>
-        </div>
-        <button type="button" class="sidebar-logout-btn" onclick="handleAdminLogout()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Logout
-        </button>
-      </div>
-    </aside>
-
-    <!-- MAIN DASHBOARD CONTENT -->
-    <main class="admin-main">
-      <!-- TOP BAR -->
-      <header class="admin-topbar">
-        <div class="topbar-left">
-          <button type="button" class="mobile-menu-toggle" onclick="toggleAdminSidebar()" aria-label="Toggle Navigation">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          </button>
-          <h1 class="topbar-title">Overview Dashboard</h1>
-        </div>
-        <div class="topbar-right">
-          <div class="supabase-status-pill">
-            <span class="status-dot online"></span>
-            <span>Database Live</span>
-          </div>
-          <a href="product-form.html" class="btn-admin-primary">
-            + Add Product
-          </a>
-        </div>
-      </header>
-
-      <!-- CONTENT BODY -->
-      <div class="admin-content">
-        <!-- STAT METRIC CARDS -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-info">
-              <span class="stat-label">Total Products</span>
-              <span class="stat-val" id="stat-total-products">0</span>
-              <span class="stat-sub">Across all categories</span>
-            </div>
-            <div class="stat-icon-wrap">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-info">
-              <span class="stat-label">Active Products</span>
-              <span class="stat-val" id="stat-active-products" style="color: var(--admin-success);">0</span>
-              <span class="stat-sub">Live on customer store</span>
-            </div>
-            <div class="stat-icon-wrap" style="color: var(--admin-success);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-info">
-              <span class="stat-label">Out of Stock</span>
-              <span class="stat-val" id="stat-out-of-stock" style="color: var(--admin-danger);">0</span>
-              <span class="stat-sub">Inventory replenish required</span>
-            </div>
-            <div class="stat-icon-wrap" style="color: var(--admin-danger);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-info">
-              <span class="stat-label">Draft Products</span>
-              <span class="stat-val" id="stat-draft-products">0</span>
-              <span class="stat-sub">Hidden from catalog</span>
-            </div>
-            <div class="stat-icon-wrap">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </div>
-          </div>
-        </div>
-
-        <!-- RECENT PRODUCTS TABLE -->
-        <div class="admin-card">
-          <div class="admin-card-header">
-            <h2 class="admin-card-title">Recent Products</h2>
-            <div class="admin-card-actions">
-              <a href="products.html" class="btn-admin-secondary">View All Products →</a>
-            </div>
-          </div>
-          <div class="table-responsive">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>SKU</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Stock</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="dashboard-recent-products-tbody">
-                <tr>
-                  <td colspan="7" style="text-align: center; padding: 24px;">Loading products...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- SUPABASE SQL BOOTSTRAP QUICK REFERENCE -->
-        <div class="admin-card">
-          <div class="admin-card-header">
-            <div>
-              <h2 class="admin-card-title">Supabase Database Integration Reference</h2>
-              <p style="font-size: 12.5px; color: var(--admin-text-secondary); margin-top: 4px;">
-                Your website operates on real-time synchronized data. Run this schema in your Supabase SQL Editor if connecting a dedicated project.
-              </p>
-            </div>
-            <button type="button" class="btn-admin-secondary" onclick="copySchemaSQL()">
-              📋 Copy SQL Schema
-            </button>
-          </div>
-          <div style="padding: 20px 24px; background-color: #FAFAFA;">
-            <pre id="schema-code-block" style="font-size: 12px; font-family: monospace; background: #1F1F1F; color: #E5E5E5; padding: 16px; border-radius: 6px; overflow-x: auto; max-height: 180px;"></pre>
-          </div>
-        </div>
-      </div>
-    </main>
+  <!-- TOP ANNOUNCEMENT BAR -->
+  <div class="announcement-bar">
+    <div class="announcement-content">
+      <span class="announcement-icon">🚚</span>
+      <span class="announcement-text">FREE SHIPPING ON ORDERS ABOVE ₹999</span>
+      <span class="announcement-divider">•</span>
+      <span class="announcement-sub">100% BIS HALLMARKED 18K GOLD</span>
+    </div>
   </div>
 
-  <div id="admin-toast-container" class="admin-toast-container"></div>
+  <!-- STICKY HEADER -->
+  <div class="header-wrapper">
+    <div class="container">
+      <header class="site-header">
+        
+        <!-- Left Mobile Header Group: Menu & Search -->
+        <div class="header-left-group">
+          <button class="mobile-toggle" onclick="toggleMobileMenu()" aria-label="Open Navigation Menu" title="Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <button class="action-btn mobile-search-btn" onclick="openSearchModal()" title="Search Jewels" aria-label="Search">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+        </div>
 
-  <script src="../config.js"></script>
-  <script src="../supabase.js"></script>
-  <script src="admin.js"></script>
-  <script src="ops.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      window.initAdminDashboard();
-      const codeBlock = document.getElementById('schema-code-block');
-      if (codeBlock && window.RoyraDB) {
-        codeBlock.textContent = window.RoyraDB.getSchemaSQL();
-      }
-    });
+        <!-- Brand Logo (Centered on Mobile) -->
+        <a href="index.html" class="site-logo">
+          <span class="logo-text">ROYRA</span>
+          <span class="logo-subtext">JEWELS</span>
+        </a>
 
-    function copySchemaSQL() {
-      if (window.RoyraDB) {
-        navigator.clipboard.writeText(window.RoyraDB.getSchemaSQL());
-        window.showAdminToast('SQL Schema copied to clipboard!', 'success');
-      }
-    }
-  </script>
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav">
+          <a href="shop.html?category=new" class="nav-link">New Arrivals</a>
+          <a href="shop.html?filter=bestseller" class="nav-link">Best Sellers</a>
+          <a href="shop.html?category=rings" class="nav-link">Rings</a>
+          <a href="shop.html?category=earrings" class="nav-link">Earrings</a>
+          <a href="shop.html?category=bracelets" class="nav-link">Bracelets</a>
+          <a href="shop.html?category=necklaces" class="nav-link">Necklaces</a>
+          <a href="shop.html" class="nav-link">Fine Jewellery</a>
+          <a href="about.html" class="nav-link">Our Story</a>
+        </nav>
+
+        <!-- Right Header Actions: Concierge (Desktop), Wishlist & Bag -->
+        <div class="header-actions">
+          <button class="action-btn desktop-search-btn" onclick="openSearchModal()" title="Search Jewels" aria-label="Search">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <a href="contact.html" class="action-btn desktop-concierge-btn" title="Concierge Assistance" aria-label="Concierge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </a>
+          <a href="wishlist.html" class="action-btn" title="Saved Jewels" aria-label="Wishlist">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span class="badge-count wishlist-count-badge" style="display: none;">0</span>
+          </a>
+          <button class="action-btn" onclick="openCartDrawer()" title="Shopping Bag" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span class="badge-count cart-count-badge" style="display: none;">0</span>
+          </button>
+        </div>
+
+      </header>
+    </div>
+  </div>
+
+  <!-- SLIDE-OUT MOBILE MENU DRAWER -->
+  <div class="mobile-drawer" id="royra-mobile-drawer">
+    <div class="drawer-header">
+      <a href="index.html" class="site-logo">
+        <span class="logo-text" style="font-size: 22px;">ROYRA</span>
+        <span class="logo-subtext">JEWELS</span>
+      </a>
+      <button onclick="toggleMobileMenu()" class="drawer-close-btn" aria-label="Close Navigation Menu">✕</button>
+    </div>
+    
+    <div class="drawer-nav">
+      <a href="shop.html?category=new" class="drawer-link" onclick="toggleMobileMenu()"><span>NEW ARRIVALS</span> <span class="arrow">›</span></a>
+      <a href="shop.html?filter=bestseller" class="drawer-link" onclick="toggleMobileMenu()"><span>BEST SELLERS</span> <span class="arrow">›</span></a>
+      <a href="shop.html" class="drawer-link" onclick="toggleMobileMenu()"><span>ALL JEWELLERY</span> <span class="arrow">›</span></a>
+      <a href="shop.html?category=rings" class="drawer-link" onclick="toggleMobileMenu()"><span>RINGS</span> <span class="arrow">›</span></a>
+      <a href="shop.html?category=earrings" class="drawer-link" onclick="toggleMobileMenu()"><span>EARRINGS</span> <span class="arrow">›</span></a>
+      <a href="shop.html?category=bracelets" class="drawer-link" onclick="toggleMobileMenu()"><span>BRACELETS</span> <span class="arrow">›</span></a>
+      <a href="shop.html?category=necklaces" class="drawer-link" onclick="toggleMobileMenu()"><span>NECKLACES</span> <span class="arrow">›</span></a>
+      <a href="shop.html?filter=fine" class="drawer-link" onclick="toggleMobileMenu()"><span>FINE JEWELLERY</span> <span class="arrow">›</span></a>
+      <a href="about.html" class="drawer-link" onclick="toggleMobileMenu()"><span>OUR STORY</span> <span class="arrow">›</span></a>
+      <a href="contact.html" class="drawer-link" onclick="toggleMobileMenu()"><span>CONCIERGE</span> <span class="arrow">›</span></a>
+    </div>
+
+    <div class="drawer-utilities">
+      <button class="drawer-util-link" onclick="toggleMobileMenu(); openSearchModal();">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>SEARCH</span>
+      </button>
+      <a href="contact.html" class="drawer-util-link" onclick="toggleMobileMenu()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span>ACCOUNT & CONCIERGE</span>
+      </a>
+      <a href="wishlist.html" class="drawer-util-link" onclick="toggleMobileMenu()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <span>WISHLIST (<span class="wishlist-count-badge-text">0</span>)</span>
+      </a>
+    </div>
+
+    <div class="drawer-footer">
+      <div class="drawer-currency-row">
+        <span>CURRENCY</span>
+        <strong>₹ INR (Indian Rupee)</strong>
+      </div>
+      <a href="contact.html" class="btn btn-outline" style="width: 100%; font-size: 11px;" onclick="toggleMobileMenu()">Book Boutique Consultation</a>
+    </div>
+  </div>
+  <div class="drawer-overlay" id="royra-drawer-overlay" onclick="toggleMobileMenu(); closeCartDrawer(); closeSupportModal(); closeQuickSizeModal();"></div>
+
+  <!-- HERO LUXURY EDITORIAL BANNER -->
+  <section class="hero-section" id="hero-banner">
+    <div class="hero-banner-container">
+      <img 
+        src="assets/images/banners/royra-hero-banner.webp" 
+        alt="ROYRA JEWELS Timeless Fine Jewellery Collection" 
+        class="hero-bg-img" 
+        fetchpriority="high"
+      />
+      <div class="hero-overlay-gradient"></div>
+      
+      <div class="container hero-container">
+        <div class="hero-content">
+          <span class="hero-eyebrow">NEW COLLECTION</span>
+          <h1 class="hero-title">TIMELESS JEWELLERY.<br/>MADE TO SHINE.</h1>
+          <p class="hero-subtitle">Discover elegant pieces designed for every occasion.</p>
+          
+          <div class="hero-action-row">
+            <a href="shop.html?category=new" class="btn btn-hero-luxury" id="hero-shop-now-btn">SHOP NOW →</a>
+          </div>
+          
+          <div class="hero-trust-proof">
+            <div class="hero-trust-stars">★★★★★</div>
+            <div class="hero-trust-caption">TRUSTED BY JEWELLERY LOVERS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW & BEST DYNAMIC TABBED SECTION -->
+  <section class="new-and-best-section" id="new-and-best-section">
+    <div class="container">
+      <div class="section-header-compact">
+        <h2 class="section-title-large">NEW & BEST</h2>
+      </div>
+
+      <!-- Two Large Mobile-Friendly Tabs -->
+      <div class="new-best-tabs-wrapper">
+        <div class="new-best-tabs" role="tablist">
+          <button type="button" class="new-best-tab active" id="tab-new-arrivals" onclick="switchNewBestTab('new', this)" role="tab" aria-selected="true">
+            NEW ARRIVALS
+          </button>
+          <button type="button" class="new-best-tab" id="tab-best-sellers" onclick="switchNewBestTab('best', this)" role="tab" aria-selected="false">
+            BEST SELLERS
+          </button>
+        </div>
+      </div>
+
+      <!-- 2-Column Mobile Product Grid -->
+      <div class="product-grid" id="new-and-best-grid">
+        <!-- Loaded dynamically via script.js -->
+      </div>
+
+      <div class="section-action-footer">
+        <a href="shop.html" class="btn btn-outline-dark">VIEW ALL JEWELLERY →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOP BY CATEGORY (2-COLUMN MOBILE CARDS) -->
+  <section class="category-section" id="categories-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">DISCOVER BY DESIGN</span>
+        <h2 class="section-title">SHOP BY CATEGORY</h2>
+        <p class="section-subtitle">Explore carefully categorized fine jewellery designed for every mood, occasion, and statement.</p>
+      </div>
+
+      <div class="category-grid">
+        <!-- Rings -->
+        <a href="shop.html?category=rings" class="category-card" id="cat-rings">
+          <img src="assets/products/roy-wh00829.webp" alt="Royra Rings" class="category-img" loading="lazy" />
+          <div class="category-overlay"></div>
+          <div class="category-info">
+            <h3 class="category-name">RINGS</h3>
+            <span class="category-btn">SHOP NOW →</span>
+          </div>
+        </a>
+
+        <!-- Earrings -->
+        <a href="shop.html?category=earrings" class="category-card" id="cat-earrings">
+          <img src="assets/products/roy-earring-5.jpg" alt="Royra Earrings" class="category-img" loading="lazy" />
+          <div class="category-overlay"></div>
+          <div class="category-info">
+            <h3 class="category-name">EARRINGS</h3>
+            <span class="category-btn">SHOP NOW →</span>
+          </div>
+        </a>
+
+        <!-- Bracelets -->
+        <a href="shop.html?category=bracelets" class="category-card" id="cat-bracelets">
+          <img src="assets/products/roy-ig-1.jpg" alt="Royra Bracelets" class="category-img" loading="lazy" />
+          <div class="category-overlay"></div>
+          <div class="category-info">
+            <h3 class="category-name">BRACELETS</h3>
+            <span class="category-btn">SHOP NOW →</span>
+          </div>
+        </a>
+
+        <!-- Necklaces -->
+        <a href="shop.html?category=necklaces" class="category-card" id="cat-necklaces">
+          <img src="assets/products/roy-necklace-1.jpg" alt="Royra Necklaces" class="category-img" loading="lazy" />
+          <div class="category-overlay"></div>
+          <div class="category-info">
+            <h3 class="category-name">NECKLACES</h3>
+            <span class="category-btn">SHOP NOW →</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DYNAMIC FEATURED COLLECTIONS (ADMIN MANAGED) -->
+  <section id="royra-featured-collections-section" style="display:none;padding:72px 0 34px;background:#fff;">
+    <div class="container">
+      <div class="section-header" style="text-align:center;margin-bottom:28px;">
+        <span class="section-tag">CURATED EDITS</span>
+        <h2 class="section-title">FEATURED COLLECTIONS</h2>
+        <p class="section-subtitle">Created and managed directly from the ROYRA JEWELS Admin Panel.</p>
+      </div>
+      <div id="royra-featured-collections" class="cms-collections-grid"></div>
+    </div>
+  </section>
+
+  <!-- FEATURED EDITORIAL COLLECTION: THE ROYRA COLLECTION -->
+  <section class="editorial-collection-banner" id="editorial-collection-banner">
+    <div class="editorial-banner-media">
+      <img src="assets/images/banners/editorial-promo-banner.jpg" alt="The Royra Collection" class="editorial-collection-bg" loading="lazy" />
+      <div class="editorial-collection-overlay"></div>
+    </div>
+    <div class="container editorial-collection-container">
+      <div class="editorial-collection-box">
+        <span class="editorial-tag">THE ROYRA COLLECTION</span>
+        <h2 class="editorial-title">Timeless pieces.<br/>Made for your story.</h2>
+        <p class="editorial-desc">Artisanal gold and certified stones meticulously sculpted for daily wear and cherished milestone celebrations.</p>
+        <a href="shop.html" class="btn btn-hero-pill">EXPLORE COLLECTION →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY ROYRA (TRUST SECTION - 4 COMPACT ITEMS) -->
+  <section class="why-royra-section">
+    <div class="container">
+      <div class="section-header-compact" style="text-align: center; margin-bottom: 28px;">
+        <span class="section-tag">OUR PROMISE</span>
+        <h2 class="section-title">WHY ROYRA</h2>
+      </div>
+
+      <div class="why-royra-grid">
+        <!-- Item 1 -->
+        <div class="why-royra-card">
+          <div class="why-royra-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="why-royra-content">
+            <h3 class="why-royra-title">Premium Quality</h3>
+            <p class="why-royra-desc">100% BIS Hallmarked 18K solid gold and certified gemstones.</p>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="why-royra-card">
+          <div class="why-royra-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <div class="why-royra-content">
+            <h3 class="why-royra-title">Secure Payments</h3>
+            <p class="why-royra-desc">256-bit encrypted checkout via UPI, Cards and NetBanking.</p>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="why-royra-card">
+          <div class="why-royra-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.8"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+          </div>
+          <div class="why-royra-content">
+            <h3 class="why-royra-title">Fast Shipping</h3>
+            <p class="why-royra-desc">Complimentary insured express delivery on orders over ₹999.</p>
+          </div>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="why-royra-card">
+          <div class="why-royra-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="1.8"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+          </div>
+          <div class="why-royra-content">
+            <h3 class="why-royra-title">Easy Returns</h3>
+            <p class="why-royra-desc">30-day effortless doorstep return and exchange guarantee.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CUSTOMER REVIEWS (HORIZONTAL SWIPE CAROUSEL) -->
+  <section class="reviews-section" id="reviews-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">VERIFIED TESTIMONIALS</span>
+        <h2 class="section-title">LOVED BY OUR CUSTOMERS</h2>
+        <p class="section-subtitle">Real experiences shared by cherished patrons across India.</p>
+      </div>
+
+      <div class="reviews-carousel-wrap">
+        <div class="reviews-scroll-track">
+          
+          <div class="review-luxury-card">
+            <div class="review-stars-row">★★★★★</div>
+            <p class="review-body-text">"The finish and sparkle of the Curved Oval Ring Set are breathtaking. The unboxing experience felt truly royal and high end."</p>
+            <div class="review-author-meta">
+              <strong class="author-name">Ananya Sharma</strong>
+              <span class="author-location">Mumbai • Verified Purchase</span>
+            </div>
+          </div>
+
+          <div class="review-luxury-card">
+            <div class="review-stars-row">★★★★★</div>
+            <p class="review-body-text">"Ordered the Classic Tennis Bracelet. The diamonds catch the light brilliantly and the double safety lock makes it so secure for daily wear."</p>
+            <div class="review-author-meta">
+              <strong class="author-name">Pooja Singhania</strong>
+              <span class="author-location">New Delhi • Verified Purchase</span>
+            </div>
+          </div>
+
+          <div class="review-luxury-card">
+            <div class="review-stars-row">★★★★★</div>
+            <p class="review-body-text">"Beautiful quality and elegant packaging. Customer concierge helped me verify my ring size within 5 minutes over WhatsApp."</p>
+            <div class="review-author-meta">
+              <strong class="author-name">Meera Nair</strong>
+              <span class="author-location">Bengaluru • Verified Purchase</span>
+            </div>
+          </div>
+
+          <div class="review-luxury-card">
+            <div class="review-stars-row">★★★★★</div>
+            <p class="review-body-text">"Impeccable craftsmanship and authentic BIS hallmarking. Royra has become my go-to luxury gifting destination."</p>
+            <div class="review-author-meta">
+              <strong class="author-name">Rhea Kapoor</strong>
+              <span class="author-location">Hyderabad • Verified Purchase</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM SOCIAL SECTION (MOBILE GRID) -->
+  <section class="social-section" id="social-section">
+    <div class="container">
+      <div class="section-header" style="margin-bottom: 24px;">
+        <span class="section-tag">JOIN THE COMMUNITY</span>
+        <h2 class="section-title">FOLLOW @ROYRAJEWELS</h2>
+        <p class="section-subtitle">Tag #RoyraGlow to be featured in our fine jewellery gallery.</p>
+      </div>
+    </div>
+
+    <div class="social-grid">
+      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
+        <img src="assets/images/social/social-1.svg" alt="Royra Jewels Look 1" loading="lazy" />
+        <div class="social-overlay">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </div>
+      </a>
+      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
+        <img src="assets/images/social/social-2.svg" alt="Royra Jewels Look 2" loading="lazy" />
+        <div class="social-overlay">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </div>
+      </a>
+      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
+        <img src="assets/images/social/social-3.svg" alt="Royra Jewels Look 3" loading="lazy" />
+        <div class="social-overlay">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </div>
+      </a>
+      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
+        <img src="assets/images/social/social-4.svg" alt="Royra Jewels Look 4" loading="lazy" />
+        <div class="social-overlay">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </div>
+      </a>
+      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
+        <img src="assets/images/social/social-5.svg" alt="Royra Jewels Look 5" loading="lazy" />
+        <div class="social-overlay">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </div>
+      </a>
+      <a href="https://instagram.com" target="_blank" rel="noopener" class="social-item">
+        <img src="assets/images/social/social-6.svg" alt="Royra Jewels Look 6" loading="lazy" />
+        <div class="social-overlay">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-box">
+        <span class="section-tag">JOIN THE ROYRA CIRCLE</span>
+        <h2 class="section-title">EXCLUSIVE PRIVILEGES</h2>
+        <p class="section-subtitle">Get new arrivals, exclusive offers and jewellery inspiration.</p>
+        
+        <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+          <input type="email" class="newsletter-input" placeholder="Enter your email" required />
+          <button type="submit" class="btn btn-primary">SUBSCRIBE</button>
+        </form>
+        <p class="newsletter-privacy">We respect your privacy. Enjoy 10% off your first order with code ROYRA10.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOBILE-OPTIMIZED COLLAPSIBLE FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        
+        <!-- Col 1: Brand -->
+        <div class="footer-col-brand">
+          <a href="index.html" class="site-logo">
+            <span class="logo-text">ROYRA</span>
+            <span class="logo-subtext">JEWELS</span>
+          </a>
+          <p style="margin: 14px 0 20px;">Timeless jewellery for every story. Handcrafted in 18K BIS hallmarked gold and certified stones with unmatched artisanal precision.</p>
+          <div class="footer-social-icons">
+            <a href="https://instagram.com" class="social-icon-btn" title="Instagram" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+            <a href="https://facebook.com" class="social-icon-btn" title="Facebook" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+            <a href="https://pinterest.com" class="social-icon-btn" title="Pinterest" aria-label="Pinterest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 20l4-9-4 1"></path></svg></a>
+            <a href="https://wa.me/919876543210" class="social-icon-btn" title="WhatsApp Concierge" aria-label="WhatsApp Concierge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></a>
+          </div>
+        </div>
+
+        <!-- Col 2: Shop -->
+        <div class="footer-accordion-col">
+          <button type="button" class="footer-heading-btn" onclick="toggleFooterAccordion(this)">
+            <span>SHOP</span>
+            <span class="footer-acc-chevron">↓</span>
+          </button>
+          <div class="footer-links">
+            <a href="shop.html">All Jewellery</a>
+            <a href="shop.html?category=new">New Arrivals</a>
+            <a href="shop.html?filter=bestseller">Best Sellers</a>
+            <a href="shop.html?category=rings">Rings</a>
+            <a href="shop.html?category=earrings">Earrings</a>
+            <a href="shop.html?category=bracelets">Bracelets</a>
+            <a href="shop.html?category=necklaces">Necklaces</a>
+          </div>
+        </div>
+
+        <!-- Col 3: Help -->
+        <div class="footer-accordion-col">
+          <button type="button" class="footer-heading-btn" onclick="toggleFooterAccordion(this)">
+            <span>HELP</span>
+            <span class="footer-acc-chevron">↓</span>
+          </button>
+          <div class="footer-links">
+            <a href="contact.html">Contact Concierge</a>
+            <a href="contact.html#shipping">Shipping & Delivery</a>
+            <a href="contact.html#returns">Returns & Exchanges</a>
+            <a href="contact.html#faqs">Frequently Asked Questions</a>
+            <a href="contact.html#sizeguide">Ring Size Guide</a>
+            <a href="contact.html#concierge">Book Video Consultation</a>
+          </div>
+        </div>
+
+        <!-- Col 4: About & Policies -->
+        <div class="footer-accordion-col">
+          <button type="button" class="footer-heading-btn" onclick="toggleFooterAccordion(this)">
+            <span>ABOUT & POLICIES</span>
+            <span class="footer-acc-chevron">↓</span>
+          </button>
+          <div class="footer-links">
+            <a href="about.html">Our Story & Atelier</a>
+            <a href="about.html#craft">Artisanal Craftsmanship</a>
+            <a href="about.html#sustainability">Ethical Sourcing & BIS</a>
+            <a href="about.html#care">Jewellery Care Guide</a>
+            <a href="about.html#privacy">Privacy Policy</a>
+            <a href="about.html#terms">Terms & Conditions</a>
+            <a href="admin/index.html" style="opacity: 0.75; font-size: 11.5px;">Admin Portal ↗</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 ROYRA JEWELS. All Rights Reserved.</div>
+        <div class="payment-badges">
+          <span>SECURE ENCRYPTED PAYMENTS:</span>
+          <span class="payment-pill">UPI</span>
+          <span class="payment-pill">VISA</span>
+          <span class="payment-pill">MASTERCARD</span>
+          <span class="payment-pill">RUPAY</span>
+          <span class="payment-pill">NETBANKING</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING CONCIERGE CHAT BUTTON (FIXED BOTTOM-RIGHT) -->
+  <button type="button" class="floating-support-btn" id="floating-support-btn" onclick="openSupportModal()" aria-label="Open Jewellery Concierge Support" title="Chat with Concierge">
+    <div class="support-icon-wrap">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+      <span class="online-indicator-dot"></span>
+    </div>
+  </button>
+
+  <!-- CONCIERGE & SUPPORT POPUP MODAL -->
+  <div class="support-modal" id="royra-support-modal" onclick="if(event.target === this) closeSupportModal()">
+    <div class="support-card">
+      <div class="support-card-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="support-avatar">👑</div>
+          <div>
+            <h4 style="font-size: 15px; font-weight: 700; color: #171717; margin: 0;">ROYRA CONCIERGE</h4>
+            <span style="font-size: 11px; color: #10B981; font-weight: 600;">● Online • Instant Response</span>
+          </div>
+        </div>
+        <button type="button" class="support-close-btn" onclick="closeSupportModal()" aria-label="Close Concierge popup">✕</button>
+      </div>
+
+      <div class="support-card-body">
+        <p style="font-size: 13px; color: #666; margin-bottom: 16px;">
+          How may our jewelry specialists assist your selection today?
+        </p>
+
+        <div class="support-options-list">
+          <a href="https://wa.me/919876543210?text=Hi%20Royra%20Jewels,%20I%20would%20like%20assistance%20with%20a%20jewellery%20piece" target="_blank" rel="noopener" class="support-option-item" onclick="closeSupportModal()">
+            <div class="option-icon whatsapp">💬</div>
+            <div class="option-text">
+              <strong>WhatsApp Live Concierge</strong>
+              <span>Chat directly with a certified diamond expert</span>
+            </div>
+            <span class="option-arrow">›</span>
+          </a>
+
+          <a href="contact.html#concierge" class="support-option-item" onclick="closeSupportModal()">
+            <div class="option-icon calendar">📹</div>
+            <div class="option-text">
+              <strong>Book Virtual Video Preview</strong>
+              <span>Live 1-on-1 HD view of rings and diamond sparkle</span>
+            </div>
+            <span class="option-arrow">›</span>
+          </a>
+
+          <a href="contact.html#sizeguide" class="support-option-item" onclick="closeSupportModal()">
+            <div class="option-icon ruler">📏</div>
+            <div class="option-text">
+              <strong>Size & Fitting Assistance</strong>
+              <span>Accurate sizing charts & printable finger gauge</span>
+            </div>
+            <span class="option-arrow">›</span>
+          </a>
+
+          <a href="tel:+919876543210" class="support-option-item" onclick="closeSupportModal()">
+            <div class="option-icon phone">📞</div>
+            <div class="option-text">
+              <strong>Call +91 98765 43210</strong>
+              <span>Mon–Sat 10:00 AM – 8:00 PM IST</span>
+            </div>
+            <span class="option-arrow">›</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH OVERLAY MODAL -->
+  <div class="search-modal" id="royra-search-modal" onclick="if(event.target === this) closeSearchModal()">
+    <div class="search-container">
+      <div class="search-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="royra-search-input" class="search-input" placeholder="Search by jewel, ring, bracelet, emerald..." oninput="handleSearchQuery(this.value)" />
+        <button class="search-close-btn" onclick="closeSearchModal()">✕</button>
+      </div>
+      <div class="search-results" id="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- CART SLIDE-OUT DRAWER -->
+  <div class="cart-drawer" id="royra-cart-drawer">
+    <div class="cart-header">
+      <div class="cart-title">YOUR SHOPPING BAG</div>
+      <button onclick="closeCartDrawer()" style="font-size: 20px; color: #171717; padding: 4px;">✕</button>
+    </div>
+    <div class="free-shipping-bar">
+      <div id="shipping-progress-text">Add ₹999 or more for FREE insured delivery!</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="shipping-progress-fill"></div>
+      </div>
+    </div>
+    <div class="cart-items-list" id="cart-drawer-items"></div>
+    <div class="cart-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal:</span>
+        <span id="cart-drawer-subtotal">₹0</span>
+      </div>
+      <div class="cart-actions-box">
+        <a href="cart.html" class="btn btn-primary" onclick="closeCartDrawer()">VIEW BAG & CHECKOUT</a>
+        <button class="btn btn-outline" onclick="closeCartDrawer()">CONTINUE BROWSING</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK VIEW BOTTOM SHEET MODAL -->
+  <div class="quickview-modal" id="royra-quickview-modal" onclick="if(event.target === this) closeQuickView()">
+    <div class="quickview-card" id="quickview-content"></div>
+  </div>
+
+  <!-- QUICK SIZE SELECTOR BOTTOM SHEET MODAL (FOR CARD CART ICON) -->
+  <div class="quicksize-modal" id="royra-quicksize-modal" onclick="if(event.target === this) closeQuickSizeModal()">
+    <div class="quicksize-sheet" id="quicksize-sheet-content">
+      <!-- Injected dynamically by script.js -->
+    </div>
+  </div>
+
+  <!-- Supabase JS Client & Store Sync -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase.js"></script>
+  <script src="cms-storefront.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
