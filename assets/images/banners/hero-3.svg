@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 750" width="100%" height="100%">
+  <defs>
+    <radialGradient id="heroGrad3" cx="65%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#FBF8F4" />
+      <stop offset="50%" stop-color="#EFE6D6" />
+      <stop offset="100%" stop-color="#DECBB0" />
+    </radialGradient>
+    <linearGradient id="goldAcc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3D6" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#8E6316" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="750" fill="url(#heroGrad3)" />
+  <circle cx="1180" cy="375" r="260" fill="#E4D8C1" opacity="0.6" />
+  <g transform="translate(1180, 360)">
+    <!-- Heritage Cuff Bangle & Emerald Cluster -->
+    <ellipse cx="0" cy="0" rx="140" ry="90" fill="none" stroke="url(#goldAcc)" stroke-width="24" />
+    <rect x="-30" y="-30" width="60" height="60" rx="12" fill="#0F8043" stroke="url(#goldAcc)" stroke-width="4" />
+    <polygon points="0,-20 20,0 0,20 -20,0" fill="#4EBA7E" opacity="0.7" />
+  </g>
+  <text x="1180" y="650" text-anchor="middle" font-family="'Playfair Display', serif" font-size="20" letter-spacing="10" fill="#8E6316">MODERN HEIRLOOMS</text>
+</svg>
