@@ -8,10 +8,13 @@
   'use strict';
 
   // 1. ASYNCHRONOUS SUPABASE AUTH & ADMIN ROLE GUARD
-  const isLoginPage = window.location.pathname.endsWith('login.html') || window.location.pathname.endsWith('login');
+  const isAuthExemptPage = window.location.pathname.endsWith('login.html') ||
+                           window.location.pathname.endsWith('login') ||
+                           window.location.pathname.endsWith('reset-password.html') ||
+                           window.location.pathname.endsWith('reset-password');
 
   async function enforceAuth() {
-    if (isLoginPage) return;
+    if (isAuthExemptPage) return;
 
     if (typeof window.RoyraDB !== 'undefined') {
       try {
