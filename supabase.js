@@ -27,10 +27,16 @@
     const customUrl = localStorage.getItem(SUPABASE_STORAGE_KEYS.URL);
     const customKey = localStorage.getItem(SUPABASE_STORAGE_KEYS.ANON_KEY);
 
-    // Default configuration (can be updated dynamically in Admin UI or window config)
-    const envObj = (typeof window !== 'undefined' && (window.__ENV__ || window.ENV)) || {};
-    const winUrl = (typeof window !== 'undefined' && window.VITE_SUPABASE_URL) || envObj.VITE_SUPABASE_URL || '';
-    const winKey = (typeof window !== 'undefined' && window.VITE_SUPABASE_ANON_KEY) || envObj.VITE_SUPABASE_ANON_KEY || '';
+    // Browser environment configuration (supports window.__ENV__, window.ENV, config.js, and globals)
+    const envObj = (typeof window !== 'undefined' && (window.__ENV__ || window.ENV || window._ENV || {})) || {};
+    const winUrl = (typeof window !== 'undefined' && (window.SUPABASE_URL || window.VITE_SUPABASE_URL)) ||
+                   envObj.SUPABASE_URL ||
+                   envObj.VITE_SUPABASE_URL ||
+                   '';
+    const winKey = (typeof window !== 'undefined' && (window.SUPABASE_ANON_KEY || window.VITE_SUPABASE_ANON_KEY)) ||
+                   envObj.SUPABASE_ANON_KEY ||
+                   envObj.VITE_SUPABASE_ANON_KEY ||
+                   '';
 
     const url = customUrl || winUrl || '';
     const anonKey = customKey || winKey || '';
