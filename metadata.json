@@ -1,0 +1,6 @@
+{
+  "name": "Royra Jewels",
+  "description": "Premium luxury jewelry e-commerce website for ROYRA JEWELS featuring handcrafted rings, earrings, bracelets, necklaces, and bespoke collections.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#FCFAF7" />
+      <stop offset="70%" stop-color="#F4ECE2" />
+      <stop offset="100%" stop-color="#E8DFC7" />
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDF1D6" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#996515" />
+    </linearGradient>
+    <radialGradient id="pearlGrad" cx="38%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="45%" stop-color="#FAF5EE" />
+      <stop offset="80%" stop-color="#EADBCE" />
+      <stop offset="100%" stop-color="#D6C1B0" />
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bgGrad)" />
+  <circle cx="400" cy="400" r="320" fill="none" stroke="#EFE9DC" stroke-width="1.5" />
+  <!-- Earring Pair -->
+  <!-- Left Earring -->
+  <g transform="translate(290, 200)">
+    <!-- Top Stud -->
+    <circle cx="0" cy="0" r="16" fill="url(#gold)" />
+    <circle cx="0" cy="0" r="10" fill="#FFFFFF" opacity="0.9" />
+    <!-- Connecting Chain & Cap -->
+    <line x1="0" y1="16" x2="0" y2="85" stroke="url(#gold)" stroke-width="5" />
+    <circle cx="0" cy="50" r="6" fill="#FFFFFF" stroke="url(#gold)" stroke-width="2" />
+    <!-- Gold Cap -->
+    <path d="M-22,85 Q0,75 22,85 L26,95 Q0,88 -26,95 Z" fill="url(#gold)" />
+    <!-- Pearl -->
+    <circle cx="0" cy="155" r="55" fill="url(#pearlGrad)" stroke="#EFE3D5" stroke-width="1.5" />
+    <ellipse cx="-18" cy="130" rx="14" ry="10" fill="#FFFFFF" opacity="0.85" />
+  </g>
+  <!-- Right Earring -->
+  <g transform="translate(510, 200)">
+    <!-- Top Stud -->
+    <circle cx="0" cy="0" r="16" fill="url(#gold)" />
+    <circle cx="0" cy="0" r="10" fill="#FFFFFF" opacity="0.9" />
+    <!-- Connecting Chain & Cap -->
+    <line x1="0" y1="16" x2="0" y2="85" stroke="url(#gold)" stroke-width="5" />
+    <circle cx="0" cy="50" r="6" fill="#FFFFFF" stroke="url(#gold)" stroke-width="2" />
+    <!-- Gold Cap -->
+    <path d="M-22,85 Q0,75 22,85 L26,95 Q0,88 -26,95 Z" fill="url(#gold)" />
+    <!-- Pearl -->
+    <circle cx="0" cy="155" r="55" fill="url(#pearlGrad)" stroke="#EFE3D5" stroke-width="1.5" />
+    <ellipse cx="-18" cy="130" rx="14" ry="10" fill="#FFFFFF" opacity="0.85" />
+  </g>
+  <text x="400" y="740" text-anchor="middle" font-family="'Playfair Display', serif" font-size="14" letter-spacing="6" fill="#B08D57" opacity="0.85">ROYRA JEWELS • FRESHWATER PEARLS</text>
+</svg>

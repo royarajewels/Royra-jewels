@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#FCFAF7" />
+      <stop offset="70%" stop-color="#F3ECE2" />
+      <stop offset="100%" stop-color="#E2D8BF" />
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDF1D6" />
+      <stop offset="40%" stop-color="#D4AF37" />
+      <stop offset="80%" stop-color="#996515" />
+      <stop offset="100%" stop-color="#E5C158" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bgGrad)" />
+  <circle cx="400" cy="400" r="320" fill="none" stroke="#EFE9DC" stroke-width="1.5" />
+  <!-- Layer 1: Choker Chain -->
+  <path d="M220,160 C260,300 320,360 400,365 C480,360 540,300 580,160" fill="none" stroke="url(#gold)" stroke-width="4" />
+  <circle cx="400" cy="365" r="10" fill="#FFFFFF" stroke="url(#gold)" stroke-width="2" />
+  <!-- Layer 2: Mid Length Bar Chain -->
+  <path d="M190,140 C230,380 300,460 400,470 C500,460 570,380 610,140" fill="none" stroke="url(#gold)" stroke-width="4" stroke-dasharray="6,3" />
+  <rect x="360" y="465" width="80" height="12" rx="4" fill="url(#gold)" />
+  <circle cx="375" cy="471" r="3" fill="#FFFFFF" />
+  <circle cx="400" cy="471" r="3" fill="#FFFFFF" />
+  <circle cx="425" cy="471" r="3" fill="#FFFFFF" />
+  <!-- Layer 3: Long Drop Chain with Coin / Medallion -->
+  <path d="M160,120 C200,440 280,560 400,580 C520,560 600,440 640,120" fill="none" stroke="url(#gold)" stroke-width="5" />
+  <g transform="translate(400, 580)">
+    <line x1="0" y1="0" x2="0" y2="40" stroke="url(#gold)" stroke-width="4" />
+    <circle cx="0" cy="65" r="28" fill="url(#gold)" stroke="#8A6014" stroke-width="2" />
+    <circle cx="0" cy="65" r="22" fill="none" stroke="#FAF2D8" stroke-width="1.5" />
+    <!-- Sunburst in medallion -->
+    <polygon points="0,50 3,62 15,65 3,68 0,80 -3,68 -15,65 -3,62" fill="#FFFFFF" />
+  </g>
+  <text x="400" y="740" text-anchor="middle" font-family="'Playfair Display', serif" font-size="14" letter-spacing="6" fill="#B08D57" opacity="0.85">ROYRA JEWELS • LAYERED GOLD CASCADE</text>
+</svg>

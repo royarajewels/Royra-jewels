@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Details | Royra Jewels</title>
+  <meta name="description" content="Handcrafted fine jewelry with certified diamonds and 18K BIS hallmarked gold. Shop online with free insured delivery." />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- TOP ANNOUNCEMENT BAR -->
+  <div class="announcement-bar">
+    <div class="announcement-content">
+      <span class="announcement-icon">🚚</span>
+      <span class="announcement-text">FREE SHIPPING ON ORDERS ABOVE ₹999</span>
+      <span class="announcement-divider">•</span>
+      <span class="announcement-sub">100% BIS HALLMARKED 18K GOLD</span>
+    </div>
+  </div>
+
+  <!-- STICKY HEADER -->
+  <div class="header-wrapper">
+    <div class="container">
+      <header class="site-header">
+        
+        <!-- Left Mobile Header Group: Menu & Search -->
+        <div class="header-left-group">
+          <button class="mobile-toggle" onclick="toggleMobileMenu()" aria-label="Open Navigation Menu" title="Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <button class="action-btn mobile-search-btn" onclick="openSearchModal()" title="Search Jewels" aria-label="Search">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+        </div>
+
+        <!-- Brand Logo (Centered on Mobile) -->
+        <a href="index.html" class="site-logo">
+          <span class="logo-text">ROYRA</span>
+          <span class="logo-subtext">JEWELS</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav">
+          <a href="shop.html?category=new" class="nav-link">New Arrivals</a>
+          <a href="shop.html?filter=bestseller" class="nav-link">Best Sellers</a>
+          <a href="shop.html?category=rings" class="nav-link">Rings</a>
+          <a href="shop.html?category=earrings" class="nav-link">Earrings</a>
+          <a href="shop.html?category=bracelets" class="nav-link">Bracelets</a>
+          <a href="shop.html?category=necklaces" class="nav-link">Necklaces</a>
+          <a href="shop.html" class="nav-link">Fine Jewellery</a>
+          <a href="about.html" class="nav-link">Our Story</a>
+        </nav>
+
+        <!-- Right Header Actions: Concierge (Desktop), Wishlist & Bag -->
+        <div class="header-actions">
+          <button class="action-btn desktop-search-btn" onclick="openSearchModal()" title="Search Jewels" aria-label="Search">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <a href="contact.html" class="action-btn desktop-concierge-btn" title="Concierge Assistance" aria-label="Concierge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </a>
+          <a href="wishlist.html" class="action-btn" title="Saved Jewels" aria-label="Wishlist">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span class="badge-count wishlist-count-badge" style="display: none;">0</span>
+          </a>
+          <button class="action-btn" onclick="openCartDrawer()" title="Shopping Bag" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span class="badge-count cart-count-badge" style="display: none;">0</span>
+          </button>
+        </div>
+
+      </header>
+    </div>
+  </div>
+
+  <!-- SLIDE-OUT MOBILE MENU DRAWER -->
+  <div class="mobile-drawer" id="royra-mobile-drawer">
+    <div class="drawer-header">
+      <a href="index.html" class="site-logo">
+        <span class="logo-text" style="font-size: 22px;">ROYRA</span>
+        <span class="logo-subtext">JEWELS</span>
+      </a>
+      <button onclick="toggleMobileMenu()" class="drawer-close-btn" aria-label="Close Navigation Menu">✕</button>
+    </div>
+    
+    <div class="drawer-nav">
+      <a href="shop.html?category=new" class="drawer-link" onclick="toggleMobileMenu()"><span>NEW ARRIVALS</span> <span class="arrow">›</span></a>
+      <a href="shop.html?filter=bestseller" class="drawer-link" onclick="toggleMobileMenu()"><span>BEST SELLERS</span> <span class="arrow">›</span></a>
+      <a href="shop.html" class="drawer-link" onclick="toggleMobileMenu()"><span>ALL JEWELLERY</span> <span class="arrow">›</span></a>
+      <a href="shop.html?category=rings" class="drawer-link" onclick="toggleMobileMenu()"><span>RINGS</span> <span class="arrow">›</span></a>
+      <a href="shop.html?category=earrings" class="drawer-link" onclick="toggleMobileMenu()"><span>EARRINGS</span> <span class="arrow">›</span></a>
+      <a href="shop.html?category=bracelets" class="drawer-link" onclick="toggleMobileMenu()"><span>BRACELETS</span> <span class="arrow">›</span></a>
+      <a href="shop.html?category=necklaces" class="drawer-link" onclick="toggleMobileMenu()"><span>NECKLACES</span> <span class="arrow">›</span></a>
+      <a href="shop.html?filter=fine" class="drawer-link" onclick="toggleMobileMenu()"><span>FINE JEWELLERY</span> <span class="arrow">›</span></a>
+      <a href="about.html" class="drawer-link" onclick="toggleMobileMenu()"><span>OUR STORY</span> <span class="arrow">›</span></a>
+      <a href="contact.html" class="drawer-link" onclick="toggleMobileMenu()"><span>CONCIERGE</span> <span class="arrow">›</span></a>
+    </div>
+
+    <div class="drawer-utilities">
+      <button class="drawer-util-link" onclick="toggleMobileMenu(); openSearchModal();">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>SEARCH</span>
+      </button>
+      <a href="contact.html" class="drawer-util-link" onclick="toggleMobileMenu()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span>ACCOUNT & CONCIERGE</span>
+      </a>
+      <a href="wishlist.html" class="drawer-util-link" onclick="toggleMobileMenu()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <span>WISHLIST (<span class="wishlist-count-badge-text">0</span>)</span>
+      </a>
+    </div>
+
+    <div class="drawer-footer">
+      <div class="drawer-currency-row">
+        <span>CURRENCY</span>
+        <strong>₹ INR (Indian Rupee)</strong>
+      </div>
+      <a href="contact.html" class="btn btn-outline" style="width: 100%; font-size: 11px;" onclick="toggleMobileMenu()">Book Boutique Consultation</a>
+    </div>
+  </div>
+  <div class="drawer-overlay" id="royra-drawer-overlay" onclick="toggleMobileMenu(); closeCartDrawer(); closeSupportModal(); closeQuickSizeModal();"></div>
+
+  <!-- PDP MAIN SECTION -->
+  <main class="product-view-section">
+    <div class="pdp-container">
+      
+      <!-- Breadcrumb Navigation -->
+      <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-sep">/</span>
+        <a href="shop.html">Jewellery</a>
+        <span class="breadcrumb-sep">/</span>
+        <a href="shop.html" id="pdp-breadcrumb-cat">Rings</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current" id="pdp-breadcrumb-name">Curved Oval Ring Set</span>
+      </nav>
+
+      <!-- 2-COLUMN PDP LAYOUT -->
+      <div class="pdp-layout-grid">
+        
+        <!-- LEFT COLUMN: PRODUCT GALLERY -->
+        <div class="pdp-gallery-column">
+          <div class="pdp-gallery-wrap">
+            
+            <!-- Vertical Thumbnails Column (4-6 Thumbnails) -->
+            <div class="pdp-vertical-thumbs" id="pdp-thumbs-list">
+              <!-- Rendered dynamically by script.js -->
+            </div>
+
+            <!-- Main Product Image (object-fit: contain, luxury clean background) -->
+            <div class="pdp-main-viewport">
+              <span class="pdp-badge-tag" id="pdp-badge-tag">BESTSELLER</span>
+              <img id="pdp-main-image" src="assets/products/product-01.jpg" alt="Royra Jewels Fine Jewel" />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: PRODUCT INFORMATION & PURCHASE PANEL -->
+        <div class="pdp-purchase-column">
+          <div class="pdp-sticky-card">
+            
+            <!-- 1. Star Rating & Review Count -->
+            <div class="pdp-rating-header">
+              <div class="pdp-stars">★★★★★</div>
+              <span class="pdp-rating-score" id="pdp-rating-score">4.9</span>
+              <a href="#reviews" class="pdp-reviews-link" id="pdp-reviews-count">(24 Reviews)</a>
+            </div>
+
+            <!-- 2. Product Title -->
+            <h1 class="pdp-main-title" id="pdp-product-name">CURVED OVAL RING SET</h1>
+
+            <!-- 3. Pricing Row -->
+            <div class="pdp-price-row">
+              <span class="pdp-current-price" id="pdp-product-price">₹9,600</span>
+              <span class="pdp-original-price" id="pdp-product-old-price">₹12,800</span>
+              <span class="pdp-tax-badge">Inclusive of all taxes</span>
+            </div>
+
+            <!-- 4. Availability Highlight Box -->
+            <div class="pdp-stock-banner" id="pdp-stock-banner">
+              <span class="stock-pulse-dot"></span>
+              <span class="stock-banner-text" id="pdp-stock-text">Almost gone! Order soon</span>
+            </div>
+
+            <!-- 5. Finish Selection -->
+            <div class="pdp-selection-block">
+              <div class="pdp-block-header">
+                <span class="block-title">FINISH:</span>
+                <span class="selected-val-label" id="pdp-selected-finish-label">GOLD</span>
+              </div>
+              <div class="finish-options-row" id="pdp-finish-options">
+                <button type="button" class="finish-btn active" data-finish="Gold" onclick="setPdpFinish('Gold', this)">GOLD</button>
+                <button type="button" class="finish-btn" data-finish="Silver" onclick="setPdpFinish('Silver', this)">SILVER</button>
+                <button type="button" class="finish-btn" data-finish="Rose Gold" onclick="setPdpFinish('Rose Gold', this)">ROSE GOLD</button>
+              </div>
+            </div>
+
+            <!-- 6. Ring Size Selection -->
+            <div class="pdp-selection-block">
+              <div class="pdp-block-header">
+                <span class="block-title">RING SIZE</span>
+                <button type="button" class="size-guide-trigger-btn" onclick="openSizeGuideModal()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><path d="M6 8v8"/><path d="M10 9v6"/><path d="M14 8v8"/><path d="M18 9v6"/></svg>
+                  Size Guide
+                </button>
+              </div>
+              <div class="size-options-grid" id="pdp-size-selector">
+                <!-- Populated dynamically with [4] [5] [6] [7] [8] [9] [10] -->
+              </div>
+            </div>
+
+            <!-- 7. Quantity Selector -->
+            <div class="pdp-selection-block pdp-qty-block">
+              <span class="block-title">QUANTITY</span>
+              <div class="pdp-stepper-box">
+                <button type="button" class="stepper-btn" onclick="decrementPdpQty()" aria-label="Decrease quantity">−</button>
+                <input type="number" id="pdp-qty-input" value="1" min="1" max="10" readonly aria-label="Selected quantity" />
+                <button type="button" class="stepper-btn" onclick="incrementPdpQty()" aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+
+            <!-- 8. Primary CTA: ADD TO BAG -->
+            <button type="button" class="pdp-cta-add-bag" id="pdp-add-to-bag-btn" onclick="addCurrentPdpToCart()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              <span>ADD TO BAG</span>
+            </button>
+
+            <!-- 9. Secondary CTA: BUY NOW -->
+            <button type="button" class="pdp-cta-buy-now" id="pdp-buy-now-btn" onclick="buyCurrentPdpNow()">
+              <span>BUY NOW</span>
+            </button>
+
+            <!-- 10. Wishlist Toggle Button -->
+            <button type="button" class="pdp-wishlist-toggle-btn" id="pdp-wishlist-btn" onclick="togglePdpWishlist()">
+              <svg id="pdp-wishlist-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <span id="pdp-wishlist-label">ADD TO WISHLIST</span>
+            </button>
+
+            <!-- 11. Trust Information (2x2 Grid) -->
+            <div class="pdp-trust-card-grid">
+              <div class="trust-pill-item">
+                <div class="trust-pill-icon">🚚</div>
+                <div class="trust-pill-text">
+                  <strong>Fast & Secure Shipping</strong>
+                  <span>Insured Express delivery</span>
+                </div>
+              </div>
+              <div class="trust-pill-item">
+                <div class="trust-pill-icon">✦</div>
+                <div class="trust-pill-text">
+                  <strong>Premium Materials</strong>
+                  <span>BIS Hallmarked & Certified</span>
+                </div>
+              </div>
+              <div class="trust-pill-item">
+                <div class="trust-pill-icon">🔒</div>
+                <div class="trust-pill-text">
+                  <strong>Secure Payments</strong>
+                  <span>100% Encrypted transactions</span>
+                </div>
+              </div>
+              <div class="trust-pill-item">
+                <div class="trust-pill-icon">↩</div>
+                <div class="trust-pill-text">
+                  <strong>Easy Returns</strong>
+                  <span>30-Day Hassle-free return</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pincode Check -->
+            <div class="pdp-pincode-card">
+              <div class="pincode-label">Estimate Delivery Date</div>
+              <div class="pincode-input-row">
+                <input type="text" id="pdp-pincode-input" placeholder="Enter 6-digit Pincode" maxlength="6" />
+                <button type="button" class="pincode-check-btn" onclick="checkPincodeDelivery()">CHECK</button>
+              </div>
+              <div id="pdp-pincode-result" class="pincode-status-msg"></div>
+            </div>
+
+            <!-- 12. Description Section -->
+            <div class="pdp-editorial-block">
+              <h3 class="editorial-heading">DESCRIPTION</h3>
+              <p class="editorial-content" id="pdp-product-desc">
+                An alluring modern curved statement piece framing a high-clarity center stone. Handcrafted in 18K gold and hypoallergenic sterling silver, designed to stack gracefully or shine individually.
+              </p>
+            </div>
+
+            <!-- 13. Details Section -->
+            <div class="pdp-editorial-block">
+              <h3 class="editorial-heading">DETAILS</h3>
+              <div class="specs-data-table" id="pdp-specs-table">
+                <div class="spec-entry">
+                  <span class="spec-k">Material:</span>
+                  <span class="spec-v" id="pdp-spec-material">18K Solid Gold / 925 Sterling Silver with Rhodium Plating</span>
+                </div>
+                <div class="spec-entry">
+                  <span class="spec-k">Stone:</span>
+                  <span class="spec-v" id="pdp-spec-stone">VVS-VS Certified Moissanite Diamond</span>
+                </div>
+                <div class="spec-entry">
+                  <span class="spec-k">Oval Center:</span>
+                  <span class="spec-v" id="pdp-spec-dimensions">6mm × 8mm Silhouette</span>
+                </div>
+                <div class="spec-entry">
+                  <span class="spec-k">Total Width:</span>
+                  <span class="spec-v" id="pdp-spec-width">13mm Ergonomic Comfort Band</span>
+                </div>
+                <div class="spec-entry">
+                  <span class="spec-k">Available Sizes:</span>
+                  <span class="spec-v" id="pdp-spec-sizes">US 4–10 (Standard Comfort Fit)</span>
+                </div>
+                <div class="spec-entry">
+                  <span class="spec-k">Hypoallergenic:</span>
+                  <span class="spec-v">100% Nickel-free & Lead-free</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 14. Expandable Accordions -->
+            <div class="pdp-accordions-group">
+              
+              <div class="pdp-accordion-pane">
+                <button type="button" class="pdp-acc-trigger" onclick="togglePdpAcc(this)">
+                  <span>QUALITY YOU CAN TRUST</span>
+                  <span class="acc-chevron">↓</span>
+                </button>
+                <div class="pdp-acc-drawer">
+                  <p>Every Royra jewel is precision-cast and hand-finished by master Indian goldsmiths. Accompanied by our authenticity card and tested for everyday durability with lifetime polish support.</p>
+                </div>
+              </div>
+
+              <div class="pdp-accordion-pane">
+                <button type="button" class="pdp-acc-trigger" onclick="togglePdpAcc(this)">
+                  <span>SHIPPING & DELIVERY</span>
+                  <span class="acc-chevron">↓</span>
+                </button>
+                <div class="pdp-acc-drawer">
+                  <p>We provide free insured shipping pan-India for orders above ₹999. Orders are packed in tamper-proof discreet packaging and dispatched via BlueDart / Delhivery Express within 24 to 48 hours.</p>
+                </div>
+              </div>
+
+              <div class="pdp-accordion-pane">
+                <button type="button" class="pdp-acc-trigger" onclick="togglePdpAcc(this)">
+                  <span>RETURNS & EXCHANGES</span>
+                  <span class="acc-chevron">↓</span>
+                </button>
+                <div class="pdp-acc-drawer">
+                  <p>Shop with confidence. We offer a 30-day effortless return and exchange policy. Free reverse doorstep pickup with 100% refund credited to your original payment method.</p>
+                </div>
+              </div>
+
+              <div class="pdp-accordion-pane">
+                <button type="button" class="pdp-acc-trigger" onclick="togglePdpAcc(this)">
+                  <span>JEWELLERY CARE</span>
+                  <span class="acc-chevron">↓</span>
+                </button>
+                <div class="pdp-acc-drawer">
+                  <p>To retain eternal sparkle, store your piece in the provided Royra velvet pouch. Avoid direct exposure to harsh perfumes, chlorine, and bleach. Wipe gently using the complimentary microfiber cloth.</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RELATED PRODUCTS -->
+      <div style="margin-top: 80px;">
+        <div class="section-header">
+          <span class="section-tag">CURATED PAIRINGS</span>
+          <h2 class="section-title">YOU MAY ALSO ADORE</h2>
+          <p class="section-subtitle">Complementary designs handcrafted to match your chosen jewel.</p>
+        </div>
+        <div class="product-grid" id="pdp-related-grid">
+          <!-- Rendered by script.js -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- SIZE GUIDE MODAL -->
+  <div class="size-guide-modal" id="royra-sizeguide-modal" onclick="if(event.target === this) closeSizeGuideModal()">
+    <div class="sizeguide-card">
+      <div class="sizeguide-header">
+        <h3>RING SIZE GUIDE</h3>
+        <button type="button" class="sizeguide-close" onclick="closeSizeGuideModal()">✕</button>
+      </div>
+      <div class="sizeguide-body">
+        <p style="font-size: 13px; color: #666; margin-bottom: 16px;">
+          Find your perfect ring fit. Measure the inner diameter of an existing ring or wrap a thin strip of paper around your finger base.
+        </p>
+        <div class="sizeguide-table-wrap">
+          <table class="sizeguide-table">
+            <thead>
+              <tr>
+                <th>US Size</th>
+                <th>Indian / EU Size</th>
+                <th>Diameter (mm)</th>
+                <th>Circumference (mm)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>4</strong></td><td>7</td><td>14.9 mm</td><td>46.8 mm</td></tr>
+              <tr><td><strong>5</strong></td><td>9</td><td>15.7 mm</td><td>49.3 mm</td></tr>
+              <tr><td><strong>6</strong></td><td>11 - 12</td><td>16.5 mm</td><td>51.9 mm</td></tr>
+              <tr><td><strong>7</strong></td><td>14</td><td>17.3 mm</td><td>54.4 mm</td></tr>
+              <tr><td><strong>8</strong></td><td>16 - 17</td><td>18.1 mm</td><td>57.0 mm</td></tr>
+              <tr><td><strong>9</strong></td><td>19</td><td>18.9 mm</td><td>59.5 mm</td></tr>
+              <tr><td><strong>10</strong></td><td>21 - 22</td><td>19.8 mm</td><td>62.1 mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="background: #F8F6F2; padding: 14px; border-radius: 4px; margin-top: 16px; font-size: 12px; color: #555;">
+          💡 <strong>Pro Tip:</strong> If you are between two sizes, we recommend selecting the larger size for maximum comfort.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDP STICKY MOBILE PURCHASE BAR (FIXED BOTTOM ON MOBILE) -->
+  <div class="pdp-mobile-sticky-bar" id="pdp-mobile-sticky-bar">
+    <div class="sticky-bar-info">
+      <img id="sticky-bar-thumb" src="assets/products/product-01.jpg" alt="Jewel Thumbnail" class="sticky-bar-img" />
+      <div class="sticky-bar-text-group">
+        <span class="sticky-bar-title" id="sticky-bar-title">Curved Oval Ring Set</span>
+        <span class="sticky-bar-price" id="sticky-bar-price">₹9,600</span>
+      </div>
+    </div>
+    <button type="button" class="sticky-bar-cta-btn" onclick="addCurrentPdpToCart()">
+      <span>ADD TO BAG</span>
+    </button>
+  </div>
+
+  <!-- MOBILE-OPTIMIZED COLLAPSIBLE FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        
+        <!-- Col 1: Brand -->
+        <div class="footer-col-brand">
+          <a href="index.html" class="site-logo">
+            <span class="logo-text">ROYRA</span>
+            <span class="logo-subtext">JEWELS</span>
+          </a>
+          <p style="margin: 14px 0 20px;">Timeless jewellery for every story. Handcrafted in 18K BIS hallmarked gold and certified stones with unmatched artisanal precision.</p>
+          <div class="footer-social-icons">
+            <a href="https://instagram.com" class="social-icon-btn" title="Instagram" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+            <a href="https://facebook.com" class="social-icon-btn" title="Facebook" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+            <a href="https://pinterest.com" class="social-icon-btn" title="Pinterest" aria-label="Pinterest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 20l4-9-4 1"></path></svg></a>
+            <a href="https://wa.me/919876543210" class="social-icon-btn" title="WhatsApp Concierge" aria-label="WhatsApp Concierge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></a>
+          </div>
+        </div>
+
+        <!-- Col 2: Shop -->
+        <div class="footer-accordion-col">
+          <button type="button" class="footer-heading-btn" onclick="toggleFooterAccordion(this)">
+            <span>SHOP</span>
+            <span class="footer-acc-chevron">↓</span>
+          </button>
+          <div class="footer-links">
+            <a href="shop.html">All Jewellery</a>
+            <a href="shop.html?category=new">New Arrivals</a>
+            <a href="shop.html?filter=bestseller">Best Sellers</a>
+            <a href="shop.html?category=rings">Rings</a>
+            <a href="shop.html?category=earrings">Earrings</a>
+            <a href="shop.html?category=bracelets">Bracelets</a>
+            <a href="shop.html?category=necklaces">Necklaces</a>
+          </div>
+        </div>
+
+        <!-- Col 3: Help -->
+        <div class="footer-accordion-col">
+          <button type="button" class="footer-heading-btn" onclick="toggleFooterAccordion(this)">
+            <span>HELP</span>
+            <span class="footer-acc-chevron">↓</span>
+          </button>
+          <div class="footer-links">
+            <a href="contact.html">Contact Concierge</a>
+            <a href="contact.html#shipping">Shipping & Delivery</a>
+            <a href="contact.html#returns">Returns & Exchanges</a>
+            <a href="contact.html#faqs">Frequently Asked Questions</a>
+            <a href="contact.html#sizeguide">Ring Size Guide</a>
+            <a href="contact.html#concierge">Book Video Consultation</a>
+          </div>
+        </div>
+
+        <!-- Col 4: About & Policies -->
+        <div class="footer-accordion-col">
+          <button type="button" class="footer-heading-btn" onclick="toggleFooterAccordion(this)">
+            <span>ABOUT & POLICIES</span>
+            <span class="footer-acc-chevron">↓</span>
+          </button>
+          <div class="footer-links">
+            <a href="about.html">Our Story & Atelier</a>
+            <a href="about.html#craft">Artisanal Craftsmanship</a>
+            <a href="about.html#sustainability">Ethical Sourcing & BIS</a>
+            <a href="about.html#care">Jewellery Care Guide</a>
+            <a href="about.html#privacy">Privacy Policy</a>
+            <a href="about.html#terms">Terms & Conditions</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 ROYRA JEWELS. All Rights Reserved.</div>
+        <div class="payment-badges">
+          <span>SECURE ENCRYPTED PAYMENTS:</span>
+          <span class="payment-pill">UPI</span>
+          <span class="payment-pill">VISA</span>
+          <span class="payment-pill">MASTERCARD</span>
+          <span class="payment-pill">RUPAY</span>
+          <span class="payment-pill">NETBANKING</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING CONCIERGE CHAT BUTTON (FIXED BOTTOM-RIGHT) -->
+  <button type="button" class="floating-support-btn" id="floating-support-btn" onclick="openSupportModal()" aria-label="Open Jewellery Concierge Support" title="Chat with Concierge">
+    <div class="support-icon-wrap">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+      <span class="online-indicator-dot"></span>
+    </div>
+  </button>
+
+  <!-- CONCIERGE & SUPPORT POPUP MODAL -->
+  <div class="support-modal" id="royra-support-modal" onclick="if(event.target === this) closeSupportModal()">
+    <div class="support-card">
+      <div class="support-card-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="support-avatar">👑</div>
+          <div>
+            <h4 style="font-size: 15px; font-weight: 700; color: #171717; margin: 0;">ROYRA CONCIERGE</h4>
+            <span style="font-size: 11px; color: #10B981; font-weight: 600;">● Online • Instant Response</span>
+          </div>
+        </div>
+        <button type="button" class="support-close-btn" onclick="closeSupportModal()" aria-label="Close Concierge popup">✕</button>
+      </div>
+
+      <div class="support-card-body">
+        <p style="font-size: 13px; color: #666; margin-bottom: 16px;">
+          How may our jewelry specialists assist your selection today?
+        </p>
+
+        <div class="support-options-list">
+          <a href="https://wa.me/919876543210?text=Hi%20Royra%20Jewels,%20I%20would%20like%20assistance%20with%20a%20jewellery%20piece" target="_blank" rel="noopener" class="support-option-item" onclick="closeSupportModal()">
+            <div class="option-icon whatsapp">💬</div>
+            <div class="option-text">
+              <strong>WhatsApp Live Concierge</strong>
+              <span>Chat directly with a certified diamond expert</span>
+            </div>
+            <span class="option-arrow">›</span>
+          </a>
+
+          <a href="contact.html#concierge" class="support-option-item" onclick="closeSupportModal()">
+            <div class="option-icon calendar">📹</div>
+            <div class="option-text">
+              <strong>Book Virtual Video Preview</strong>
+              <span>Live 1-on-1 HD view of rings and diamond sparkle</span>
+            </div>
+            <span class="option-arrow">›</span>
+          </a>
+
+          <a href="contact.html#sizeguide" class="support-option-item" onclick="closeSupportModal()">
+            <div class="option-icon ruler">📏</div>
+            <div class="option-text">
+              <strong>Size & Fitting Assistance</strong>
+              <span>Accurate sizing charts & printable finger gauge</span>
+            </div>
+            <span class="option-arrow">›</span>
+          </a>
+
+          <a href="tel:+919876543210" class="support-option-item" onclick="closeSupportModal()">
+            <div class="option-icon phone">📞</div>
+            <div class="option-text">
+              <strong>Call +91 98765 43210</strong>
+              <span>Mon–Sat 10:00 AM – 8:00 PM IST</span>
+            </div>
+            <span class="option-arrow">›</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH OVERLAY MODAL -->
+  <div class="search-modal" id="royra-search-modal" onclick="if(event.target === this) closeSearchModal()">
+    <div class="search-container">
+      <div class="search-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="royra-search-input" class="search-input" placeholder="Search by jewel, ring, bracelet, emerald..." oninput="handleSearchQuery(this.value)" />
+        <button class="search-close-btn" onclick="closeSearchModal()">✕</button>
+      </div>
+      <div class="search-results" id="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- CART SLIDE-OUT DRAWER -->
+  <div class="cart-drawer" id="royra-cart-drawer">
+    <div class="cart-header">
+      <div class="cart-title">YOUR SHOPPING BAG</div>
+      <button onclick="closeCartDrawer()" style="font-size: 20px; color: #171717; padding: 4px;">✕</button>
+    </div>
+    <div class="free-shipping-bar">
+      <div id="shipping-progress-text">Add ₹999 or more for FREE insured delivery!</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="shipping-progress-fill"></div>
+      </div>
+    </div>
+    <div class="cart-items-list" id="cart-drawer-items"></div>
+    <div class="cart-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal:</span>
+        <span id="cart-drawer-subtotal">₹0</span>
+      </div>
+      <div class="cart-actions-box">
+        <a href="cart.html" class="btn btn-primary" onclick="closeCartDrawer()">VIEW BAG & CHECKOUT</a>
+        <button class="btn btn-outline" onclick="closeCartDrawer()">CONTINUE BROWSING</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK VIEW MODAL -->
+  <div class="quickview-modal" id="royra-quickview-modal" onclick="if(event.target === this) closeQuickView()">
+    <div class="quickview-card" id="quickview-content"></div>
+  </div>
+
+  <!-- QUICK SIZE SELECTOR BOTTOM SHEET MODAL -->
+  <div class="quicksize-modal" id="royra-quicksize-modal" onclick="if(event.target === this) closeQuickSizeModal()">
+    <div class="quicksize-sheet" id="quicksize-sheet-content">
+      <!-- Injected dynamically by script.js -->
+    </div>
+  </div>
+
+  <!-- Supabase JS Client & Store Sync -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

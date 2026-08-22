@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#FCFAF7" />
+      <stop offset="70%" stop-color="#F2EDE4" />
+      <stop offset="100%" stop-color="#E5DEC9" />
+    </radialGradient>
+    <linearGradient id="goldRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDF1D6" />
+      <stop offset="25%" stop-color="#D4AF37" />
+      <stop offset="50%" stop-color="#AA7C11" />
+      <stop offset="75%" stop-color="#E5C158" />
+      <stop offset="100%" stop-color="#996515" />
+    </linearGradient>
+    <linearGradient id="diamondGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="35%" stop-color="#E8F4F8" />
+      <stop offset="70%" stop-color="#D0E8F2" />
+      <stop offset="100%" stop-color="#A5C8DF" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="25" stdDeviation="20" flood-color="#554422" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <rect width="800" height="800" fill="url(#bgGrad)" />
+  <circle cx="400" cy="400" r="320" fill="none" stroke="#EFE9DC" stroke-width="1.5" stroke-dasharray="4,6" />
+  <ellipse cx="400" cy="580" rx="190" ry="25" fill="#3D311A" opacity="0.12" filter="blur(15px)" />
+  <!-- Ring Shank -->
+  <g filter="url(#shadow)">
+    <ellipse cx="400" cy="460" rx="160" ry="140" fill="none" stroke="url(#goldRing)" stroke-width="32" />
+    <ellipse cx="400" cy="460" rx="160" ry="140" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.6" stroke-dasharray="100, 200" />
+    <!-- Prongs -->
+    <path d="M375,340 L370,270 L385,270 L388,340 Z" fill="url(#goldRing)" />
+    <path d="M425,340 L430,270 L415,270 L412,340 Z" fill="url(#goldRing)" />
+    <path d="M350,335 L335,290 L348,285 L360,335 Z" fill="url(#goldRing)" />
+    <path d="M450,335 L465,290 L452,285 L440,335 Z" fill="url(#goldRing)" />
+    <!-- Solitaire Center Gem -->
+    <g transform="translate(400, 250)">
+      <!-- Main Diamond Polygon -->
+      <polygon points="0,-75 55,-40 65,30 0,75 -65,30 -55,-40" fill="url(#diamondGrad)" stroke="#FFFFFF" stroke-width="2" />
+      <!-- Facets -->
+      <polygon points="0,-75 0,75 55,-40" fill="#FFFFFF" opacity="0.45" />
+      <polygon points="0,-75 0,75 -55,-40" fill="#B8DCED" opacity="0.5" />
+      <polygon points="0,-25 40,0 0,40 -40,0" fill="#FFFFFF" opacity="0.8" />
+      <polygon points="0,-75 25,-40 0,-25 -25,-40" fill="#EAF6FB" opacity="0.9" />
+      <polygon points="55,-40 65,30 40,0" fill="#99C2DE" opacity="0.6" />
+      <polygon points="-55,-40 -65,30 -40,0" fill="#C5E3F3" opacity="0.7" />
+      <polygon points="0,75 40,0 0,40" fill="#7FAECB" opacity="0.5" />
+      <polygon points="0,75 -40,0 0,40" fill="#A8D0E6" opacity="0.6" />
+      <!-- Sparkle stars -->
+      <path d="M-40,-50 L-35,-45 L-30,-50 L-35,-55 Z" fill="#FFFFFF" filter="url(#glow)" />
+      <path d="M35,-30 L40,-25 L45,-30 L40,-35 Z" fill="#FFFFFF" filter="url(#glow)" />
+      <path d="M-10,15 L-5,20 L0,15 L-5,10 Z" fill="#FFFFFF" filter="url(#glow)" />
+    </g>
+  </g>
+  <!-- Subtle brand watermark -->
+  <text x="400" y="740" text-anchor="middle" font-family="'Playfair Display', serif" font-size="14" letter-spacing="6" fill="#B08D57" opacity="0.85">ROYRA JEWELS • 18K GOLD</text>
+</svg>

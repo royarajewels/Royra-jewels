@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopping Bag | Royra Jewels</title>
+  <meta name="description" content="Review your selected handcrafted jewelry pieces and proceed to secure checkout with Royra Jewels." />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ANNOUNCEMENT BAR -->
+  <div class="announcement-bar">
+    <span>✨ 100% SECURE CHECKOUT • BIS 916 HALLMARKED GOLD ✨</span>
+  </div>
+
+  <!-- STICKY HEADER -->
+  <div class="header-wrapper">
+    <div class="container">
+      <header class="site-header">
+        
+        <button class="mobile-toggle" onclick="toggleMobileMenu()" aria-label="Open Navigation Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
+        <a href="index.html" class="site-logo">
+          <span class="logo-text">ROYRA</span>
+          <span class="logo-subtext">JEWELS</span>
+        </a>
+
+        <nav class="desktop-nav">
+          <a href="shop.html" class="nav-link">All Jewellery</a>
+          <a href="shop.html?category=rings" class="nav-link">Rings</a>
+          <a href="shop.html?category=earrings" class="nav-link">Earrings</a>
+          <a href="shop.html?category=bracelets" class="nav-link">Bracelets</a>
+          <a href="shop.html?category=necklaces" class="nav-link">Necklaces</a>
+          <a href="about.html" class="nav-link">Our Story</a>
+          <a href="contact.html" class="nav-link">Concierge</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="action-btn" onclick="openSearchModal()" title="Search Jewels">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <a href="contact.html" class="action-btn" title="Concierge Assistance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </a>
+          <a href="wishlist.html" class="action-btn" title="Saved Jewels">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span class="badge-count wishlist-count-badge" style="display: none;">0</span>
+          </a>
+          <button class="action-btn active" onclick="openCartDrawer()" title="Shopping Bag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span class="badge-count cart-count-badge" style="display: none;">0</span>
+          </button>
+        </div>
+
+      </header>
+    </div>
+  </div>
+
+  <!-- MOBILE MENU DRAWER -->
+  <div class="mobile-drawer" id="royra-mobile-drawer">
+    <div class="drawer-header">
+      <a href="index.html" class="site-logo">
+        <span class="logo-text" style="font-size: 22px;">ROYRA</span>
+        <span class="logo-subtext">JEWELS</span>
+      </a>
+      <button onclick="toggleMobileMenu()" style="padding: 8px; font-size: 20px; color: #171717;">✕</button>
+    </div>
+    <div class="drawer-nav">
+      <a href="shop.html" class="drawer-link" onclick="toggleMobileMenu()"><span>All Jewellery</span> <span>→</span></a>
+      <a href="shop.html?category=rings" class="drawer-link" onclick="toggleMobileMenu()"><span>Rings</span> <span>→</span></a>
+      <a href="shop.html?category=earrings" class="drawer-link" onclick="toggleMobileMenu()"><span>Earrings</span> <span>→</span></a>
+      <a href="shop.html?category=bracelets" class="drawer-link" onclick="toggleMobileMenu()"><span>Bracelets</span> <span>→</span></a>
+      <a href="shop.html?category=necklaces" class="drawer-link" onclick="toggleMobileMenu()"><span>Necklaces</span> <span>→</span></a>
+      <a href="about.html" class="drawer-link" onclick="toggleMobileMenu()"><span>Our Story</span> <span>→</span></a>
+      <a href="contact.html" class="drawer-link" onclick="toggleMobileMenu()"><span>Concierge</span> <span>→</span></a>
+    </div>
+  </div>
+  <div class="drawer-overlay" id="royra-drawer-overlay" onclick="toggleMobileMenu(); closeCartDrawer();"></div>
+
+  <!-- CART PAGE CONTENT -->
+  <div class="container" style="padding-top: 40px; padding-bottom: 80px;" id="cart-page-content">
+    
+    <div class="section-header" style="text-align: left; margin-bottom: 30px;">
+      <span class="section-tag">YOUR SELECTIONS</span>
+      <h1 class="section-title">SHOPPING BAG</h1>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 380px; gap: 48px; align-items: start;">
+      
+      <!-- Left: Items list -->
+      <div>
+        <div id="cart-page-items">
+          <!-- Dynamically rendered via script.js -->
+        </div>
+
+        <div style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center;">
+          <a href="shop.html" class="btn btn-outline">← Continue Shopping</a>
+        </div>
+      </div>
+
+      <!-- Right: Order Summary -->
+      <div style="background: #FAF7F2; border: 1px solid var(--border-color); border-radius: 8px; padding: 30px;">
+        <h3 style="font-size: 18px; margin-bottom: 20px; text-transform: uppercase;">ORDER SUMMARY</h3>
+
+        <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; font-size: 14px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: #666;">Bag Subtotal</span>
+            <span id="cart-page-subtotal" style="font-weight: 600;">₹0</span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: #666;">Insured Express Delivery</span>
+            <span style="color: #10B981; font-weight: 600;">FREE</span>
+          </div>
+
+          <div id="cart-page-discount-row" style="display: none; justify-content: space-between; color: #10B981;">
+            <span>Discount Applied</span>
+            <span id="cart-page-discount-val">-₹0</span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: #666;">Taxes & Duties</span>
+            <span style="color: #666;">Included in Price</span>
+          </div>
+        </div>
+
+        <!-- Coupon code input -->
+        <div style="margin-bottom: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+          <label style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">Gift Card or Promo Code</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="coupon-code-input" placeholder="e.g. ROYRA10" style="padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; flex: 1; text-transform: uppercase;" />
+            <button class="btn btn-outline" style="padding: 10px 16px;" onclick="applyCouponCode()">APPLY</button>
+          </div>
+          <div id="coupon-msg" style="font-size: 12px; margin-top: 6px;"></div>
+        </div>
+
+        <!-- Grand Total -->
+        <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; padding-top: 16px; border-top: 1px solid var(--border-color); margin-bottom: 24px;">
+          <span>Estimated Total</span>
+          <span id="cart-page-total" style="color: var(--primary-text);">₹0</span>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; height: 50px; font-size: 14px;" onclick="simulateCheckout()">PROCEED TO SECURE CHECKOUT</button>
+
+        <div style="margin-top: 20px; font-size: 11px; color: #777; line-height: 1.5; text-align: center;">
+          🔒 256-Bit Encrypted Secure Payment Gateway<br/>
+          Includes Luxury Signature Velvet Box & BIS Certificate
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SIMULATED CHECKOUT MODAL -->
+  <div class="quickview-modal" id="checkout-simulation-modal" onclick="if(event.target === this) closeCheckoutModal()">
+    <div class="quickview-card" style="display: block; max-width: 540px; padding: 36px;">
+      <button class="quickview-close" onclick="closeCheckoutModal()">✕</button>
+      <span class="section-tag">INSTANT VIP ORDER</span>
+      <h2 style="font-size: 24px; margin-bottom: 12px;">ROYRA WHITE GLOVE CHECKOUT</h2>
+      <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Complete your delivery details for insured shipping.</p>
+
+      <form onsubmit="event.preventDefault(); confirmSimulatedOrder();">
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Full Name *</label>
+          <input id="checkout-name" type="text" value="" placeholder="Your full name" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; margin-top: 4px;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Delivery Address *</label>
+          <input id="checkout-address" type="text" value="" placeholder="Full delivery address" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; margin-top: 4px;" />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <label style="font-size: 11px; font-weight: 700; text-transform: uppercase;">City & State *</label>
+            <input id="checkout-citystate" type="text" value="" placeholder="City, State" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; margin-top: 4px;" />
+          </div>
+          <div>
+            <label style="font-size: 11px; font-weight: 700; text-transform: uppercase;">PIN Code *</label>
+            <input id="checkout-pincode" type="text" value="" placeholder="PIN Code" pattern="[0-9]{6}" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; margin-top: 4px;" />
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px; padding: 14px; background: #F8F6F2; border-radius: 4px; border: 1px solid var(--border-color);">
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Payment Method:</div>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; margin-bottom: 6px;">
+            <input type="radio" name="pay-method" value="COD" checked /> Cash on Delivery / Manual Payment
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+            <input type="radio" name="pay-method" value="ONLINE" /> Online Payment (gateway pending configuration)
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; height: 48px;">CONFIRM & PLACE JEWELRY ORDER</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col-brand">
+          <a href="index.html" class="site-logo">
+            <span class="logo-text">ROYRA</span>
+            <span class="logo-subtext">JEWELS</span>
+          </a>
+          <p>Timeless jewellery for every story. Handcrafted in 18K BIS hallmarked gold and certified stones with unmatched precision.</p>
+        </div>
+        <div>
+          <h4 class="footer-heading">SHOP</h4>
+          <div class="footer-links">
+            <a href="shop.html">All Jewellery</a>
+            <a href="shop.html?category=rings">Rings</a>
+            <a href="shop.html?category=earrings">Earrings</a>
+            <a href="shop.html?category=bracelets">Bracelets</a>
+            <a href="shop.html?category=necklaces">Necklaces</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">HELP</h4>
+          <div class="footer-links">
+            <a href="contact.html">Contact Us</a>
+            <a href="contact.html#shipping">Shipping Policy</a>
+            <a href="contact.html#returns">Returns & Exchanges</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">ABOUT</h4>
+          <div class="footer-links">
+            <a href="about.html">Our Story</a>
+            <a href="about.html#craft">Artisanal Craft</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 Royra Jewels. All Rights Reserved.</div>
+        <div class="payment-badges">
+          <span class="payment-pill">UPI</span>
+          <span class="payment-pill">VISA</span>
+          <span class="payment-pill">MASTERCARD</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SEARCH OVERLAY MODAL -->
+  <div class="search-modal" id="royra-search-modal" onclick="if(event.target === this) closeSearchModal()">
+    <div class="search-container">
+      <div class="search-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="royra-search-input" class="search-input" placeholder="Search by jewel, ring, bracelet, emerald..." oninput="handleSearchQuery(this.value)" />
+        <button class="search-close-btn" onclick="closeSearchModal()">✕</button>
+      </div>
+      <div class="search-results" id="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- CART SLIDE-OUT DRAWER -->
+  <div class="cart-drawer" id="royra-cart-drawer">
+    <div class="cart-header">
+      <div class="cart-title">YOUR SHOPPING BAG</div>
+      <button onclick="closeCartDrawer()" style="font-size: 20px; color: #171717; padding: 4px;">✕</button>
+    </div>
+    <div class="free-shipping-bar">
+      <div id="shipping-progress-text">Add ₹999 or more for FREE insured delivery!</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="shipping-progress-fill"></div>
+      </div>
+    </div>
+    <div class="cart-items-list" id="cart-drawer-items"></div>
+    <div class="cart-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal:</span>
+        <span id="cart-drawer-subtotal">₹0</span>
+      </div>
+      <div class="cart-actions-box">
+        <a href="cart.html" class="btn btn-primary" onclick="closeCartDrawer()">VIEW BAG & CHECKOUT</a>
+        <button class="btn btn-outline" onclick="closeCartDrawer()">CONTINUE BROWSING</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase JS Client & Store Sync -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

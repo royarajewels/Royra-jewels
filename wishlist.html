@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saved Wishlist | Royra Jewels</title>
+  <meta name="description" content="View and manage your saved fine jewelry wishlist at Royra Jewels." />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ANNOUNCEMENT BAR -->
+  <div class="announcement-bar">
+    <span>✨ FREE SHIPPING ON ORDERS ABOVE ₹999 • 100% BIS HALLMARKED 18K GOLD ✨</span>
+  </div>
+
+  <!-- STICKY HEADER -->
+  <div class="header-wrapper">
+    <div class="container">
+      <header class="site-header">
+        
+        <button class="mobile-toggle" onclick="toggleMobileMenu()" aria-label="Open Navigation Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
+        <a href="index.html" class="site-logo">
+          <span class="logo-text">ROYRA</span>
+          <span class="logo-subtext">JEWELS</span>
+        </a>
+
+        <nav class="desktop-nav">
+          <a href="shop.html" class="nav-link">All Jewellery</a>
+          <a href="shop.html?category=rings" class="nav-link">Rings</a>
+          <a href="shop.html?category=earrings" class="nav-link">Earrings</a>
+          <a href="shop.html?category=bracelets" class="nav-link">Bracelets</a>
+          <a href="shop.html?category=necklaces" class="nav-link">Necklaces</a>
+          <a href="about.html" class="nav-link">Our Story</a>
+          <a href="contact.html" class="nav-link">Concierge</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="action-btn" onclick="openSearchModal()" title="Search Jewels">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <a href="contact.html" class="action-btn" title="Concierge Assistance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </a>
+          <a href="wishlist.html" class="action-btn active" title="Saved Jewels">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span class="badge-count wishlist-count-badge" style="display: none;">0</span>
+          </a>
+          <button class="action-btn" onclick="openCartDrawer()" title="Shopping Bag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span class="badge-count cart-count-badge" style="display: none;">0</span>
+          </button>
+        </div>
+
+      </header>
+    </div>
+  </div>
+
+  <!-- MOBILE MENU DRAWER -->
+  <div class="mobile-drawer" id="royra-mobile-drawer">
+    <div class="drawer-header">
+      <a href="index.html" class="site-logo">
+        <span class="logo-text" style="font-size: 22px;">ROYRA</span>
+        <span class="logo-subtext">JEWELS</span>
+      </a>
+      <button onclick="toggleMobileMenu()" style="padding: 8px; font-size: 20px; color: #171717;">✕</button>
+    </div>
+    <div class="drawer-nav">
+      <a href="shop.html" class="drawer-link" onclick="toggleMobileMenu()"><span>All Jewellery</span> <span>→</span></a>
+      <a href="shop.html?category=rings" class="drawer-link" onclick="toggleMobileMenu()"><span>Rings</span> <span>→</span></a>
+      <a href="shop.html?category=earrings" class="drawer-link" onclick="toggleMobileMenu()"><span>Earrings</span> <span>→</span></a>
+      <a href="shop.html?category=bracelets" class="drawer-link" onclick="toggleMobileMenu()"><span>Bracelets</span> <span>→</span></a>
+      <a href="shop.html?category=necklaces" class="drawer-link" onclick="toggleMobileMenu()"><span>Necklaces</span> <span>→</span></a>
+      <a href="about.html" class="drawer-link" onclick="toggleMobileMenu()"><span>Our Story</span> <span>→</span></a>
+      <a href="contact.html" class="drawer-link" onclick="toggleMobileMenu()"><span>Concierge</span> <span>→</span></a>
+    </div>
+  </div>
+  <div class="drawer-overlay" id="royra-drawer-overlay" onclick="toggleMobileMenu(); closeCartDrawer();"></div>
+
+  <!-- WISHLIST CONTENT -->
+  <div class="container" style="padding-top: 40px; padding-bottom: 80px;">
+    
+    <div class="section-header" style="text-align: left; margin-bottom: 30px;">
+      <span class="section-tag">SAVED CREATIONS</span>
+      <h1 class="section-title">YOUR WISHLIST</h1>
+      <p style="color: #666;">Keep track of your favorite solitaires, bands, and diamond heirlooms in one place.</p>
+    </div>
+
+    <!-- Empty State -->
+    <div id="wishlist-empty-state" style="display: none; text-align: center; padding: 80px 20px;">
+      <div class="empty-icon">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </div>
+      <h2 style="font-size: 26px; margin-bottom: 12px;">Your Wishlist is Empty</h2>
+      <p style="color: #666; max-width: 440px; margin: 0 auto 30px;">Click the heart icon on any jewel in our catalogue to save it to your private collection.</p>
+      <a href="shop.html" class="btn btn-primary">Explore All Jewellery</a>
+    </div>
+
+    <!-- Populated Wishlist Grid -->
+    <div class="product-grid" id="wishlist-grid">
+      <!-- Rendered by script.js -->
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col-brand">
+          <a href="index.html" class="site-logo">
+            <span class="logo-text">ROYRA</span>
+            <span class="logo-subtext">JEWELS</span>
+          </a>
+          <p>Timeless jewellery for every story. Handcrafted in 18K BIS hallmarked gold and certified stones with unmatched precision.</p>
+        </div>
+        <div>
+          <h4 class="footer-heading">SHOP</h4>
+          <div class="footer-links">
+            <a href="shop.html">All Jewellery</a>
+            <a href="shop.html?category=rings">Rings</a>
+            <a href="shop.html?category=earrings">Earrings</a>
+            <a href="shop.html?category=bracelets">Bracelets</a>
+            <a href="shop.html?category=necklaces">Necklaces</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">HELP</h4>
+          <div class="footer-links">
+            <a href="contact.html">Contact Us</a>
+            <a href="contact.html#shipping">Shipping Policy</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">ABOUT</h4>
+          <div class="footer-links">
+            <a href="about.html">Our Story</a>
+            <a href="about.html#craft">Artisanal Craft</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 Royra Jewels. All Rights Reserved.</div>
+        <div class="payment-badges">
+          <span class="payment-pill">UPI</span>
+          <span class="payment-pill">VISA</span>
+          <span class="payment-pill">MASTERCARD</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SEARCH OVERLAY MODAL -->
+  <div class="search-modal" id="royra-search-modal" onclick="if(event.target === this) closeSearchModal()">
+    <div class="search-container">
+      <div class="search-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B08D57" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="royra-search-input" class="search-input" placeholder="Search by jewel, ring, bracelet, emerald..." oninput="handleSearchQuery(this.value)" />
+        <button class="search-close-btn" onclick="closeSearchModal()">✕</button>
+      </div>
+      <div class="search-results" id="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- CART SLIDE-OUT DRAWER -->
+  <div class="cart-drawer" id="royra-cart-drawer">
+    <div class="cart-header">
+      <div class="cart-title">YOUR SHOPPING BAG</div>
+      <button onclick="closeCartDrawer()" style="font-size: 20px; color: #171717; padding: 4px;">✕</button>
+    </div>
+    <div class="free-shipping-bar">
+      <div id="shipping-progress-text">Add ₹999 or more for FREE insured delivery!</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="shipping-progress-fill"></div>
+      </div>
+    </div>
+    <div class="cart-items-list" id="cart-drawer-items"></div>
+    <div class="cart-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal:</span>
+        <span id="cart-drawer-subtotal">₹0</span>
+      </div>
+      <div class="cart-actions-box">
+        <a href="cart.html" class="btn btn-primary" onclick="closeCartDrawer()">VIEW BAG & CHECKOUT</a>
+        <button class="btn btn-outline" onclick="closeCartDrawer()">CONTINUE BROWSING</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK VIEW MODAL -->
+  <div class="quickview-modal" id="royra-quickview-modal" onclick="if(event.target === this) closeQuickView()">
+    <div class="quickview-card" id="quickview-content"></div>
+  </div>
+
+  <!-- Supabase JS Client & Store Sync -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

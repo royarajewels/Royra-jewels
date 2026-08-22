@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 750" width="100%" height="100%">
+  <defs>
+    <radialGradient id="catGrad2" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#FAF7F2" />
+      <stop offset="60%" stop-color="#EFE6D8" />
+      <stop offset="100%" stop-color="#DECDB2" />
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDF1D6" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#996515" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="750" fill="url(#catGrad2)" />
+  <circle cx="300" cy="360" r="220" fill="none" stroke="#E3D7C1" stroke-width="1.5" stroke-dasharray="4,6" />
+  <g transform="translate(220, 260)">
+    <circle cx="0" cy="0" r="14" fill="url(#gold)" />
+    <line x1="0" y1="14" x2="0" y2="70" stroke="url(#gold)" stroke-width="4" />
+    <circle cx="0" cy="130" r="45" fill="#FAF5EE" stroke="#E2D0BE" stroke-width="2" />
+    <ellipse cx="-12" cy="110" rx="10" ry="8" fill="#FFFFFF" opacity="0.8" />
+  </g>
+  <g transform="translate(380, 260)">
+    <circle cx="0" cy="0" r="14" fill="url(#gold)" />
+    <line x1="0" y1="14" x2="0" y2="70" stroke="url(#gold)" stroke-width="4" />
+    <circle cx="0" cy="130" r="45" fill="#FAF5EE" stroke="#E2D0BE" stroke-width="2" />
+    <ellipse cx="-12" cy="110" rx="10" ry="8" fill="#FFFFFF" opacity="0.8" />
+  </g>
+</svg>
