@@ -1,1 +1,71 @@
-@import "tailwindcss";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f8f5f0;
+  color: #222;
+}
+
+.app {
+  text-align: center;
+}
+
+header {
+  background: #2b1b12;
+  color: white;
+  padding: 40px 20px;
+}
+
+header h1 {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+header p {
+  font-size: 18px;
+  color: #d4af37;
+}
+
+main {
+  padding: 40px 20px;
+}
+
+main h2 {
+  font-size: 30px;
+  margin-bottom: 30px;
+  color: #2b1b12;
+}
+
+.products {
+  display: flex;
+  justify-content: center;
+}
+
+.product {
+  background: white;
+  width: 300px;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.product img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.product h3 {
+  margin-top: 15px;
+  font-size: 22px;
+}
+
+.product p {
+  margin-top: 8px;
+  color: #b8860b;
+  font-size: 20px;
+  font-weight: bold;
+}
