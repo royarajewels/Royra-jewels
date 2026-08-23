@@ -489,7 +489,7 @@ function formatBytes(bytes: number, decimals = 2) {
 // -------------------------------------------------------------
 // 1. C-PANEL DASHBOARD & SYSTEM OVERVIEW
 // -------------------------------------------------------------
-router.get('/overview', (req, res) => {
+function getOverviewData() {
   const totalMem = os.totalmem();
   const freeMem = os.freemem();
   const usedMem = totalMem - freeMem;
@@ -501,7 +501,7 @@ router.get('/overview', (req, res) => {
 
   const isDbConfigured = Boolean(process.env.DB_SERVER && process.env.DB_USER);
 
-  res.json({
+  return {
     success: true,
     websiteStatus: 'Online',
     erpApiStatus: isDbConfigured ? 'Online' : 'Warning',
@@ -535,6 +535,27 @@ router.get('/overview', (req, res) => {
     currentVersion: 'v2.4.1-enterprise',
     errorCount: systemLogs.filter(l => l.level === 'ERROR' || l.level === 'CRITICAL').length,
     recentAudits: auditLogs.slice(0, 5)
+  };
+}
+
+router.get('/', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.json(getOverviewData());
+});
+
+router.get('/overview', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.json(getOverviewData());
+});
+
+router.get('/health', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.json({
+    success: true,
+    status: 'online',
+    timestamp: new Date().toISOString(),
+    uptimeSeconds: Math.floor((Date.now() - startTime) / 1000),
+    service: 'Royra Jewels C-Panel Administration API'
   });
 });
 
@@ -937,9 +958,10 @@ router.get('/files/download', (req, res) => {
 // -------------------------------------------------------------
 // 3. DATABASE / CONNECTIONS
 // -------------------------------------------------------------
-router.get('/database/info', (req, res) => {
+const getDatabaseInfoHandler = (req: express.Request, res: express.Response) => {
   const isEnvConfigured = Boolean(process.env.DB_SERVER && process.env.DB_USER);
   
+  res.setHeader('Content-Type', 'application/json');
   res.json({
     success: true,
     providers: [
@@ -985,7 +1007,10 @@ router.get('/database/info', (req, res) => {
       }
     ]
   });
-});
+};
+
+router.get('/database', getDatabaseInfoHandler);
+router.get('/database/info', getDatabaseInfoHandler);
 
 router.post('/database/test-connection', async (req, res) => {
   const start = Date.now();
@@ -1763,6 +1788,45 @@ router.post('/users/update-role', (req, res) => {
   );
 
   res.json({ success: true, message: `User "${target.name}" role updated to ${newRole}.`, user: target });
+});
+
+// Route Aliases
+router.get('/environment', (req, res) => {
+  res.redirect('/api/cpanel/env');
+});
+
+router.get('/github', (req, res) => {
+  res.redirect('/api/cpanel/github/status');
+});
+
+router.get('/domain', (req, res) => {
+  res.redirect('/api/cpanel/domain/status');
+});
+
+router.get('/domains', (req, res) => {
+  res.redirect('/api/cpanel/domain/status');
+});
+
+router.get('/storage', (req, res) => {
+  res.redirect('/api/cpanel/storage/stats');
+});
+
+router.get('/api', (req, res) => {
+  res.redirect('/api/cpanel/api/stats');
+});
+
+router.get('/security', (req, res) => {
+  res.redirect('/api/cpanel/security/audit');
+});
+
+// Explicit C-Panel 404 JSON Catch-All
+router.all('*', (req, res) => {
+  res.status(404).setHeader('Content-Type', 'application/json').json({
+    success: false,
+    status: 'unavailable',
+    error: `C-Panel API route not found: ${req.method} ${req.originalUrl}`,
+    endpoint: req.originalUrl
+  });
 });
 
 export default router;

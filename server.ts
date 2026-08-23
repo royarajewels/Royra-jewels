@@ -59,6 +59,16 @@ function getSqlPool(): Promise<sql.ConnectionPool> {
 }
 
 // 1. Health & Connection Status API
+app.get('/api/health', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    service: 'Royra Jewels Server'
+  });
+});
+
 app.get('/api/integration/status', async (req, res) => {
   const isEnvConfigured = Boolean(process.env.DB_SERVER && process.env.DB_USER);
   if (!isEnvConfigured) {
@@ -298,6 +308,16 @@ app.post('/api/integration/test-sample-order', async (req, res) => {
   } catch (err: any) {
     return res.status(500).json({ success: false, error: err.message });
   }
+});
+
+// Explicit API 404 JSON Catch-All: Prevents any missing /api/* endpoint from falling through to HTML SPA
+app.all('/api/*', (req, res) => {
+  res.status(404).setHeader('Content-Type', 'application/json').json({
+    success: false,
+    status: 'unavailable',
+    error: `API endpoint not found: ${req.method} ${req.originalUrl}`,
+    endpoint: req.originalUrl
+  });
 });
 
 // Vite Middleware Setup for dev and production static serving

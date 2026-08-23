@@ -60,11 +60,12 @@ function escHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-// API Helper
+// API Helper with robust JSON validation and HTML fallthrough guard
 async function apiCall(endpoint, method = 'GET', body = null) {
   const options = {
     method,
     headers: {
+      'Accept': 'application/json',
       'Content-Type': 'application/json',
       'x-admin-email': CPanelState.userEmail,
       'x-admin-role': CPanelState.currentRole
@@ -76,11 +77,43 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
   try {
     const res = await fetch(endpoint, options);
+    const contentType = res.headers.get('content-type') || '';
+    
+    // Check if the response is not JSON or is an HTML error page
+    if (!contentType.includes('application/json')) {
+      const text = await res.text();
+      if (text.trim().startsWith('<') || text.includes('<!DOCTYPE')) {
+        console.warn(`[C-Panel API] Received HTML response for ${endpoint} instead of JSON.`);
+        return {
+          success: false,
+          status: 'unavailable',
+          isApiUnavailable: true,
+          error: `Node.js server API at ${endpoint} returned HTML (Status ${res.status}). Ensure the backend server is running on port 3000.`
+        };
+      }
+      try {
+        const parsed = JSON.parse(text);
+        return parsed;
+      } catch (parseErr) {
+        return {
+          success: false,
+          status: 'unavailable',
+          isApiUnavailable: true,
+          error: `Invalid response format from ${endpoint} (Status ${res.status}).`
+        };
+      }
+    }
+
     const data = await res.json();
     return data;
   } catch (err) {
-    console.error(`API Call failed on ${endpoint}:`, err);
-    return { success: false, error: err.message };
+    console.warn(`[C-Panel API] Network/fetch error on ${endpoint}:`, err);
+    return {
+      success: false,
+      status: 'unavailable',
+      isApiUnavailable: true,
+      error: `Could not connect to C-Panel API at ${endpoint}. Please verify that the server is online.`
+    };
   }
 }
 
@@ -195,7 +228,30 @@ async function renderActiveTab() {
 async function renderDashboard(container) {
   const res = await apiCall('/api/cpanel/overview');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch overview: ${escHtml(res.error)}</p></div>`;
+    container.innerHTML = `
+      <div class="cp-card" style="border-left: 4px solid #D97706; padding: 24px;">
+        <div style="display:flex;align-items:flex-start;gap:16px">
+          <div style="width:40px;height:40px;border-radius:8px;background:#FEF3C7;color:#D97706;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i data-lucide="server-off" style="width:20px;height:20px"></i>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:16px;font-weight:700;color:#1C1917;margin-bottom:4px">C-Panel Telemetry Bridge Unavailable</div>
+            <div style="font-size:13.5px;color:#57534E;line-height:1.6;margin-bottom:12px">
+              ${escHtml(res.error || 'The server overview endpoint is currently not responding with JSON.')}
+            </div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <button class="cp-btn cp-btn-gold cp-btn-sm" onclick="renderActiveTab()">
+                <i data-lucide="refresh-cw"></i> Retry Connection
+              </button>
+              <a href="/api/cpanel/overview" target="_blank" class="cp-btn cp-btn-outline cp-btn-sm">
+                <i data-lucide="external-link"></i> Test Endpoint
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
     return;
   }
 
