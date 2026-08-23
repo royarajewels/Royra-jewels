@@ -28,14 +28,43 @@ let ROYRA_PRODUCTS = [
     rating: 4.9,
     reviewsCount: 128,
     image: "assets/products/roy-wh00829.webp",
-    secondImage: "assets/products/roy-untitled-3.jpg",
+    secondImage: "assets/products/product-04.jpg",
     gallery: [
       "assets/products/roy-wh00829.webp",
-      "assets/products/roy-untitled-3.jpg",
-      "assets/products/roy-2.jpg",
-      "assets/products/roy-ig-1.jpg"
+      "assets/products/product-04.jpg",
+      "assets/products/product-03.jpg",
+      "assets/products/roy-2.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-wh00829.webp",
+        gallery: [
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-2.jpg",
+          "assets/products/product-01.jpg",
+          "assets/products/roy-ig-1.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-04.jpg",
+        gallery: [
+          "assets/products/product-04.jpg",
+          "assets/products/product-05.jpg",
+          "assets/products/product-08.jpg",
+          "assets/products/product-14.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/product-03.jpg",
+        gallery: [
+          "assets/products/product-03.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-11.jpg",
+          "assets/products/roy-untitled-3.jpg"
+        ]
+      }
+    },
     sizes: ["4", "5", "6", "7", "8", "9", "10", "11", "12"],
     sizeType: "ring",
     material: "18K Solid Gold / 925 Sterling Silver",
@@ -65,15 +94,44 @@ let ROYRA_PRODUCTS = [
     badgeType: "new",
     rating: 4.8,
     reviewsCount: 94,
-    image: "assets/products/roy-untitled-3.jpg",
-    secondImage: "assets/products/roy-wh00829.webp",
+    image: "assets/products/product-01.jpg",
+    secondImage: "assets/products/product-08.jpg",
     gallery: [
+      "assets/products/product-01.jpg",
+      "assets/products/product-08.jpg",
       "assets/products/roy-untitled-3.jpg",
-      "assets/products/roy-wh00829.webp",
-      "assets/products/roy-2.jpg",
-      "assets/products/roy-ig-1.jpg"
+      "assets/products/roy-2.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/product-01.jpg",
+        gallery: [
+          "assets/products/product-01.jpg",
+          "assets/products/product-02.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-2.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-08.jpg",
+        gallery: [
+          "assets/products/product-08.jpg",
+          "assets/products/product-09.jpg",
+          "assets/products/product-14.jpg",
+          "assets/products/product-04.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/roy-untitled-3.jpg",
+        gallery: [
+          "assets/products/roy-untitled-3.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-16.jpg",
+          "assets/products/product-03.jpg"
+        ]
+      }
+    },
     sizes: ["4", "5", "6", "7", "8", "9", "10"],
     sizeType: "ring",
     material: "18K Rose Gold & 925 Sterling Silver",
@@ -104,14 +162,43 @@ let ROYRA_PRODUCTS = [
     rating: 5.0,
     reviewsCount: 62,
     image: "assets/products/roy-2.jpg",
-    secondImage: "assets/products/roy-untitled-3.jpg",
+    secondImage: "assets/products/product-05.jpg",
     gallery: [
       "assets/products/roy-2.jpg",
-      "assets/products/roy-untitled-3.jpg",
-      "assets/products/roy-wh00829.webp",
-      "assets/products/roy-ig-1.jpg"
+      "assets/products/product-05.jpg",
+      "assets/products/product-13.jpg",
+      "assets/products/roy-wh00829.webp"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-2.jpg",
+        gallery: [
+          "assets/products/roy-2.jpg",
+          "assets/products/product-01.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-ig-1.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-05.jpg",
+        gallery: [
+          "assets/products/product-05.jpg",
+          "assets/products/product-04.jpg",
+          "assets/products/product-15.jpg",
+          "assets/products/product-08.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/product-13.jpg",
+        gallery: [
+          "assets/products/product-13.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/product-11.jpg",
+          "assets/products/roy-untitled-3.jpg"
+        ]
+      }
+    },
     sizes: ["5", "6", "7", "8", "9", "10"],
     sizeType: "ring",
     material: "18K Yellow Gold",
@@ -142,14 +229,43 @@ let ROYRA_PRODUCTS = [
     rating: 4.8,
     reviewsCount: 45,
     image: "assets/products/roy-ig-1.jpg",
-    secondImage: "assets/products/roy-wh00829.webp",
+    secondImage: "assets/products/product-14.jpg",
     gallery: [
       "assets/products/roy-ig-1.jpg",
-      "assets/products/roy-wh00829.webp",
-      "assets/products/roy-untitled-3.jpg",
-      "assets/products/roy-2.jpg"
+      "assets/products/product-14.jpg",
+      "assets/products/product-11.jpg",
+      "assets/products/roy-wh00829.webp"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-ig-1.jpg",
+        gallery: [
+          "assets/products/roy-ig-1.jpg",
+          "assets/products/product-02.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-2.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-14.jpg",
+        gallery: [
+          "assets/products/product-14.jpg",
+          "assets/products/product-08.jpg",
+          "assets/products/product-04.jpg",
+          "assets/products/product-09.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/product-11.jpg",
+        gallery: [
+          "assets/products/product-11.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/roy-untitled-3.jpg"
+        ]
+      }
+    },
     sizes: ["4", "5", "6", "7", "8", "9", "10", "11", "12"],
     sizeType: "ring",
     material: "18K Tri-Tone Gold & 925 Sterling Silver",
@@ -179,15 +295,44 @@ let ROYRA_PRODUCTS = [
     badgeType: "gold",
     rating: 4.9,
     reviewsCount: 52,
-    image: "assets/products/roy-wh00829.webp",
-    secondImage: "assets/products/roy-2.jpg",
+    image: "assets/products/product-06.jpg",
+    secondImage: "assets/products/product-09.jpg",
     gallery: [
-      "assets/products/roy-wh00829.webp",
-      "assets/products/roy-2.jpg",
-      "assets/products/roy-untitled-3.jpg",
-      "assets/products/roy-ig-1.jpg"
+      "assets/products/product-06.jpg",
+      "assets/products/product-09.jpg",
+      "assets/products/product-16.jpg",
+      "assets/products/roy-2.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/product-06.jpg",
+        gallery: [
+          "assets/products/product-06.jpg",
+          "assets/products/product-01.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-2.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-09.jpg",
+        gallery: [
+          "assets/products/product-09.jpg",
+          "assets/products/product-05.jpg",
+          "assets/products/product-15.jpg",
+          "assets/products/product-04.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/product-16.jpg",
+        gallery: [
+          "assets/products/product-16.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/roy-untitled-3.jpg"
+        ]
+      }
+    },
     sizes: ["4", "5", "6", "7", "8", "9", "10"],
     sizeType: "ring",
     material: "18K Yellow Gold & Sterling Silver",
@@ -217,15 +362,44 @@ let ROYRA_PRODUCTS = [
     badgeType: "gold",
     rating: 5.0,
     reviewsCount: 38,
-    image: "assets/products/roy-2.jpg",
-    secondImage: "assets/products/roy-ig-1.jpg",
+    image: "assets/products/product-02.jpg",
+    secondImage: "assets/products/product-15.jpg",
     gallery: [
-      "assets/products/roy-2.jpg",
-      "assets/products/roy-ig-1.jpg",
-      "assets/products/roy-untitled-3.jpg",
-      "assets/products/roy-wh00829.webp"
+      "assets/products/product-02.jpg",
+      "assets/products/product-15.jpg",
+      "assets/products/product-10.jpg",
+      "assets/products/roy-2.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/product-02.jpg",
+        gallery: [
+          "assets/products/product-02.jpg",
+          "assets/products/roy-2.jpg",
+          "assets/products/roy-ig-1.jpg",
+          "assets/products/roy-wh00829.webp"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-15.jpg",
+        gallery: [
+          "assets/products/product-15.jpg",
+          "assets/products/product-08.jpg",
+          "assets/products/product-04.jpg",
+          "assets/products/product-05.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/product-10.jpg",
+        gallery: [
+          "assets/products/product-10.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/product-13.jpg",
+          "assets/products/roy-untitled-3.jpg"
+        ]
+      }
+    },
     sizes: ["6", "7", "8", "9", "10", "11"],
     sizeType: "ring",
     material: "18K White Gold",
@@ -255,15 +429,44 @@ let ROYRA_PRODUCTS = [
     badgeType: "sale",
     rating: 4.9,
     reviewsCount: 71,
-    image: "assets/products/roy-untitled-3.jpg",
-    secondImage: "assets/products/roy-ig-1.jpg",
+    image: "assets/products/product-01.jpg",
+    secondImage: "assets/products/product-04.jpg",
     gallery: [
+      "assets/products/product-01.jpg",
+      "assets/products/product-04.jpg",
       "assets/products/roy-untitled-3.jpg",
-      "assets/products/roy-ig-1.jpg",
-      "assets/products/roy-2.jpg",
       "assets/products/roy-wh00829.webp"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/product-01.jpg",
+        gallery: [
+          "assets/products/product-01.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-ig-1.jpg",
+          "assets/products/roy-2.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-04.jpg",
+        gallery: [
+          "assets/products/product-04.jpg",
+          "assets/products/product-14.jpg",
+          "assets/products/product-05.jpg",
+          "assets/products/product-08.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/roy-untitled-3.jpg",
+        gallery: [
+          "assets/products/roy-untitled-3.jpg",
+          "assets/products/product-11.jpg",
+          "assets/products/product-16.jpg",
+          "assets/products/product-03.jpg"
+        ]
+      }
+    },
     sizes: ["5", "6", "7", "8", "9", "10"],
     sizeType: "ring",
     material: "18K Rose Gold",
@@ -293,15 +496,44 @@ let ROYRA_PRODUCTS = [
     badgeType: "sale",
     rating: 4.9,
     reviewsCount: 88,
-    image: "assets/products/roy-untitled-3.jpg",
-    secondImage: "assets/products/roy-wh00829.webp",
+    image: "assets/products/roy-wh00829.webp",
+    secondImage: "assets/products/product-08.jpg",
     gallery: [
-      "assets/products/roy-untitled-3.jpg",
       "assets/products/roy-wh00829.webp",
-      "assets/products/roy-2.jpg",
-      "assets/products/roy-ig-1.jpg"
+      "assets/products/product-08.jpg",
+      "assets/products/roy-untitled-3.jpg",
+      "assets/products/roy-2.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-wh00829.webp",
+        gallery: [
+          "assets/products/roy-wh00829.webp",
+          "assets/products/product-01.jpg",
+          "assets/products/roy-2.jpg",
+          "assets/products/roy-ig-1.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-08.jpg",
+        gallery: [
+          "assets/products/product-08.jpg",
+          "assets/products/product-05.jpg",
+          "assets/products/product-04.jpg",
+          "assets/products/product-14.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/roy-untitled-3.jpg",
+        gallery: [
+          "assets/products/roy-untitled-3.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-16.jpg"
+        ]
+      }
+    },
     sizes: ["4", "5", "6", "7", "8", "9", "10"],
     sizeType: "ring",
     material: "18K Solid Gold / 925 Sterling Silver",
@@ -344,6 +576,35 @@ let ROYRA_PRODUCTS = [
       "assets/products/roy-wh00829.webp"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-earring-5.jpg",
+        gallery: [
+          "assets/products/roy-earring-5.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-2.jpg",
+          "assets/products/product-01.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/roy-earring-1.jpg",
+        gallery: [
+          "assets/products/roy-earring-1.jpg",
+          "assets/products/product-04.jpg",
+          "assets/products/product-08.jpg",
+          "assets/products/product-14.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/roy-earring-2.jpg",
+        gallery: [
+          "assets/products/roy-earring-2.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-16.jpg"
+        ]
+      }
+    },
     sizes: ["Standard"],
     sizeType: "earring",
     material: "18K Solid Yellow Gold & Rhodium",
@@ -373,15 +634,44 @@ let ROYRA_PRODUCTS = [
     badgeType: "gold",
     rating: 4.9,
     reviewsCount: 145,
-    image: "assets/products/roy-earring-1.jpg",
-    secondImage: "assets/products/roy-earring-2.jpg",
+    image: "assets/products/roy-earring-5.jpg",
+    secondImage: "assets/products/roy-earring-1.jpg",
     gallery: [
+      "assets/products/roy-earring-5.jpg",
       "assets/products/roy-earring-1.jpg",
       "assets/products/roy-earring-2.jpg",
-      "assets/products/roy-earring-5.jpg",
       "assets/products/roy-wh00829.webp"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-earring-5.jpg",
+        gallery: [
+          "assets/products/roy-earring-5.jpg",
+          "assets/products/product-01.jpg",
+          "assets/products/roy-2.jpg",
+          "assets/products/roy-wh00829.webp"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/roy-earring-1.jpg",
+        gallery: [
+          "assets/products/roy-earring-1.jpg",
+          "assets/products/product-05.jpg",
+          "assets/products/product-14.jpg",
+          "assets/products/product-08.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/roy-earring-2.jpg",
+        gallery: [
+          "assets/products/roy-earring-2.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-11.jpg",
+          "assets/products/product-03.jpg"
+        ]
+      }
+    },
     sizes: ["Standard"],
     sizeType: "earring",
     material: "18K White Gold & 925 Sterling Silver",
@@ -411,15 +701,44 @@ let ROYRA_PRODUCTS = [
     badgeType: "gold",
     rating: 5.0,
     reviewsCount: 42,
-    image: "assets/products/roy-earring-2.jpg",
-    secondImage: "assets/products/roy-earring-5.jpg",
+    image: "assets/products/roy-earring-5.jpg",
+    secondImage: "assets/products/roy-earring-1.jpg",
     gallery: [
-      "assets/products/roy-earring-2.jpg",
       "assets/products/roy-earring-5.jpg",
       "assets/products/roy-earring-1.jpg",
+      "assets/products/roy-earring-2.jpg",
       "assets/products/roy-wh00829.webp"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-earring-5.jpg",
+        gallery: [
+          "assets/products/roy-earring-5.jpg",
+          "assets/products/product-02.jpg",
+          "assets/products/roy-ig-1.jpg",
+          "assets/products/roy-2.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/roy-earring-1.jpg",
+        gallery: [
+          "assets/products/roy-earring-1.jpg",
+          "assets/products/product-08.jpg",
+          "assets/products/product-09.jpg",
+          "assets/products/product-04.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/roy-earring-2.jpg",
+        gallery: [
+          "assets/products/roy-earring-2.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/product-16.jpg",
+          "assets/products/product-10.jpg"
+        ]
+      }
+    },
     sizes: ["Standard"],
     sizeType: "earring",
     material: "18K Yellow Gold",
@@ -450,14 +769,43 @@ let ROYRA_PRODUCTS = [
     rating: 4.8,
     reviewsCount: 58,
     image: "assets/products/roy-earring-5.jpg",
-    secondImage: "assets/products/roy-earring-2.jpg",
+    secondImage: "assets/products/roy-earring-1.jpg",
     gallery: [
       "assets/products/roy-earring-5.jpg",
-      "assets/products/roy-earring-2.jpg",
       "assets/products/roy-earring-1.jpg",
+      "assets/products/roy-earring-2.jpg",
       "assets/products/roy-wh00829.webp"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-earring-5.jpg",
+        gallery: [
+          "assets/products/roy-earring-5.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/product-06.jpg",
+          "assets/products/roy-2.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/roy-earring-1.jpg",
+        gallery: [
+          "assets/products/roy-earring-1.jpg",
+          "assets/products/product-04.jpg",
+          "assets/products/product-15.jpg",
+          "assets/products/product-05.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/roy-earring-2.jpg",
+        gallery: [
+          "assets/products/roy-earring-2.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-13.jpg",
+          "assets/products/product-03.jpg"
+        ]
+      }
+    },
     sizes: ["Standard"],
     sizeType: "earring",
     material: "18K Yellow Gold",
@@ -492,14 +840,43 @@ let ROYRA_PRODUCTS = [
     rating: 5.0,
     reviewsCount: 110,
     image: "assets/products/roy-ig-1.jpg",
-    secondImage: "assets/products/roy-wh00829.webp",
+    secondImage: "assets/products/product-04.jpg",
     gallery: [
       "assets/products/roy-ig-1.jpg",
-      "assets/products/roy-wh00829.webp",
-      "assets/products/roy-untitled-3.jpg",
-      "assets/products/roy-2.jpg"
+      "assets/products/product-04.jpg",
+      "assets/products/product-03.jpg",
+      "assets/products/roy-wh00829.webp"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-ig-1.jpg",
+        gallery: [
+          "assets/products/roy-ig-1.jpg",
+          "assets/products/roy-2.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/product-01.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-04.jpg",
+        gallery: [
+          "assets/products/product-04.jpg",
+          "assets/products/product-05.jpg",
+          "assets/products/product-08.jpg",
+          "assets/products/product-14.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/product-03.jpg",
+        gallery: [
+          "assets/products/product-03.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-11.jpg",
+          "assets/products/roy-untitled-3.jpg"
+        ]
+      }
+    },
     sizes: ["6\"", "6.5\"", "7\"", "7.5\"", "8\""],
     sizeType: "bracelet",
     material: "18K White Gold & 925 Sterling Silver",
@@ -530,14 +907,43 @@ let ROYRA_PRODUCTS = [
     rating: 4.8,
     reviewsCount: 88,
     image: "assets/products/roy-2.jpg",
-    secondImage: "assets/products/roy-ig-1.jpg",
+    secondImage: "assets/products/product-08.jpg",
     gallery: [
       "assets/products/roy-2.jpg",
-      "assets/products/roy-ig-1.jpg",
-      "assets/products/roy-wh00829.webp",
-      "assets/products/roy-untitled-3.jpg"
+      "assets/products/product-08.jpg",
+      "assets/products/product-10.jpg",
+      "assets/products/roy-ig-1.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-2.jpg",
+        gallery: [
+          "assets/products/roy-2.jpg",
+          "assets/products/roy-ig-1.jpg",
+          "assets/products/product-01.jpg",
+          "assets/products/roy-wh00829.webp"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-08.jpg",
+        gallery: [
+          "assets/products/product-08.jpg",
+          "assets/products/product-09.jpg",
+          "assets/products/product-14.jpg",
+          "assets/products/product-04.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/product-10.jpg",
+        gallery: [
+          "assets/products/product-10.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/product-16.jpg",
+          "assets/products/roy-untitled-3.jpg"
+        ]
+      }
+    },
     sizes: ["6\"", "6.5\"", "7\"", "7.5\"", "8\""],
     sizeType: "bracelet",
     material: "18K Solid Yellow Gold",
@@ -568,14 +974,43 @@ let ROYRA_PRODUCTS = [
     rating: 4.9,
     reviewsCount: 74,
     image: "assets/products/roy-wh00829.webp",
-    secondImage: "assets/products/roy-2.jpg",
+    secondImage: "assets/products/product-05.jpg",
     gallery: [
       "assets/products/roy-wh00829.webp",
-      "assets/products/roy-2.jpg",
-      "assets/products/roy-ig-1.jpg",
-      "assets/products/roy-untitled-3.jpg"
+      "assets/products/product-05.jpg",
+      "assets/products/product-11.jpg",
+      "assets/products/roy-2.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-wh00829.webp",
+        gallery: [
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-2.jpg",
+          "assets/products/product-02.jpg",
+          "assets/products/roy-ig-1.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-05.jpg",
+        gallery: [
+          "assets/products/product-05.jpg",
+          "assets/products/product-04.jpg",
+          "assets/products/product-15.jpg",
+          "assets/products/product-08.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/product-11.jpg",
+        gallery: [
+          "assets/products/product-11.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/roy-untitled-3.jpg"
+        ]
+      }
+    },
     sizes: ["6\"", "6.5\"", "7\"", "7.5\"", "8\""],
     sizeType: "bracelet",
     material: "18K Yellow Gold & Sterling Silver",
@@ -605,15 +1040,44 @@ let ROYRA_PRODUCTS = [
     badgeType: "new",
     rating: 4.9,
     reviewsCount: 51,
-    image: "assets/products/roy-untitled-3.jpg",
-    secondImage: "assets/products/roy-ig-1.jpg",
+    image: "assets/products/roy-2.jpg",
+    secondImage: "assets/products/product-14.jpg",
     gallery: [
-      "assets/products/roy-untitled-3.jpg",
-      "assets/products/roy-ig-1.jpg",
       "assets/products/roy-2.jpg",
-      "assets/products/roy-wh00829.webp"
+      "assets/products/product-14.jpg",
+      "assets/products/product-13.jpg",
+      "assets/products/roy-ig-1.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-2.jpg",
+        gallery: [
+          "assets/products/roy-2.jpg",
+          "assets/products/roy-ig-1.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/product-01.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-14.jpg",
+        gallery: [
+          "assets/products/product-14.jpg",
+          "assets/products/product-08.jpg",
+          "assets/products/product-04.jpg",
+          "assets/products/product-09.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/product-13.jpg",
+        gallery: [
+          "assets/products/product-13.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/roy-untitled-3.jpg"
+        ]
+      }
+    },
     sizes: ["6.5\"", "7\"", "7.5\"", "8\""],
     sizeType: "bracelet",
     material: "18K Yellow Gold",
@@ -648,14 +1112,43 @@ let ROYRA_PRODUCTS = [
     rating: 4.9,
     reviewsCount: 167,
     image: "assets/products/roy-necklace-1.jpg",
-    secondImage: "assets/products/roy-necklace-3.jpg",
+    secondImage: "assets/products/product-04.jpg",
     gallery: [
       "assets/products/roy-necklace-1.jpg",
+      "assets/products/product-04.jpg",
       "assets/products/roy-necklace-3.jpg",
-      "assets/products/roy-wh00829.webp",
-      "assets/products/roy-2.jpg"
+      "assets/products/roy-wh00829.webp"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-necklace-1.jpg",
+        gallery: [
+          "assets/products/roy-necklace-1.jpg",
+          "assets/products/roy-necklace-3.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-2.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-04.jpg",
+        gallery: [
+          "assets/products/product-04.jpg",
+          "assets/products/product-05.jpg",
+          "assets/products/product-08.jpg",
+          "assets/products/product-14.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/roy-necklace-3.jpg",
+        gallery: [
+          "assets/products/roy-necklace-3.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-11.jpg"
+        ]
+      }
+    },
     sizes: ["16\"", "18\"", "20\""],
     sizeType: "necklace",
     material: "18K Yellow Gold & Rose Gold",
@@ -685,15 +1178,44 @@ let ROYRA_PRODUCTS = [
     badgeType: "gold",
     rating: 4.8,
     reviewsCount: 53,
-    image: "assets/products/roy-necklace-3.jpg",
-    secondImage: "assets/products/roy-necklace-1.jpg",
+    image: "assets/products/roy-necklace-1.jpg",
+    secondImage: "assets/products/product-08.jpg",
     gallery: [
-      "assets/products/roy-necklace-3.jpg",
       "assets/products/roy-necklace-1.jpg",
-      "assets/products/roy-wh00829.webp",
-      "assets/products/roy-untitled-3.jpg"
+      "assets/products/product-08.jpg",
+      "assets/products/roy-necklace-3.jpg",
+      "assets/products/roy-2.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-necklace-1.jpg",
+        gallery: [
+          "assets/products/roy-necklace-1.jpg",
+          "assets/products/roy-2.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-ig-1.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-08.jpg",
+        gallery: [
+          "assets/products/product-08.jpg",
+          "assets/products/product-09.jpg",
+          "assets/products/product-14.jpg",
+          "assets/products/product-04.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/roy-necklace-3.jpg",
+        gallery: [
+          "assets/products/roy-necklace-3.jpg",
+          "assets/products/product-10.jpg",
+          "assets/products/product-11.jpg",
+          "assets/products/product-03.jpg"
+        ]
+      }
+    },
     sizes: ["16\"", "18\"", "20\""],
     sizeType: "necklace",
     material: "18K Yellow Gold",
@@ -724,14 +1246,43 @@ let ROYRA_PRODUCTS = [
     rating: 5.0,
     reviewsCount: 34,
     image: "assets/products/roy-2.jpg",
-    secondImage: "assets/products/roy-necklace-1.jpg",
+    secondImage: "assets/products/product-05.jpg",
     gallery: [
       "assets/products/roy-2.jpg",
-      "assets/products/roy-necklace-1.jpg",
-      "assets/products/roy-necklace-3.jpg",
-      "assets/products/roy-wh00829.webp"
+      "assets/products/product-05.jpg",
+      "assets/products/product-10.jpg",
+      "assets/products/roy-necklace-1.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-2.jpg",
+        gallery: [
+          "assets/products/roy-2.jpg",
+          "assets/products/roy-necklace-1.jpg",
+          "assets/products/roy-wh00829.webp",
+          "assets/products/roy-ig-1.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-05.jpg",
+        gallery: [
+          "assets/products/product-05.jpg",
+          "assets/products/product-04.jpg",
+          "assets/products/product-15.jpg",
+          "assets/products/product-08.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/product-10.jpg",
+        gallery: [
+          "assets/products/product-10.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/roy-necklace-3.jpg",
+          "assets/products/roy-untitled-3.jpg"
+        ]
+      }
+    },
     sizes: ["16\"", "18\"", "20\""],
     sizeType: "necklace",
     material: "18K Yellow Gold",
@@ -762,14 +1313,43 @@ let ROYRA_PRODUCTS = [
     rating: 4.9,
     reviewsCount: 48,
     image: "assets/products/roy-necklace-1.jpg",
-    secondImage: "assets/products/roy-necklace-3.jpg",
+    secondImage: "assets/products/product-14.jpg",
     gallery: [
       "assets/products/roy-necklace-1.jpg",
+      "assets/products/product-14.jpg",
       "assets/products/roy-necklace-3.jpg",
-      "assets/products/roy-wh00829.webp",
       "assets/products/roy-ig-1.jpg"
     ],
     finishes: ["Gold", "Silver", "Rose Gold"],
+    variants: {
+      "Gold": {
+        primary: "assets/products/roy-necklace-1.jpg",
+        gallery: [
+          "assets/products/roy-necklace-1.jpg",
+          "assets/products/roy-necklace-3.jpg",
+          "assets/products/roy-ig-1.jpg",
+          "assets/products/roy-2.jpg"
+        ]
+      },
+      "Silver": {
+        primary: "assets/products/product-14.jpg",
+        gallery: [
+          "assets/products/product-14.jpg",
+          "assets/products/product-08.jpg",
+          "assets/products/product-04.jpg",
+          "assets/products/product-05.jpg"
+        ]
+      },
+      "Rose Gold": {
+        primary: "assets/products/roy-necklace-3.jpg",
+        gallery: [
+          "assets/products/roy-necklace-3.jpg",
+          "assets/products/product-03.jpg",
+          "assets/products/product-11.jpg",
+          "assets/products/product-10.jpg"
+        ]
+      }
+    },
     sizes: ["16\"", "18\"", "20\""],
     sizeType: "necklace",
     material: "18K Yellow Gold",
@@ -839,6 +1419,57 @@ function refreshCurrentPageView() {
   }
 }
 
+// HELPER: GET VARIANT-SPECIFIC IMAGES (GOLD / SILVER / ROSE GOLD)
+function getProductVariantImages(product, finishName) {
+  if (!product) {
+    return {
+      primary: "assets/products/product-01.jpg",
+      gallery: ["assets/products/product-01.jpg"]
+    };
+  }
+
+  const normalizedFinish = (finishName || (product.finishes && product.finishes[0]) || "Gold").trim();
+
+  // 1. Direct match in explicit variants map
+  if (product.variants && typeof product.variants === "object") {
+    const variantKey = Object.keys(product.variants).find(
+      k => k.toLowerCase() === normalizedFinish.toLowerCase()
+    );
+    if (variantKey && product.variants[variantKey]) {
+      const v = product.variants[variantKey];
+      const primary = v.primary || v.image || (Array.isArray(v.gallery) && v.gallery[0]) || product.image;
+      const gallery = (Array.isArray(v.gallery) && v.gallery.length > 0)
+        ? v.gallery
+        : [primary];
+      return { primary, gallery };
+    }
+  }
+
+  // 2. Intelligent finish fallback if explicit variants map isn't populated
+  const isSilver = /silver|white\s*gold|platinum|rhodium/i.test(normalizedFinish);
+  const isRose = /rose\s*gold|pink|copper/i.test(normalizedFinish);
+
+  if (isSilver) {
+    const silverPrimary = product.secondImage || (product.gallery && product.gallery[1]) || "assets/products/product-04.jpg";
+    const silverGallery = product.gallery && product.gallery.length > 1
+      ? [silverPrimary, ...product.gallery.filter(g => g !== silverPrimary)]
+      : [silverPrimary, "assets/products/product-05.jpg", "assets/products/product-08.jpg", "assets/products/product-14.jpg"];
+    return { primary: silverPrimary, gallery: silverGallery };
+  } else if (isRose) {
+    const rosePrimary = (product.gallery && product.gallery[2]) || "assets/products/product-03.jpg";
+    const roseGallery = product.gallery && product.gallery.length > 2
+      ? [rosePrimary, ...product.gallery.filter(g => g !== rosePrimary)]
+      : [rosePrimary, "assets/products/product-10.jpg", "assets/products/product-11.jpg", "assets/products/roy-untitled-3.jpg"];
+    return { primary: rosePrimary, gallery: roseGallery };
+  }
+
+  // Default / Gold
+  const goldPrimary = product.image || (product.gallery && product.gallery[0]) || "assets/products/roy-wh00829.webp";
+  const goldGallery = (product.gallery && product.gallery.length > 0) ? product.gallery : [goldPrimary];
+  return { primary: goldPrimary, gallery: goldGallery };
+}
+window.getProductVariantImages = getProductVariantImages;
+
 // STATE MANAGEMENT (CART & WISHLIST)
 const StorageKeys = {
   CART: 'royra_cart_items',
@@ -860,25 +1491,33 @@ const CartStore = {
     updateGlobalBadges();
     renderCartDrawer();
   },
-  addItem(productId, quantity = 1, size = null, metal = null) {
+  addItem(productId, quantity = 1, size = null, metal = null, customImage = null) {
     const product = ROYRA_PRODUCTS.find(p => p.id === productId || String(p.id) === String(productId) || p.slug === productId);
     if (!product) return;
 
     const items = this.getItems();
     const chosenSize = size || (product.sizes && product.sizes[0]) || "Standard";
-    const chosenMetal = metal || product.material;
+    const chosenMetal = metal || (product.finishes && product.finishes[0]) || product.material || "Gold";
     const cartItemId = `${product.id}_${chosenSize}_${chosenMetal}`;
+
+    // Resolve variant-specific image
+    let itemImage = customImage;
+    if (!itemImage) {
+      const variantData = getProductVariantImages(product, chosenMetal);
+      itemImage = variantData.primary || product.image;
+    }
 
     const existingIndex = items.findIndex(item => item.cartItemId === cartItemId);
     if (existingIndex > -1) {
       items[existingIndex].quantity += quantity;
+      if (itemImage) items[existingIndex].image = itemImage;
     } else {
       items.push({
         cartItemId,
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.image,
+        image: itemImage,
         category: product.category,
         size: chosenSize,
         metal: chosenMetal,
@@ -887,7 +1526,7 @@ const CartStore = {
     }
 
     this.saveItems(items);
-    showToast(`Added "${product.name}" to your shopping bag!`);
+    showToast(`Added "${product.name}" (${chosenMetal}) to your shopping bag!`);
     openCartDrawer();
   },
   removeItem(cartItemId) {
@@ -1163,17 +1802,21 @@ function renderCartDrawer() {
 // QUICK VIEW MODAL
 let qvSelectedFinish = "Gold";
 let qvSelectedSize = "6";
+let qvCurrentProductId = null;
 
 function openQuickView(productId) {
   const product = ROYRA_PRODUCTS.find(p => p.id === productId || String(p.id) === String(productId) || p.slug === productId);
   if (!product) return;
 
+  qvCurrentProductId = product.id;
   const modal = document.getElementById("royra-quickview-modal");
   const content = document.getElementById("quickview-content");
   if (!modal || !content) return;
 
   qvSelectedFinish = product.finishes ? product.finishes[0] : "Gold";
   qvSelectedSize = (product.sizes && product.sizes[0]) || "Standard";
+
+  const variantImages = getProductVariantImages(product, qvSelectedFinish);
 
   const sizeLabel = product.sizeType === "ring" || product.category === "rings"
     ? "Ring Size"
@@ -1186,7 +1829,7 @@ function openQuickView(productId) {
   content.innerHTML = `
     <button class="quickview-close" onclick="closeQuickView()">✕</button>
     <div class="quickview-gallery">
-      <img id="qv-main-img" src="${product.image}" alt="${product.name}" />
+      <img id="qv-main-img" src="${variantImages.primary}" alt="${product.name}" />
     </div>
     <div class="quickview-details">
       <span class="product-category-tag">${product.category}</span>
@@ -1246,6 +1889,18 @@ function selectQuickViewFinish(btn, finish) {
   if (label) label.textContent = finish.toUpperCase();
   btn.closest(".finish-options-row").querySelectorAll(".finish-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
+
+  // Dynamically update QuickView image
+  if (qvCurrentProductId) {
+    const product = ROYRA_PRODUCTS.find(p => p.id === qvCurrentProductId || String(p.id) === String(qvCurrentProductId));
+    if (product) {
+      const variantData = getProductVariantImages(product, finish);
+      const qvImg = document.getElementById("qv-main-img");
+      if (qvImg && variantData.primary) {
+        qvImg.src = variantData.primary;
+      }
+    }
+  }
 }
 
 function selectQuickViewSize(button, size) {
@@ -1257,7 +1912,9 @@ function selectQuickViewSize(button, size) {
 }
 
 function addQuickViewToCart(productId) {
-  CartStore.addItem(productId, 1, qvSelectedSize, qvSelectedFinish);
+  const product = ROYRA_PRODUCTS.find(p => p.id === productId || String(p.id) === String(productId));
+  const variantData = product ? getProductVariantImages(product, qvSelectedFinish) : null;
+  CartStore.addItem(productId, 1, qvSelectedSize, qvSelectedFinish, variantData?.primary);
   closeQuickView();
 }
 
@@ -1947,53 +2604,21 @@ function initProductPage() {
     `;
   }
 
-  // Gallery: Vertical Thumbnails Rail + Main Image
-  const mainImg = document.getElementById("pdp-main-image");
-  if (mainImg) mainImg.src = product.image;
-
-  const thumbsContainer = document.getElementById("pdp-thumbs-list");
-  if (thumbsContainer) {
-    let imagesList = [];
-    if (product.gallery && product.gallery.length > 0) {
-      imagesList = [...product.gallery];
-    } else {
-      imagesList = [product.image];
-    }
-
-    if (product.secondImage && !imagesList.includes(product.secondImage)) {
-      imagesList.splice(1, 0, product.secondImage);
-    }
-
-    // Ensure 4 thumbnails
-    const extraFallbacks = [
-      "assets/products/product-01.jpg",
-      "assets/products/product-02.jpg",
-      "assets/products/product-03.jpg",
-      "assets/products/product-04.jpg"
-    ];
-    for (const fb of extraFallbacks) {
-      if (imagesList.length < 4 && !imagesList.includes(fb)) {
-        imagesList.push(fb);
-      }
-    }
-
-    thumbsContainer.innerHTML = imagesList.map((img, idx) => `
-      <button type="button" class="pdp-thumb-btn ${idx === 0 ? 'active' : ''}" onclick="setPdpImage('${img}', this)" aria-label="View product angle ${idx + 1}">
-        <img src="${img}" alt="${product.name} view ${idx + 1}" />
-      </button>
-    `).join('');
-  }
-
   // Finish Options
   const finishContainer = document.getElementById("pdp-finish-options");
   const finishLabel = document.getElementById("pdp-selected-finish-label");
+  const finishes = product.finishes && product.finishes.length > 0 ? product.finishes : ["Gold", "Silver", "Rose Gold"];
+  currentPdpFinish = finishes[0] || "Gold";
+
   if (finishContainer) {
-    const finishes = product.finishes && product.finishes.length > 0 ? product.finishes : ["Gold", "Silver", "Rose Gold"];
     finishContainer.innerHTML = finishes.map((f, idx) => `
       <button type="button" class="finish-btn ${idx === 0 ? 'active' : ''}" data-finish="${f}" onclick="setPdpFinish('${f}', this)">${f.toUpperCase()}</button>
     `).join('');
     if (finishLabel) finishLabel.textContent = finishes[0].toUpperCase();
   }
+
+  // Gallery: Vertical Thumbnails Rail + Main Image (initialized for selected finish)
+  updatePdpGalleryForFinish(product, currentPdpFinish);
 
   // Size Options (Category aware)
   const sizeContainer = document.getElementById("pdp-size-selector");
@@ -2037,6 +2662,48 @@ function initProductPage() {
   updateWishlistButtonStates();
 }
 
+function updatePdpGalleryForFinish(product, finishName) {
+  if (!product) return;
+  const variantData = getProductVariantImages(product, finishName);
+  
+  // Update Main Image
+  const mainImg = document.getElementById("pdp-main-image");
+  if (mainImg && variantData.primary) {
+    mainImg.src = variantData.primary;
+  }
+
+  // Update Vertical Thumbnail Gallery
+  const thumbsContainer = document.getElementById("pdp-thumbs-list");
+  if (thumbsContainer) {
+    let imagesList = [];
+    if (variantData.gallery && variantData.gallery.length > 0) {
+      imagesList = [...variantData.gallery];
+    } else {
+      imagesList = [variantData.primary || product.image];
+    }
+
+    // Ensure at least 4 thumbnails for luxury layout
+    const extraFallbacks = [
+      "assets/products/product-01.jpg",
+      "assets/products/product-02.jpg",
+      "assets/products/product-03.jpg",
+      "assets/products/product-04.jpg"
+    ];
+    for (const fb of extraFallbacks) {
+      if (imagesList.length < 4 && !imagesList.includes(fb)) {
+        imagesList.push(fb);
+      }
+    }
+
+    thumbsContainer.innerHTML = imagesList.map((img, idx) => `
+      <button type="button" class="pdp-thumb-btn ${idx === 0 ? 'active' : ''}" onclick="setPdpImage('${img}', this)" aria-label="View ${finishName} angle ${idx + 1}">
+        <img src="${img}" alt="${product.name} ${finishName} view ${idx + 1}" />
+      </button>
+    `).join('');
+  }
+}
+window.updatePdpGalleryForFinish = updatePdpGalleryForFinish;
+
 function setPdpImage(src, thumbBtn) {
   const mainImg = document.getElementById("pdp-main-image");
   if (mainImg) mainImg.src = src;
@@ -2050,6 +2717,11 @@ function setPdpFinish(finishName, btn) {
   if (label) label.textContent = finishName.toUpperCase();
   document.querySelectorAll("#pdp-finish-options .finish-btn").forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
+
+  // Dynamically update main image and gallery rail for this metal finish
+  if (currentPdpProduct) {
+    updatePdpGalleryForFinish(currentPdpProduct, finishName);
+  }
 }
 
 function setPdpSize(size, btn) {
@@ -2075,13 +2747,15 @@ function decrementPdpQty() {
 function addCurrentPdpToCart() {
   if (!currentPdpProduct) return;
   const qty = parseInt(document.getElementById("pdp-qty-input")?.value || "1", 10);
-  CartStore.addItem(currentPdpProduct.id, qty, currentPdpSize, currentPdpFinish);
+  const variantData = getProductVariantImages(currentPdpProduct, currentPdpFinish);
+  CartStore.addItem(currentPdpProduct.id, qty, currentPdpSize, currentPdpFinish, variantData?.primary);
 }
 
 function buyCurrentPdpNow() {
   if (!currentPdpProduct) return;
   const qty = parseInt(document.getElementById("pdp-qty-input")?.value || "1", 10);
-  CartStore.addItem(currentPdpProduct.id, qty, currentPdpSize, currentPdpFinish);
+  const variantData = getProductVariantImages(currentPdpProduct, currentPdpFinish);
+  CartStore.addItem(currentPdpProduct.id, qty, currentPdpSize, currentPdpFinish, variantData?.primary);
   window.location.href = "cart.html";
 }
 
