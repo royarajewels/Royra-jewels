@@ -68,9 +68,67 @@ function escHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+// API Base Configuration and resolution
+function getApiBaseUrl() {
+  // 1. Explicit override in localStorage
+  const savedBase = localStorage.getItem('royra_cpanel_api_base');
+  if (savedBase && savedBase.trim()) {
+    return savedBase.trim().replace(/\/+$/, '');
+  }
+
+  // 2. Global window environment config
+  if (window.__ENV__ && window.__ENV__.API_BASE && window.__ENV__.API_BASE.trim()) {
+    return window.__ENV__.API_BASE.trim().replace(/\/+$/, '');
+  }
+  if (window.CPANEL_API_BASE && window.CPANEL_API_BASE.trim()) {
+    return window.CPANEL_API_BASE.trim().replace(/\/+$/, '');
+  }
+
+  const host = window.location.hostname;
+  const port = window.location.port;
+
+  // 3. Localhost & Local Development
+  if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0') {
+    // If we are on port 3000, origin is direct backend.
+    // If on port 3002 or others, Vite proxy transparently routes /api to http://localhost:3000.
+    return window.location.origin;
+  }
+
+  // 4. GitHub Pages static hosting (e.g. *.github.io)
+  if (host.endsWith('github.io')) {
+    // GitHub Pages cannot execute Node APIs; return saved custom URL or origin
+    return localStorage.getItem('royra_cpanel_api_base') || window.location.origin;
+  }
+
+  // 5. Cloud Run / Production container / custom domain
+  return window.location.origin;
+}
+
+function setCustomApiBase() {
+  const current = localStorage.getItem('royra_cpanel_api_base') || getApiBaseUrl();
+  const input = prompt(
+    'Enter C-Panel Backend API Base URL:\n(e.g., http://localhost:3000, http://localhost:3002, or your deployed Cloud Run URL)',
+    current
+  );
+  if (input !== null) {
+    const trimmed = input.trim();
+    if (trimmed) {
+      localStorage.setItem('royra_cpanel_api_base', trimmed);
+      showToast(`API Base updated to ${trimmed}`, 'success');
+    } else {
+      localStorage.removeItem('royra_cpanel_api_base');
+      showToast('API Base reset to automatic detection', 'info');
+    }
+    renderActiveTab();
+  }
+}
+
 // API Helper with strict JSON validation and diagnostics
 async function apiCall(endpoint, method = 'GET', body = null) {
   const startTime = performance.now();
+  const base = getApiBaseUrl();
+  let fullUrl = endpoint.startsWith('http') ? endpoint : (base ? `${base}${endpoint}` : endpoint);
+
   const options = {
     method,
     headers: {
@@ -85,12 +143,34 @@ async function apiCall(endpoint, method = 'GET', body = null) {
   }
 
   try {
-    const res = await fetch(endpoint, options);
-    const contentType = res.headers.get('content-type') || '';
-    const duration = Math.round(performance.now() - startTime);
+    let res = await fetch(fullUrl, options);
+    let contentType = res.headers.get('content-type') || '';
+    let duration = Math.round(performance.now() - startTime);
+
+    // Fallback detection: If local request on non-3000 port failed with 404 or HTML, try http://localhost:3000 directly
+    const host = window.location.hostname;
+    const port = window.location.port;
+    if ((!res.ok || !contentType.includes('application/json')) && 
+        (host === 'localhost' || host === '127.0.0.1') && 
+        port && port !== '3000' && 
+        !fullUrl.startsWith('http://localhost:3000')) {
+      try {
+        const fallbackUrl = `http://localhost:3000${endpoint}`;
+        const fallbackRes = await fetch(fallbackUrl, options);
+        const fbContentType = fallbackRes.headers.get('content-type') || '';
+        if (fallbackRes.ok && fbContentType.includes('application/json')) {
+          res = fallbackRes;
+          fullUrl = fallbackUrl;
+          contentType = fbContentType;
+          duration = Math.round(performance.now() - startTime);
+        }
+      } catch (fbErr) {
+        // preserve original error
+      }
+    }
 
     CPanelState.diagnostics = {
-      apiBase: window.location.origin,
+      apiBase: fullUrl.startsWith('http://localhost:3000') ? 'http://localhost:3000 (Direct Backend)' : (base || window.location.origin),
       endpoint,
       httpStatus: res.status,
       contentType: contentType || 'none',
@@ -101,13 +181,13 @@ async function apiCall(endpoint, method = 'GET', body = null) {
     // Verify content-type before parsing
     if (!contentType.includes('application/json')) {
       const rawText = await res.text();
-      console.warn(`[C-Panel API] CPANEL API ROUTE ERROR on ${endpoint}: Content-Type is "${contentType}"`, rawText.slice(0, 150));
+      console.warn(`[C-Panel API] CPANEL API ROUTE ERROR on ${fullUrl}: Content-Type is "${contentType}"`, rawText.slice(0, 150));
       CPanelState.diagnostics.lastError = `CPANEL API ROUTE ERROR: non-JSON response (${contentType || 'empty'})`;
       return {
         success: false,
         status: 'unavailable',
         isApiUnavailable: true,
-        error: `CPANEL API ROUTE ERROR: Endpoint ${endpoint} returned ${contentType || 'text/html'} instead of application/json.`
+        error: `CPANEL API ROUTE ERROR: Endpoint ${endpoint} returned ${contentType || 'text/html'} instead of application/json. Ensure backend server is running.`
       };
     }
 
@@ -127,10 +207,35 @@ async function apiCall(endpoint, method = 'GET', body = null) {
     const data = await res.json();
     return data;
   } catch (err) {
+    // If local fetch on port 3002/etc threw network error, attempt direct connection to localhost:3000
+    const host = window.location.hostname;
+    const port = window.location.port;
+    if ((host === 'localhost' || host === '127.0.0.1') && port && port !== '3000' && !fullUrl.startsWith('http://localhost:3000')) {
+      try {
+        const directUrl = `http://localhost:3000${endpoint}`;
+        const directRes = await fetch(directUrl, options);
+        const directCt = directRes.headers.get('content-type') || '';
+        const duration = Math.round(performance.now() - startTime);
+        if (directRes.ok && directCt.includes('application/json')) {
+          CPanelState.diagnostics = {
+            apiBase: 'http://localhost:3000 (Direct Local Backend)',
+            endpoint,
+            httpStatus: directRes.status,
+            contentType: directCt,
+            responseTimeMs: duration,
+            lastError: null
+          };
+          return await directRes.json();
+        }
+      } catch (directErr) {
+        // Fall through
+      }
+    }
+
     const duration = Math.round(performance.now() - startTime);
     console.warn(`[C-Panel API] Network error on ${endpoint}:`, err);
     CPanelState.diagnostics = {
-      apiBase: window.location.origin,
+      apiBase: base || window.location.origin,
       endpoint,
       httpStatus: 'NETWORK_ERROR',
       contentType: 'none',
@@ -362,7 +467,12 @@ async function renderDashboard(container) {
           <span style="font-size:13px;font-weight:700;color:#1C1917">C-Panel API Diagnostics</span>
           <span class="cp-status online" style="font-size:10px;padding:2px 8px">Verified JSON</span>
         </div>
-        <span style="font-size:11.5px;color:#8C867D">Service: ${escHtml(healthRes.service || 'cpanel-api')} • Status: ${escHtml(healthRes.status || 'online')}</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:11.5px;color:#8C867D">Service: ${escHtml(healthRes.service || 'cpanel-api')} • Status: ${escHtml(healthRes.status || 'online')}</span>
+          <button class="cp-btn cp-btn-outline cp-btn-sm" style="padding:2px 8px;font-size:11px" onclick="setCustomApiBase()">
+            <i data-lucide="settings-2" style="width:12px;height:12px"></i> Change API Base
+          </button>
+        </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));gap:12px;font-size:12px;font-family:monospace;color:#44403C">
         <div><span style="color:#8C867D">API Base:</span> <strong style="color:#1C1917">${escHtml(diag.apiBase)}</strong></div>
