@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROYRA JEWELS - C-Panel Hosting & System Administration</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  
+  <!-- C-Panel Stylesheet -->
+  <link rel="stylesheet" href="cpanel.css" />
+  <link rel="stylesheet" href="../cpanel.css" />
+
+  <!-- Lucide Icons -->
+  <script src="../lucide.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="cpanel-body">
+  <div class="cpanel-layout">
+    <!-- SIDEBAR -->
+    <aside id="cpanel-sidebar" class="cpanel-sidebar">
+      <div class="cpanel-sidebar-header">
+        <a href="index.html" class="cpanel-logo">
+          <span class="cpanel-logo-text">ROYRA</span>
+          <span class="cpanel-badge">C-PANEL</span>
+        </a>
+      </div>
+
+      <nav class="cpanel-nav">
+        <div class="cpanel-nav-title">Server & Hosting</div>
+        <a class="cpanel-nav-item active" data-tab="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a class="cpanel-nav-item" data-tab="filemanager">
+          <i data-lucide="folder-tree"></i>
+          <span>File Manager</span>
+        </a>
+        <a class="cpanel-nav-item" data-tab="database">
+          <i data-lucide="database"></i>
+          <span>Database</span>
+        </a>
+        <a class="cpanel-nav-item" data-tab="env">
+          <i data-lucide="key-round"></i>
+          <span>Environment</span>
+        </a>
+
+        <div class="cpanel-nav-title">DevOps & Release</div>
+        <a class="cpanel-nav-item" data-tab="github">
+          <i data-lucide="git-merge"></i>
+          <span>GitHub / Deployments</span>
+        </a>
+        <a class="cpanel-nav-item" data-tab="backups">
+          <i data-lucide="archive"></i>
+          <span>Backups & Restore</span>
+        </a>
+        <a class="cpanel-nav-item" data-tab="logs">
+          <i data-lucide="terminal"></i>
+          <span>System Logs</span>
+        </a>
+
+        <div class="cpanel-nav-title">Infrastructure</div>
+        <a class="cpanel-nav-item" data-tab="domain">
+          <i data-lucide="globe"></i>
+          <span>Domains & SSL</span>
+        </a>
+        <a class="cpanel-nav-item" data-tab="storage">
+          <i data-lucide="hard-drive"></i>
+          <span>Storage & Media</span>
+        </a>
+        <a class="cpanel-nav-item" data-tab="api">
+          <i data-lucide="network"></i>
+          <span>API Control</span>
+        </a>
+
+        <div class="cpanel-nav-title">Access & Security</div>
+        <a class="cpanel-nav-item" data-tab="security">
+          <i data-lucide="shield-check"></i>
+          <span>Security & Sessions</span>
+        </a>
+        <a class="cpanel-nav-item" data-tab="users">
+          <i data-lucide="users"></i>
+          <span>Users & Permissions</span>
+        </a>
+      </nav>
+
+      <div class="cpanel-sidebar-footer">
+        <a href="../admin/index.html" class="cpanel-switch-erp" title="Switch to Jewellery ERP Business Operations Panel">
+          <i data-lucide="gem"></i>
+          <span>Switch to ERP Admin</span>
+        </a>
+        <a href="../index.html" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;color:#8C867D;text-decoration:none">
+          <i data-lucide="external-link" style="width:13px;height:13px"></i>
+          <span>View Public Storefront</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONSOLE -->
+    <main class="cpanel-main">
+      <!-- TOPBAR -->
+      <header class="cpanel-topbar">
+        <div class="cpanel-topbar-left">
+          <button type="button" class="cp-btn cp-btn-outline cp-btn-sm" style="display:none" id="sidebar-toggle-btn" onclick="toggleSidebar()">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="cpanel-topbar-title-wrap">
+            <h1 class="cpanel-topbar-title">Royra Hosting C-Panel</h1>
+            <span class="cpanel-topbar-sub" id="cp-page-subtitle">System Overview & Live Health Telemetry</span>
+          </div>
+        </div>
+
+        <div class="cpanel-topbar-right">
+          <div class="cpanel-live-pill">
+            <span class="cpanel-live-dot"></span>
+            <span>Host: Online</span>
+          </div>
+
+          <div class="cpanel-role-switcher" title="Switch C-Panel simulation role">
+            <i data-lucide="user-check" style="width:14px;height:14px"></i>
+            <span>Role:</span>
+            <select id="cp-role-select" class="cpanel-role-select">
+              <option value="Super Admin">Super Admin</option>
+              <option value="System Admin">System Admin</option>
+              <option value="Deployment Manager">Deployment Manager</option>
+              <option value="Database Admin">Database Admin</option>
+              <option value="Support / Viewer">Support / Viewer</option>
+            </select>
+          </div>
+
+          <a href="../admin/index.html" class="cp-btn cp-btn-outline cp-btn-sm">
+            <i data-lucide="layout-grid"></i> ERP Business Panel
+          </a>
+        </div>
+      </header>
+
+      <!-- DYNAMIC CONTENT CONTAINER -->
+      <div class="cpanel-content" id="cpanel-content-area">
+        <!-- Injected via cpanel.js -->
+      </div>
+    </main>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="cp-toast-container" class="cp-toast-container"></div>
+
+  <!-- SCRIPTS -->
+  <script src="cpanel.js"></script>
+  <script src="../cpanel.js"></script>
+</body>
+</html>

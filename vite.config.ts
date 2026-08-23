@@ -50,6 +50,8 @@ export default defineConfig(() => {
           admin_reports: path.resolve(__dirname, 'admin/reports.html'),
           admin_users: path.resolve(__dirname, 'admin/users.html'),
           admin_settings: path.resolve(__dirname, 'admin/settings.html'),
+          cpanel: path.resolve(__dirname, 'cpanel/index.html'),
+          cpanel_root: path.resolve(__dirname, 'cpanel.html'),
         },
       },
     },

@@ -4,6 +4,7 @@ import path from 'path';
 import sql from 'mssql';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
+import cpanelRouter from './server/cpanel';
 
 dotenv.config();
 
@@ -12,6 +13,9 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Mount C-Panel Hosting & Server Administration API
+app.use('/api/cpanel', cpanelRouter);
 
 // SQL Server Configuration from Environment Variables
 const sqlConfig: sql.config = {
