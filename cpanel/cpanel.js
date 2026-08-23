@@ -16,6 +16,14 @@ const CPanelState = {
   envData: [],
   logsData: [],
   dbData: null,
+  diagnostics: {
+    apiBase: window.location.origin,
+    endpoint: '/api/cpanel/overview',
+    httpStatus: 'Pending',
+    contentType: 'Pending',
+    responseTimeMs: 0,
+    lastError: null
+  },
   rolesPermissions: {
     'Super Admin': ['all'],
     'System Admin': ['files_write', 'env_edit', 'backup_create', 'api_manage', 'cache_clear'],
@@ -60,8 +68,9 @@ function escHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-// API Helper with robust JSON validation and HTML fallthrough guard
+// API Helper with strict JSON validation and diagnostics
 async function apiCall(endpoint, method = 'GET', body = null) {
+  const startTime = performance.now();
   const options = {
     method,
     headers: {
@@ -78,28 +87,39 @@ async function apiCall(endpoint, method = 'GET', body = null) {
   try {
     const res = await fetch(endpoint, options);
     const contentType = res.headers.get('content-type') || '';
-    
-    // Check if the response is not JSON or is an HTML error page
+    const duration = Math.round(performance.now() - startTime);
+
+    CPanelState.diagnostics = {
+      apiBase: window.location.origin,
+      endpoint,
+      httpStatus: res.status,
+      contentType: contentType || 'none',
+      responseTimeMs: duration,
+      lastError: res.ok ? null : `HTTP ${res.status}`
+    };
+
+    // Verify content-type before parsing
     if (!contentType.includes('application/json')) {
-      const text = await res.text();
-      if (text.trim().startsWith('<') || text.includes('<!DOCTYPE')) {
-        console.warn(`[C-Panel API] Received HTML response for ${endpoint} instead of JSON.`);
-        return {
-          success: false,
-          status: 'unavailable',
-          isApiUnavailable: true,
-          error: `Node.js server API at ${endpoint} returned HTML (Status ${res.status}). Ensure the backend server is running on port 3000.`
-        };
-      }
+      const rawText = await res.text();
+      console.warn(`[C-Panel API] CPANEL API ROUTE ERROR on ${endpoint}: Content-Type is "${contentType}"`, rawText.slice(0, 150));
+      CPanelState.diagnostics.lastError = `CPANEL API ROUTE ERROR: non-JSON response (${contentType || 'empty'})`;
+      return {
+        success: false,
+        status: 'unavailable',
+        isApiUnavailable: true,
+        error: `CPANEL API ROUTE ERROR: Endpoint ${endpoint} returned ${contentType || 'text/html'} instead of application/json.`
+      };
+    }
+
+    if (!res.ok) {
       try {
-        const parsed = JSON.parse(text);
-        return parsed;
-      } catch (parseErr) {
+        const errorJson = await res.json();
+        return errorJson;
+      } catch (e) {
         return {
           success: false,
-          status: 'unavailable',
-          isApiUnavailable: true,
-          error: `Invalid response format from ${endpoint} (Status ${res.status}).`
+          status: 'error',
+          error: `HTTP Error ${res.status}: ${res.statusText}`
         };
       }
     }
@@ -107,12 +127,21 @@ async function apiCall(endpoint, method = 'GET', body = null) {
     const data = await res.json();
     return data;
   } catch (err) {
-    console.warn(`[C-Panel API] Network/fetch error on ${endpoint}:`, err);
+    const duration = Math.round(performance.now() - startTime);
+    console.warn(`[C-Panel API] Network error on ${endpoint}:`, err);
+    CPanelState.diagnostics = {
+      apiBase: window.location.origin,
+      endpoint,
+      httpStatus: 'NETWORK_ERROR',
+      contentType: 'none',
+      responseTimeMs: duration,
+      lastError: err.message
+    };
     return {
       success: false,
       status: 'unavailable',
       isApiUnavailable: true,
-      error: `Could not connect to C-Panel API at ${endpoint}. Please verify that the server is online.`
+      error: `Could not connect to C-Panel API at ${endpoint}. ${err.message}`
     };
   }
 }
@@ -226,7 +255,10 @@ async function renderActiveTab() {
 // 1. DASHBOARD MODULE
 // -------------------------------------------------------------
 async function renderDashboard(container) {
+  // Test health check endpoint in background for system verification
+  const healthRes = await apiCall('/api/cpanel/health');
   const res = await apiCall('/api/cpanel/overview');
+  
   if (!res.success) {
     container.innerHTML = `
       <div class="cp-card" style="border-left: 4px solid #D97706; padding: 24px;">
@@ -239,12 +271,23 @@ async function renderDashboard(container) {
             <div style="font-size:13.5px;color:#57534E;line-height:1.6;margin-bottom:12px">
               ${escHtml(res.error || 'The server overview endpoint is currently not responding with JSON.')}
             </div>
+            
+            <!-- Diagnostics Panel in Error State -->
+            <div style="background:#FBF9F5;border:1px solid #EAE5DB;border-radius:6px;padding:12px;margin-bottom:14px;font-family:monospace;font-size:12px;display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px">
+              <div><strong>API Base:</strong> ${escHtml(CPanelState.diagnostics.apiBase)}</div>
+              <div><strong>Endpoint:</strong> ${escHtml(CPanelState.diagnostics.endpoint)}</div>
+              <div><strong>HTTP Status:</strong> ${escHtml(CPanelState.diagnostics.httpStatus)}</div>
+              <div><strong>Content-Type:</strong> ${escHtml(CPanelState.diagnostics.contentType)}</div>
+              <div><strong>Response Time:</strong> ${CPanelState.diagnostics.responseTimeMs} ms</div>
+              <div><strong>Last Error:</strong> ${escHtml(CPanelState.diagnostics.lastError || 'None')}</div>
+            </div>
+
             <div style="display:flex;gap:10px;align-items:center">
               <button class="cp-btn cp-btn-gold cp-btn-sm" onclick="renderActiveTab()">
                 <i data-lucide="refresh-cw"></i> Retry Connection
               </button>
               <a href="/api/cpanel/overview" target="_blank" class="cp-btn cp-btn-outline cp-btn-sm">
-                <i data-lucide="external-link"></i> Test Endpoint
+                <i data-lucide="external-link"></i> Test Endpoint Direct
               </a>
             </div>
           </div>
@@ -257,6 +300,7 @@ async function renderDashboard(container) {
 
   const d = res;
   CPanelState.overviewData = d;
+  const diag = CPanelState.diagnostics;
 
   const html = `
     <!-- Top Metrics Grid -->
@@ -307,6 +351,26 @@ async function renderDashboard(container) {
           <i data-lucide="git-branch" style="width:13px;height:13px"></i>
           <span>Auto Deployment Configured</span>
         </div>
+      </div>
+    </div>
+
+    <!-- API Diagnostics Bar -->
+    <div class="cp-card" style="padding:14px 20px;margin-bottom:20px;border-left:3px solid #15803D;background:#FAFAF7">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <i data-lucide="check-circle-2" style="width:16px;height:16px;color:#15803D"></i>
+          <span style="font-size:13px;font-weight:700;color:#1C1917">C-Panel API Diagnostics</span>
+          <span class="cp-status online" style="font-size:10px;padding:2px 8px">Verified JSON</span>
+        </div>
+        <span style="font-size:11.5px;color:#8C867D">Service: ${escHtml(healthRes.service || 'cpanel-api')} • Status: ${escHtml(healthRes.status || 'online')}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));gap:12px;font-size:12px;font-family:monospace;color:#44403C">
+        <div><span style="color:#8C867D">API Base:</span> <strong style="color:#1C1917">${escHtml(diag.apiBase)}</strong></div>
+        <div><span style="color:#8C867D">Endpoint:</span> <strong style="color:#1C1917">${escHtml(diag.endpoint)}</strong></div>
+        <div><span style="color:#8C867D">HTTP Status:</span> <strong style="color:#15803D">${escHtml(diag.httpStatus)} OK</strong></div>
+        <div><span style="color:#8C867D">Content-Type:</span> <strong style="color:#1C1917">${escHtml(diag.contentType)}</strong></div>
+        <div><span style="color:#8C867D">Response Time:</span> <strong style="color:#1C1917">${diag.responseTimeMs} ms</strong></div>
+        <div><span style="color:#8C867D">Last API Error:</span> <strong style="color:#15803D">${escHtml(diag.lastError || 'None (Clean JSON)')}</strong></div>
       </div>
     </div>
 
