@@ -5,6 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    base: './',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
@@ -25,11 +26,30 @@ export default defineConfig(() => {
           contact: path.resolve(__dirname, 'contact.html'),
           cart: path.resolve(__dirname, 'cart.html'),
           wishlist: path.resolve(__dirname, 'wishlist.html'),
+          order_confirmation: path.resolve(__dirname, 'order-confirmation.html'),
           admin_login: path.resolve(__dirname, 'admin/login.html'),
+          admin_reset_password: path.resolve(__dirname, 'admin/reset-password.html'),
           admin_index: path.resolve(__dirname, 'admin/index.html'),
           admin_products: path.resolve(__dirname, 'admin/products.html'),
           admin_product_form: path.resolve(__dirname, 'admin/product-form.html'),
           admin_categories: path.resolve(__dirname, 'admin/categories.html'),
+          admin_collections: path.resolve(__dirname, 'admin/collections.html'),
+          admin_banners: path.resolve(__dirname, 'admin/banners.html'),
+          admin_media: path.resolve(__dirname, 'admin/media.html'),
+          admin_orders: path.resolve(__dirname, 'admin/orders.html'),
+          admin_customers: path.resolve(__dirname, 'admin/customers.html'),
+          admin_coupons: path.resolve(__dirname, 'admin/coupons.html'),
+          admin_offers: path.resolve(__dirname, 'admin/offers.html'),
+          admin_inventory: path.resolve(__dirname, 'admin/inventory.html'),
+          admin_purchase_orders: path.resolve(__dirname, 'admin/purchase-orders.html'),
+          admin_suppliers: path.resolve(__dirname, 'admin/suppliers.html'),
+          admin_payments: path.resolve(__dirname, 'admin/payments.html'),
+          admin_refunds: path.resolve(__dirname, 'admin/refunds.html'),
+          admin_returns: path.resolve(__dirname, 'admin/returns.html'),
+          admin_shipping: path.resolve(__dirname, 'admin/shipping.html'),
+          admin_reports: path.resolve(__dirname, 'admin/reports.html'),
+          admin_users: path.resolve(__dirname, 'admin/users.html'),
+          admin_settings: path.resolve(__dirname, 'admin/settings.html'),
         },
       },
     },
