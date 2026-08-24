@@ -68,6 +68,9 @@ function escHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+// Default production backend URL for Royra Jewels C-Panel
+const DEFAULT_PROD_API_BASE = 'https://ais-dev-qvmgzjx5odfaoem7rmqock-197524094525.asia-southeast1.run.app';
+
 // API Base Configuration and resolution
 function getApiBaseUrl() {
   // 1. Explicit override in localStorage
@@ -95,9 +98,9 @@ function getApiBaseUrl() {
   }
 
   // 4. GitHub Pages static hosting (e.g. *.github.io)
-  if (host.endsWith('github.io')) {
-    // GitHub Pages cannot execute Node APIs; return saved custom URL or origin
-    return localStorage.getItem('royra_cpanel_api_base') || window.location.origin;
+  if (host.includes('github.io')) {
+    // GitHub Pages cannot execute Node APIs; return default deployed Cloud Run backend
+    return DEFAULT_PROD_API_BASE;
   }
 
   // 5. Cloud Run / Production container / custom domain
