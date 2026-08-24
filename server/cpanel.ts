@@ -1824,6 +1824,577 @@ router.post('/users/update-role', (req, res) => {
   res.json({ success: true, message: `User "${target.name}" role updated to ${newRole}.`, user: target });
 });
 
+// =============================================================
+// 8. WEBSITE CONTENT STUDIO APIS (Banners, Media, Sections, SEO)
+// =============================================================
+
+// In-Memory Storage for Website Content Management
+interface CPanelBanner {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  ctaText: string;
+  ctaUrl: string;
+  position: string;
+  sortOrder: number;
+  desktopImage: string;
+  mobileImage: string;
+  status: 'published' | 'scheduled' | 'draft' | 'archived';
+  startDate?: string;
+  endDate?: string;
+  altText: string;
+  viewsCount: number;
+  clicksCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+let cpanelBanners: CPanelBanner[] = [
+  {
+    id: 'banner-01',
+    title: 'THE RADIANCE OF HIGH HEIRLOOMS',
+    subtitle: 'SPRING / SUMMER 2026 SIGNATURE CAMPAIGN',
+    description: 'Handcrafted solitaires and micro-pavé brilliance cast in certified 18K Yellow Gold and 925 Sterling Silver.',
+    ctaText: 'DISCOVER COLLECTION',
+    ctaUrl: 'shop.html?category=rings',
+    position: 'hero',
+    sortOrder: 1,
+    desktopImage: 'assets/products/roy-wh00829.webp',
+    mobileImage: 'assets/products/roy-wh00829.webp',
+    status: 'published',
+    altText: 'Royra Jewels Spring Summer Fine Jewellery Banner',
+    viewsCount: 14250,
+    clicksCount: 1890,
+    createdAt: new Date(Date.now() - 86400000 * 15).toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'banner-02',
+    title: 'THE BRIDAL BESPOKE SUITE',
+    subtitle: 'TIMELESS ROYAL EMERALDS & SOLITAIRES',
+    description: 'Intricately engineered bridal crowns and tennis necklaces designed for cherished moments.',
+    ctaText: 'EXPLORE BRIDAL',
+    ctaUrl: 'shop.html?collection=bridal',
+    position: 'hero',
+    sortOrder: 2,
+    desktopImage: 'assets/products/roy-untitled-3.jpg',
+    mobileImage: 'assets/products/roy-untitled-3.jpg',
+    status: 'published',
+    altText: 'Royra Jewels Bridal Solitaires Banner',
+    viewsCount: 9800,
+    clicksCount: 1120,
+    createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'banner-03',
+    title: 'EVERYDAY RADIANCE EDIT',
+    subtitle: 'MINIMAL LUXURY UNDER ₹5,000',
+    description: 'Featherlight stackable bands and geometric studs engineered for all-day seamless comfort.',
+    ctaText: 'SHOP BESTSELLERS',
+    ctaUrl: 'shop.html?filter=bestseller',
+    position: 'mid-page',
+    sortOrder: 3,
+    desktopImage: 'assets/products/roy-2.jpg',
+    mobileImage: 'assets/products/roy-2.jpg',
+    status: 'published',
+    altText: 'Everyday Fine Jewellery Collection',
+    viewsCount: 6540,
+    clicksCount: 780,
+    createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+];
+
+interface CPanelMediaItem {
+  id: string;
+  name: string;
+  url: string;
+  folder: 'banners' | 'products' | 'variants' | 'cad' | 'certificates' | 'collections' | 'blog' | 'icons' | 'other';
+  dimensions: string;
+  sizeBytes: number;
+  format: string;
+  altText: string;
+  uploadDate: string;
+}
+
+let cpanelMediaLibrary: CPanelMediaItem[] = [
+  { id: 'media-01', name: 'roy-wh00829.webp', url: 'assets/products/roy-wh00829.webp', folder: 'banners', dimensions: '1920x700', sizeBytes: 184500, format: 'webp', altText: 'Hero Fine Jewellery Banner', uploadDate: new Date(Date.now() - 86400000 * 12).toISOString() },
+  { id: 'media-02', name: 'roy-untitled-3.jpg', url: 'assets/products/roy-untitled-3.jpg', folder: 'banners', dimensions: '1920x700', sizeBytes: 245000, format: 'jpg', altText: 'Bridal Banner', uploadDate: new Date(Date.now() - 86400000 * 10).toISOString() },
+  { id: 'media-03', name: 'plain-x-band-gold.jpg', url: 'assets/products/product-01.jpg', folder: 'variants', dimensions: '1000x1000', sizeBytes: 142000, format: 'jpg', altText: 'Plain X Band Gold Variant', uploadDate: new Date(Date.now() - 86400000 * 8).toISOString() },
+  { id: 'media-04', name: 'plain-x-band-silver.jpg', url: 'assets/products/product-04.jpg', folder: 'variants', dimensions: '1000x1000', sizeBytes: 139000, format: 'jpg', altText: 'Plain X Band Silver Variant', uploadDate: new Date(Date.now() - 86400000 * 8).toISOString() },
+  { id: 'media-05', name: 'plain-x-band-rosegold.jpg', url: 'assets/products/product-03.jpg', folder: 'variants', dimensions: '1000x1000', sizeBytes: 145000, format: 'jpg', altText: 'Plain X Band Rose Gold Variant', uploadDate: new Date(Date.now() - 86400000 * 8).toISOString() },
+  { id: 'media-06', name: 'product-02.jpg', url: 'assets/products/product-02.jpg', folder: 'products', dimensions: '1000x1000', sizeBytes: 128000, format: 'jpg', altText: 'Classic Solitaire Ring', uploadDate: new Date(Date.now() - 86400000 * 7).toISOString() },
+  { id: 'media-07', name: 'product-05.jpg', url: 'assets/products/product-05.jpg', folder: 'products', dimensions: '1000x1000', sizeBytes: 156000, format: 'jpg', altText: 'Tennis Bracelet Silver', uploadDate: new Date(Date.now() - 86400000 * 6).toISOString() },
+  { id: 'media-08', name: 'product-06.jpg', url: 'assets/products/product-06.jpg', folder: 'products', dimensions: '1000x1000', sizeBytes: 162000, format: 'jpg', altText: 'Marquise Crown Stackable Ring', uploadDate: new Date(Date.now() - 86400000 * 5).toISOString() },
+  { id: 'media-09', name: 'hallmark-cert-bis.pdf', url: 'assets/certificates/hallmark.pdf', folder: 'certificates', dimensions: 'PDF Document', sizeBytes: 420000, format: 'pdf', altText: 'BIS 916 Hallmark Official Certification', uploadDate: new Date(Date.now() - 86400000 * 30).toISOString() },
+  { id: 'media-10', name: 'royra-emblem.svg', url: 'assets/icons/royra-emblem.svg', folder: 'icons', dimensions: 'Vector SVG', sizeBytes: 12400, format: 'svg', altText: 'Royra Royal Crown Emblem', uploadDate: new Date(Date.now() - 86400000 * 40).toISOString() }
+];
+
+interface CPanelHomepageSection {
+  id: string;
+  sectionKey: string;
+  name: string;
+  enabled: boolean;
+  sortOrder: number;
+  title: string;
+  subtitle: string;
+  ctaText?: string;
+  ctaUrl?: string;
+  image?: string;
+  contentSnippet?: string;
+}
+
+let cpanelHomepageSections: CPanelHomepageSection[] = [
+  { id: 'sec-01', sectionKey: 'announcement', name: 'Top Announcement Bar', enabled: true, sortOrder: 1, title: 'BIS 916 HALLMARKED GOLD • INSURED COMPLIMENTARY EXPRESS SHIPPING ACROSS INDIA', subtitle: 'Special Offer' },
+  { id: 'sec-02', sectionKey: 'hero', name: 'Hero Banner Carousel', enabled: true, sortOrder: 2, title: 'THE RADIANCE OF HIGH HEIRLOOMS', subtitle: 'Spring / Summer Signature Collection', ctaText: 'DISCOVER JEWELS', ctaUrl: 'shop.html' },
+  { id: 'sec-03', sectionKey: 'categories_bar', name: 'Curated Categories Slider', enabled: true, sortOrder: 3, title: 'EXPLORE BY SILHOUETTE', subtitle: 'Rings, Earrings, Bracelets & Necklaces' },
+  { id: 'sec-04', sectionKey: 'new_arrivals', name: 'New Arrivals Showcase', enabled: true, sortOrder: 4, title: 'NEW RADIANT ARRIVALS', subtitle: 'Freshly cast hand-finished pieces' },
+  { id: 'sec-05', sectionKey: 'featured_collection', name: 'Featured Collection Spotlight', enabled: true, sortOrder: 5, title: 'THE SOLITAIRE SUITE', subtitle: 'Engineered for eternal sparkle', ctaText: 'EXPLORE SOLITAIRES', ctaUrl: 'shop.html?category=rings', image: 'assets/products/roy-wh00829.webp' },
+  { id: 'sec-06', sectionKey: 'bestsellers', name: 'Curated Best Sellers', enabled: true, sortOrder: 6, title: 'BELOVED ICONIC JEWELS', subtitle: 'Most sought after by our patrons' },
+  { id: 'sec-07', sectionKey: 'editorial_banner', name: 'Editorial Storytelling Banner', enabled: true, sortOrder: 7, title: 'MODERN HERITAGE CRAFT', subtitle: 'Every piece is crafted in ethical fine metals with master setters.', ctaText: 'OUR CRAFT STORY', ctaUrl: 'about.html', image: 'assets/products/roy-untitled-3.jpg' },
+  { id: 'sec-08', sectionKey: 'testimonials', name: 'Patron Reviews & Trust Badges', enabled: true, sortOrder: 8, title: 'WORDS FROM OUR PATRONS', subtitle: 'Over 10,000+ 5-Star verified fine jewellery experiences' },
+  { id: 'sec-09', sectionKey: 'newsletter', name: 'Private VIP Concierge & Newsletter', enabled: true, sortOrder: 9, title: 'JOIN THE ROYRA CIRCLE', subtitle: 'Receive exclusive invitations and early previews.' }
+];
+
+let cpanelSeoSettings = {
+  siteTitle: 'Royra Jewels | Handcrafted Luxury Fine Jewellery & Solitaires',
+  metaDescription: 'Shop handcrafted 18K solid gold, certified diamonds, and sterling silver rings, earrings, bracelets, and necklaces. BIS 916 Hallmarked with insured shipping across India.',
+  canonicalUrl: 'https://royrajewels.com',
+  ogImage: 'assets/products/roy-wh00829.webp',
+  keywords: 'fine jewellery, diamond rings, solitaire engagement, gold bracelets, luxury earrings, BIS hallmark, Royra Jewels',
+  sitemapStatus: 'Generated & Active (48 indexed URLs)',
+  robotsTxt: 'User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /cpanel/\nSitemap: https://royrajewels.com/sitemap.xml',
+  healthScore: 96
+};
+
+interface CPanelScheduledItem {
+  id: string;
+  title: string;
+  type: 'banner' | 'homepage_section' | 'flash_sale' | 'promo_block';
+  targetId: string;
+  publishAt: string;
+  unpublishAt: string;
+  status: 'pending' | 'active' | 'completed' | 'cancelled';
+  createdAt: string;
+}
+
+let cpanelScheduledItems: CPanelScheduledItem[] = [
+  {
+    id: 'sched-01',
+    title: 'Akshaya Tritiya Gold Launch Banner',
+    type: 'banner',
+    targetId: 'banner-02',
+    publishAt: new Date(Date.now() + 86400000 * 3).toISOString(),
+    unpublishAt: new Date(Date.now() + 86400000 * 10).toISOString(),
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'sched-02',
+    title: 'Weekend Solitaire Flash Showcase',
+    type: 'promo_block',
+    targetId: 'sec-05',
+    publishAt: new Date(Date.now() + 86400000 * 5).toISOString(),
+    unpublishAt: new Date(Date.now() + 86400000 * 7).toISOString(),
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  }
+];
+
+interface CPanelPublishLog {
+  id: string;
+  timestamp: string;
+  user: string;
+  role: string;
+  itemType: string;
+  itemName: string;
+  action: string;
+  details: string;
+}
+
+let cpanelPublishLogs: CPanelPublishLog[] = [
+  {
+    id: 'pub-01',
+    timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
+    user: 'admin@royrajewels.com',
+    role: 'Super Admin',
+    itemType: 'Banner',
+    itemName: 'THE RADIANCE OF HIGH HEIRLOOMS',
+    action: 'PUBLISH',
+    details: 'Published live on homepage Hero Carousel with 1920x700 WebP asset.'
+  },
+  {
+    id: 'pub-02',
+    timestamp: new Date(Date.now() - 3600000 * 14).toISOString(),
+    user: 'content@royrajewels.com',
+    role: 'Content Manager',
+    itemType: 'Homepage Section',
+    itemName: 'Featured Collection Spotlight',
+    action: 'UPDATE',
+    details: 'Updated copy and synchronized CTA link to Solitaire Rings category.'
+  },
+  {
+    id: 'pub-03',
+    timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
+    user: 'admin@royrajewels.com',
+    role: 'Super Admin',
+    itemType: 'SEO Configuration',
+    itemName: 'Global SERP Meta Tags',
+    action: 'SYNC',
+    details: 'Regenerated sitemap.xml and updated canonical URL structured schema.'
+  }
+];
+
+// 8.1 CONTENT STUDIO OVERVIEW
+router.get('/content-overview', (req, res) => {
+  const publishedBanners = cpanelBanners.filter(b => b.status === 'published').length;
+  const scheduledBanners = cpanelBanners.filter(b => b.status === 'scheduled').length;
+  const totalMediaBytes = cpanelMediaLibrary.reduce((sum, m) => sum + (m.sizeBytes || 0), 0);
+  const activeSections = cpanelHomepageSections.filter(s => s.enabled).length;
+
+  res.json({
+    success: true,
+    stats: {
+      banners: {
+        total: cpanelBanners.length,
+        published: publishedBanners,
+        scheduled: scheduledBanners,
+        draft: cpanelBanners.length - publishedBanners - scheduledBanners
+      },
+      media: {
+        totalFiles: cpanelMediaLibrary.length,
+        totalBytes: totalMediaBytes,
+        formattedSize: (totalMediaBytes / (1024 * 1024)).toFixed(2) + ' MB',
+        foldersCount: 8
+      },
+      homepage: {
+        totalSections: cpanelHomepageSections.length,
+        activeSections,
+        disabledSections: cpanelHomepageSections.length - activeSections
+      },
+      seo: {
+        healthScore: cpanelSeoSettings.healthScore,
+        indexedPages: 48,
+        sitemapStatus: cpanelSeoSettings.sitemapStatus
+      },
+      scheduled: {
+        pendingCount: cpanelScheduledItems.filter(s => s.status === 'pending').length
+      }
+    },
+    recentBanners: cpanelBanners.slice(0, 3),
+    recentPublishLogs: cpanelPublishLogs.slice(0, 5)
+  });
+});
+
+// 8.2 BANNERS CRUD
+router.get('/banners', (req, res) => {
+  res.json({
+    success: true,
+    banners: cpanelBanners
+  });
+});
+
+router.post('/banners', (req, res) => {
+  const { title, subtitle, description, ctaText, ctaUrl, position, desktopImage, mobileImage, status, startDate, endDate, altText, sortOrder } = req.body;
+  if (!title) {
+    return res.status(400).json({ success: false, error: 'Banner Title is required.' });
+  }
+
+  const newBanner: CPanelBanner = {
+    id: `banner-${Date.now()}`,
+    title: title.trim(),
+    subtitle: (subtitle || '').trim(),
+    description: (description || '').trim(),
+    ctaText: (ctaText || 'SHOP NOW').trim(),
+    ctaUrl: (ctaUrl || 'shop.html').trim(),
+    position: position || 'hero',
+    sortOrder: Number(sortOrder) || cpanelBanners.length + 1,
+    desktopImage: desktopImage || 'assets/products/roy-wh00829.webp',
+    mobileImage: mobileImage || desktopImage || 'assets/products/roy-wh00829.webp',
+    status: status || 'published',
+    startDate: startDate || undefined,
+    endDate: endDate || undefined,
+    altText: altText || title,
+    viewsCount: 0,
+    clicksCount: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  cpanelBanners.unshift(newBanner);
+
+  // Record Audit & Publish Log
+  const user = req.headers['x-admin-email'] ? String(req.headers['x-admin-email']) : 'admin@royrajewels.com';
+  recordAudit(user, 'Content Manager', 'BANNER_CREATE', 'CONTENT', `Created banner "${newBanner.title}" in position "${newBanner.position}".`);
+  cpanelPublishLogs.unshift({
+    id: `pub-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    user,
+    role: 'Content Manager',
+    itemType: 'Banner',
+    itemName: newBanner.title,
+    action: 'CREATE',
+    details: `Created new banner for position "${newBanner.position}" with status "${newBanner.status}".`
+  });
+
+  res.json({ success: true, banner: newBanner, message: 'Banner created and synchronized successfully.' });
+});
+
+router.put('/banners/:id', (req, res) => {
+  const { id } = req.params;
+  const index = cpanelBanners.findIndex(b => b.id === id);
+  if (index === -1) {
+    return res.status(404).json({ success: false, error: 'Banner not found.' });
+  }
+
+  const existing = cpanelBanners[index];
+  const updated: CPanelBanner = {
+    ...existing,
+    ...req.body,
+    id: existing.id,
+    updatedAt: new Date().toISOString()
+  };
+
+  cpanelBanners[index] = updated;
+
+  const user = req.headers['x-admin-email'] ? String(req.headers['x-admin-email']) : 'admin@royrajewels.com';
+  recordAudit(user, 'Content Manager', 'BANNER_UPDATE', 'CONTENT', `Updated banner "${updated.title}".`);
+  cpanelPublishLogs.unshift({
+    id: `pub-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    user,
+    role: 'Content Manager',
+    itemType: 'Banner',
+    itemName: updated.title,
+    action: 'UPDATE',
+    details: `Updated banner details and status to "${updated.status}".`
+  });
+
+  res.json({ success: true, banner: updated, message: 'Banner updated successfully.' });
+});
+
+router.delete('/banners/:id', (req, res) => {
+  const { id } = req.params;
+  const target = cpanelBanners.find(b => b.id === id);
+  if (!target) {
+    return res.status(404).json({ success: false, error: 'Banner not found.' });
+  }
+
+  cpanelBanners = cpanelBanners.filter(b => b.id !== id);
+
+  const user = req.headers['x-admin-email'] ? String(req.headers['x-admin-email']) : 'admin@royrajewels.com';
+  recordAudit(user, 'Content Manager', 'BANNER_DELETE', 'CONTENT', `Deleted banner "${target.title}".`);
+  cpanelPublishLogs.unshift({
+    id: `pub-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    user,
+    role: 'Content Manager',
+    itemType: 'Banner',
+    itemName: target.title,
+    action: 'DELETE',
+    details: 'Removed banner from active website configurations.'
+  });
+
+  res.json({ success: true, message: 'Banner deleted successfully.' });
+});
+
+// 8.3 MEDIA LIBRARY CRUD
+router.get('/media', (req, res) => {
+  const folder = req.query.folder ? String(req.query.folder) : null;
+  const search = req.query.search ? String(req.query.search).toLowerCase() : null;
+
+  let items = [...cpanelMediaLibrary];
+  if (folder && folder !== 'all') {
+    items = items.filter(m => m.folder === folder);
+  }
+  if (search) {
+    items = items.filter(m => m.name.toLowerCase().includes(search) || m.altText.toLowerCase().includes(search));
+  }
+
+  res.json({
+    success: true,
+    totalCount: items.length,
+    media: items,
+    folders: [
+      { id: 'all', name: 'All Media', count: cpanelMediaLibrary.length },
+      { id: 'banners', name: 'Banners (1920x700 & 1080x1350)', count: cpanelMediaLibrary.filter(m => m.folder === 'banners').length },
+      { id: 'products', name: 'Product Images (1000x1000)', count: cpanelMediaLibrary.filter(m => m.folder === 'products').length },
+      { id: 'variants', name: 'Variant Images (Gold/Silver/Rose)', count: cpanelMediaLibrary.filter(m => m.folder === 'variants').length },
+      { id: 'cad', name: 'CAD 3D Models & Renders', count: cpanelMediaLibrary.filter(m => m.folder === 'cad').length },
+      { id: 'certificates', name: 'Certificates & Hallmark Documents', count: cpanelMediaLibrary.filter(m => m.folder === 'certificates').length },
+      { id: 'collections', name: 'Collection Editorial Graphics', count: cpanelMediaLibrary.filter(m => m.folder === 'collections').length },
+      { id: 'icons', name: 'Brand Icons & SVGs', count: cpanelMediaLibrary.filter(m => m.folder === 'icons').length },
+      { id: 'other', name: 'Other Assets', count: cpanelMediaLibrary.filter(m => m.folder === 'other').length }
+    ]
+  });
+});
+
+router.post('/media', (req, res) => {
+  const { name, url, folder, dimensions, sizeBytes, format, altText } = req.body;
+  if (!name || !url) {
+    return res.status(400).json({ success: false, error: 'File name and URL are required.' });
+  }
+
+  const newItem: CPanelMediaItem = {
+    id: `media-${Date.now()}`,
+    name: name.trim(),
+    url: url.trim(),
+    folder: folder || 'other',
+    dimensions: dimensions || '1000x1000',
+    sizeBytes: Number(sizeBytes) || 120000,
+    format: format || name.split('.').pop() || 'jpg',
+    altText: altText || name,
+    uploadDate: new Date().toISOString()
+  };
+
+  cpanelMediaLibrary.unshift(newItem);
+  res.json({ success: true, item: newItem, message: 'Media asset uploaded to library.' });
+});
+
+router.delete('/media/:id', (req, res) => {
+  const { id } = req.params;
+  cpanelMediaLibrary = cpanelMediaLibrary.filter(m => m.id !== id);
+  res.json({ success: true, message: 'Media asset deleted.' });
+});
+
+router.post('/media/bulk-action', (req, res) => {
+  const { action, mediaIds, targetFolder } = req.body;
+  if (!Array.isArray(mediaIds) || mediaIds.length === 0) {
+    return res.status(400).json({ success: false, error: 'No media items selected.' });
+  }
+
+  if (action === 'delete') {
+    cpanelMediaLibrary = cpanelMediaLibrary.filter(m => !mediaIds.includes(m.id));
+    return res.json({ success: true, message: `Deleted ${mediaIds.length} media items.` });
+  } else if (action === 'move' && targetFolder) {
+    cpanelMediaLibrary.forEach(m => {
+      if (mediaIds.includes(m.id)) {
+        m.folder = targetFolder;
+      }
+    });
+    return res.json({ success: true, message: `Moved ${mediaIds.length} media items to "${targetFolder}".` });
+  }
+
+  res.status(400).json({ success: false, error: 'Invalid bulk action.' });
+});
+
+// 8.4 HOMEPAGE SECTIONS CRUD
+router.get('/homepage-sections', (req, res) => {
+  res.json({
+    success: true,
+    sections: cpanelHomepageSections.sort((a, b) => a.sortOrder - b.sortOrder)
+  });
+});
+
+router.post('/homepage-sections/toggle', (req, res) => {
+  const { sectionId, enabled } = req.body;
+  const section = cpanelHomepageSections.find(s => s.id === sectionId);
+  if (!section) {
+    return res.status(404).json({ success: false, error: 'Section not found.' });
+  }
+
+  section.enabled = Boolean(enabled);
+  const user = req.headers['x-admin-email'] ? String(req.headers['x-admin-email']) : 'admin@royrajewels.com';
+  recordAudit(user, 'Content Manager', 'SECTION_TOGGLE', 'CONTENT', `${section.enabled ? 'Enabled' : 'Disabled'} homepage section "${section.name}".`);
+
+  res.json({ success: true, section, message: `Section "${section.name}" is now ${section.enabled ? 'Enabled' : 'Disabled'}.` });
+});
+
+router.put('/homepage-sections/:id', (req, res) => {
+  const { id } = req.params;
+  const index = cpanelHomepageSections.findIndex(s => s.id === id);
+  if (index === -1) {
+    return res.status(404).json({ success: false, error: 'Section not found.' });
+  }
+
+  cpanelHomepageSections[index] = {
+    ...cpanelHomepageSections[index],
+    ...req.body,
+    id: cpanelHomepageSections[index].id
+  };
+
+  res.json({ success: true, section: cpanelHomepageSections[index], message: 'Homepage section updated.' });
+});
+
+router.post('/homepage-sections/reorder', (req, res) => {
+  const { orderedIds } = req.body;
+  if (Array.isArray(orderedIds)) {
+    orderedIds.forEach((id: string, index: number) => {
+      const sec = cpanelHomepageSections.find(s => s.id === id);
+      if (sec) sec.sortOrder = index + 1;
+    });
+  }
+  res.json({ success: true, sections: cpanelHomepageSections.sort((a, b) => a.sortOrder - b.sortOrder), message: 'Homepage section order saved.' });
+});
+
+// 8.5 SEO CONFIGURATION
+router.get('/seo', (req, res) => {
+  res.json({
+    success: true,
+    seo: cpanelSeoSettings
+  });
+});
+
+router.post('/seo', (req, res) => {
+  const { siteTitle, metaDescription, canonicalUrl, ogImage, keywords, robotsTxt } = req.body;
+  cpanelSeoSettings = {
+    ...cpanelSeoSettings,
+    siteTitle: siteTitle || cpanelSeoSettings.siteTitle,
+    metaDescription: metaDescription || cpanelSeoSettings.metaDescription,
+    canonicalUrl: canonicalUrl || cpanelSeoSettings.canonicalUrl,
+    ogImage: ogImage || cpanelSeoSettings.ogImage,
+    keywords: keywords || cpanelSeoSettings.keywords,
+    robotsTxt: robotsTxt || cpanelSeoSettings.robotsTxt,
+    healthScore: 98
+  };
+
+  const user = req.headers['x-admin-email'] ? String(req.headers['x-admin-email']) : 'admin@royrajewels.com';
+  recordAudit(user, 'System Admin', 'SEO_UPDATE', 'SYSTEM', 'Updated global SEO meta tags, Google SERP snippet, and robots.txt.');
+
+  res.json({ success: true, seo: cpanelSeoSettings, message: 'SEO configuration updated and sitemap indexed.' });
+});
+
+// 8.6 SCHEDULED CONTENT
+router.get('/scheduled', (req, res) => {
+  res.json({
+    success: true,
+    scheduledItems: cpanelScheduledItems
+  });
+});
+
+router.post('/scheduled', (req, res) => {
+  const { title, type, targetId, publishAt, unpublishAt } = req.body;
+  const newItem: CPanelScheduledItem = {
+    id: `sched-${Date.now()}`,
+    title: title || 'Scheduled Content Campaign',
+    type: type || 'banner',
+    targetId: targetId || 'banner-01',
+    publishAt: publishAt || new Date(Date.now() + 86400000 * 2).toISOString(),
+    unpublishAt: unpublishAt || new Date(Date.now() + 86400000 * 7).toISOString(),
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  };
+
+  cpanelScheduledItems.unshift(newItem);
+  res.json({ success: true, item: newItem, message: 'Campaign scheduled in automation queue.' });
+});
+
+router.delete('/scheduled/:id', (req, res) => {
+  const { id } = req.params;
+  cpanelScheduledItems = cpanelScheduledItems.filter(s => s.id !== id);
+  res.json({ success: true, message: 'Scheduled campaign cancelled.' });
+});
+
+// 8.7 PUBLISH HISTORY
+router.get('/publish-history', (req, res) => {
+  res.json({
+    success: true,
+    history: cpanelPublishLogs
+  });
+});
+
 // Route Aliases
 router.get('/environment', (req, res) => {
   res.redirect('/api/cpanel/env');

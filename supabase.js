@@ -1049,6 +1049,15 @@
         gallery = [row.image_url];
       }
 
+      let localVariants = null;
+      try {
+        const localList = this.getLocalProducts();
+        const localMatch = localList.find(p => String(p.id) === String(row.id));
+        if (localMatch && localMatch.variants) {
+          localVariants = localMatch.variants;
+        }
+      } catch (e) {}
+
       return {
         id: row.id,
         name: row.name,
@@ -1078,7 +1087,8 @@
         gallery: gallery,
         rating: 4.9,
         reviewsCount: 1,
-        finishes: ['Gold', 'Silver', 'Rose Gold'],
+        finishes: row.finishes || ['Gold', 'Silver', 'Rose Gold'],
+        variants: row.variants || localVariants || null,
         sizes: ['5', '6', '7', '8', '9', '10'],
         createdAt: row.created_at,
         updatedAt: row.updated_at

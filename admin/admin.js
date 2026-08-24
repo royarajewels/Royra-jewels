@@ -457,7 +457,60 @@
       document.getElementById('input-plating').value = existingProduct.plating || '';
       document.getElementById('input-stone').value = existingProduct.stone || '';
       document.getElementById('input-weight').value = existingProduct.weight || '';
-      document.getElementById('input-collection').value = existingProduct.collection || 'everyday';
+      
+      const collectionSelect = document.getElementById('input-collection');
+      if (collectionSelect) {
+        if (existingProduct.collection) {
+          // Check if option exists, otherwise append it
+          const optExists = Array.from(collectionSelect.options).some(o => o.value === existingProduct.collection);
+          if (!optExists) {
+            const opt = document.createElement('option');
+            opt.value = existingProduct.collection;
+            opt.textContent = existingProduct.collection.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            collectionSelect.appendChild(opt);
+          }
+          collectionSelect.value = existingProduct.collection;
+        }
+      }
+
+      // Populate Variant Matrix if exists
+      const variants = existingProduct.variants || {};
+      
+      // Gold Variant
+      const goldV = variants['Gold'] || variants['gold'] || {};
+      if (document.getElementById('v-gold-sku')) {
+        document.getElementById('v-gold-sku').value = goldV.sku || (existingProduct.sku ? `${existingProduct.sku}-GLD` : '');
+        document.getElementById('v-gold-price').value = goldV.price || '';
+        document.getElementById('v-gold-stock').value = goldV.stock ?? existingProduct.stock ?? 10;
+        document.getElementById('v-gold-primary-img').value = goldV.primary || existingProduct.image || '';
+        document.getElementById('v-gold-gallery').value = (goldV.gallery && Array.isArray(goldV.gallery)) ? goldV.gallery.join(', ') : '';
+        document.getElementById('v-gold-active').checked = goldV.active !== false;
+      }
+
+      // Silver Variant
+      const silverV = variants['Silver'] || variants['silver'] || {};
+      if (document.getElementById('v-silver-sku')) {
+        document.getElementById('v-silver-sku').value = silverV.sku || (existingProduct.sku ? `${existingProduct.sku}-SLV` : '');
+        document.getElementById('v-silver-price').value = silverV.price || '';
+        document.getElementById('v-silver-stock').value = silverV.stock ?? 10;
+        document.getElementById('v-silver-primary-img').value = silverV.primary || existingProduct.secondImage || '';
+        document.getElementById('v-silver-gallery').value = (silverV.gallery && Array.isArray(silverV.gallery)) ? silverV.gallery.join(', ') : '';
+        document.getElementById('v-silver-active').checked = silverV.active !== false;
+      }
+
+      // Rose Gold Variant
+      const roseV = variants['Rose Gold'] || variants['rose gold'] || variants['Rose'] || {};
+      if (document.getElementById('v-rose-sku')) {
+        document.getElementById('v-rose-sku').value = roseV.sku || (existingProduct.sku ? `${existingProduct.sku}-RSG` : '');
+        document.getElementById('v-rose-price').value = roseV.price || '';
+        document.getElementById('v-rose-stock').value = roseV.stock ?? 10;
+        document.getElementById('v-rose-primary-img').value = roseV.primary || '';
+        document.getElementById('v-rose-gallery').value = (roseV.gallery && Array.isArray(roseV.gallery)) ? roseV.gallery.join(', ') : '';
+        document.getElementById('v-rose-active').checked = roseV.active !== false;
+      }
+
+      // Refresh preview strips
+      ['gold', 'silver', 'rose'].forEach(v => updateVariantPreview(v));
 
       // Load multiple gallery images
       if (existingProduct.gallery && existingProduct.gallery.length > 0) {
@@ -473,7 +526,11 @@
       renderImagePreviews();
     } else {
       if (skuInput && !skuInput.value) {
-        skuInput.value = `ROY-${Math.floor(1000 + Math.random() * 9000)}`;
+        const baseSku = `ROY-${Math.floor(1000 + Math.random() * 9000)}`;
+        skuInput.value = baseSku;
+        if (document.getElementById('v-gold-sku')) document.getElementById('v-gold-sku').value = `${baseSku}-GLD`;
+        if (document.getElementById('v-silver-sku')) document.getElementById('v-silver-sku').value = `${baseSku}-SLV`;
+        if (document.getElementById('v-rose-sku')) document.getElementById('v-rose-sku').value = `${baseSku}-RSG`;
       }
     }
 
@@ -496,6 +553,96 @@
         }
       }, 300));
     }
+
+    // VARIANT MATRIX HELPERS & UI CONTROLLERS
+    window.switchVariantTab = function (vtab, btn) {
+      document.querySelectorAll('.variant-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.querySelectorAll('.variant-panel').forEach(p => p.style.display = 'none');
+      const panel = document.getElementById(`vpanel-${vtab}`);
+      if (panel) panel.style.display = 'block';
+    };
+
+    window.updateVariantPreview = function (metalKey) {
+      const primaryInput = document.getElementById(`v-${metalKey}-primary-img`);
+      const galleryInput = document.getElementById(`v-${metalKey}-gallery`);
+      const previewStrip = document.getElementById(`v-${metalKey}-preview-strip`);
+      if (!previewStrip) return;
+
+      const primary = primaryInput ? primaryInput.value.trim() : '';
+      const gallery = galleryInput ? galleryInput.value.split(',').map(s => s.trim()).filter(Boolean) : [];
+      const allUrls = primary ? [primary, ...gallery.filter(g => g !== primary)] : gallery;
+
+      if (allUrls.length === 0) {
+        previewStrip.innerHTML = '<span style="font-size: 11px; color: #888;">No images assigned to this variant yet.</span>';
+        return;
+      }
+
+      previewStrip.innerHTML = allUrls.map((url, idx) => `
+        <div style="position: relative; width: 50px; height: 50px; border-radius: 4px; overflow: hidden; border: 1px solid var(--admin-border); flex-shrink: 0; background: #fff;">
+          <img src="${resolveAdminImageUrl(url)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='../assets/products/variant-unavailable.svg'" />
+          ${idx === 0 ? '<span style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: #fff; font-size: 8px; text-align: center; font-weight: 700;">MAIN</span>' : ''}
+        </div>
+      `).join('');
+    };
+
+    window.pickFromMasterGallery = function (metalKey, type) {
+      if (productImages.length === 0) {
+        window.showAdminToast('Upload images to Master Gallery first, or paste image path directly', 'info');
+        return;
+      }
+      const primaryUrl = productImages[primaryImageIndex]?.url || productImages[0]?.url;
+      if (type === 'primary') {
+        const input = document.getElementById(`v-${metalKey}-primary-img`);
+        if (input && primaryUrl) {
+          input.value = primaryUrl;
+          updateVariantPreview(metalKey);
+          window.showAdminToast(`Assigned ${primaryUrl.split('/').pop()} to ${metalKey.toUpperCase()} primary`, 'success');
+        }
+      }
+    };
+
+    // QUICK ADD COLLECTION MODAL LOGIC
+    window.openAddCollectionModal = function () {
+      const modal = document.getElementById('quick-add-collection-modal');
+      if (modal) modal.style.display = 'flex';
+      const nameInput = document.getElementById('new-collection-name');
+      if (nameInput) {
+        nameInput.value = '';
+        nameInput.focus();
+      }
+      const slugInput = document.getElementById('new-collection-slug');
+      if (slugInput) slugInput.value = '';
+    };
+
+    window.closeAddCollectionModal = function () {
+      const modal = document.getElementById('quick-add-collection-modal');
+      if (modal) modal.style.display = 'none';
+    };
+
+    window.saveNewCollectionFromModal = function () {
+      const nameInput = document.getElementById('new-collection-name');
+      const slugInput = document.getElementById('new-collection-slug');
+      const name = nameInput ? nameInput.value.trim() : '';
+      if (!name) {
+        window.showAdminToast('Please enter a collection name', 'error');
+        return;
+      }
+      let slug = slugInput ? slugInput.value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') : '';
+      if (!slug) slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+      const collectionSelect = document.getElementById('input-collection');
+      if (collectionSelect) {
+        const opt = document.createElement('option');
+        opt.value = slug;
+        opt.textContent = name;
+        collectionSelect.appendChild(opt);
+        collectionSelect.value = slug;
+      }
+
+      window.closeAddCollectionModal();
+      window.showAdminToast(`Collection "${name}" added and selected`, 'success');
+    };
 
     // Multi-Image Gallery Rendering & Controls
     function renderImagePreviews() {
@@ -639,6 +786,51 @@
         const galleryUrls = orderedImages.map(img => img.url);
         const mainImageUrl = galleryUrls[0] || (existingProduct ? existingProduct.image : 'assets/products/product-01.jpg');
 
+        // Extract Variant Matrix
+        const goldPrimary = document.getElementById('v-gold-primary-img')?.value.trim() || '';
+        const silverPrimary = document.getElementById('v-silver-primary-img')?.value.trim() || '';
+        const rosePrimary = document.getElementById('v-rose-primary-img')?.value.trim() || '';
+
+        const goldGallery = document.getElementById('v-gold-gallery')?.value.split(',').map(s => s.trim()).filter(Boolean) || [];
+        const silverGallery = document.getElementById('v-silver-gallery')?.value.split(',').map(s => s.trim()).filter(Boolean) || [];
+        const roseGallery = document.getElementById('v-rose-gallery')?.value.split(',').map(s => s.trim()).filter(Boolean) || [];
+
+        const goldActive = document.getElementById('v-gold-active')?.checked ?? true;
+        const silverActive = document.getElementById('v-silver-active')?.checked ?? true;
+        const roseActive = document.getElementById('v-rose-active')?.checked ?? true;
+
+        const variantsPayload = {
+          "Gold": {
+            sku: document.getElementById('v-gold-sku')?.value.trim() || `${sku}-GLD`,
+            price: document.getElementById('v-gold-price')?.value ? Number(document.getElementById('v-gold-price').value) : Number(price),
+            stock: Number(document.getElementById('v-gold-stock')?.value || 10),
+            primary: goldPrimary || mainImageUrl,
+            gallery: goldGallery.length > 0 ? (goldPrimary ? [goldPrimary, ...goldGallery.filter(g => g !== goldPrimary)] : goldGallery) : [goldPrimary || mainImageUrl],
+            active: goldActive
+          },
+          "Silver": {
+            sku: document.getElementById('v-silver-sku')?.value.trim() || `${sku}-SLV`,
+            price: document.getElementById('v-silver-price')?.value ? Number(document.getElementById('v-silver-price').value) : Number(price),
+            stock: Number(document.getElementById('v-silver-stock')?.value || 10),
+            primary: silverPrimary || '',
+            gallery: silverGallery.length > 0 ? (silverPrimary ? [silverPrimary, ...silverGallery.filter(g => g !== silverPrimary)] : silverGallery) : (silverPrimary ? [silverPrimary] : []),
+            active: silverActive
+          },
+          "Rose Gold": {
+            sku: document.getElementById('v-rose-sku')?.value.trim() || `${sku}-RSG`,
+            price: document.getElementById('v-rose-price')?.value ? Number(document.getElementById('v-rose-price').value) : Number(price),
+            stock: Number(document.getElementById('v-rose-stock')?.value || 10),
+            primary: rosePrimary || '',
+            gallery: roseGallery.length > 0 ? (rosePrimary ? [rosePrimary, ...roseGallery.filter(g => g !== rosePrimary)] : roseGallery) : (rosePrimary ? [rosePrimary] : []),
+            active: roseActive
+          }
+        };
+
+        const activeFinishes = [];
+        if (goldActive) activeFinishes.push("Gold");
+        if (silverActive) activeFinishes.push("Silver");
+        if (roseActive) activeFinishes.push("Rose Gold");
+
         const productPayload = {
           id: productId || null,
           name,
@@ -659,9 +851,11 @@
           weight: document.getElementById('input-weight').value,
           collection: document.getElementById('input-collection').value,
           image: mainImageUrl,
-          secondImage: galleryUrls[1] || null,
+          secondImage: silverPrimary || galleryUrls[1] || null,
           images: orderedImages,
-          gallery: galleryUrls.length > 0 ? galleryUrls : [mainImageUrl]
+          gallery: galleryUrls.length > 0 ? galleryUrls : [mainImageUrl],
+          variants: variantsPayload,
+          finishes: activeFinishes.length > 0 ? activeFinishes : ["Gold", "Silver", "Rose Gold"]
         };
 
         const result = await window.RoyraDB.saveProduct(productPayload, isEdit);

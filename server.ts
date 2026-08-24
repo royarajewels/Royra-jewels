@@ -310,6 +310,26 @@ app.post('/api/integration/test-sample-order', async (req, res) => {
   }
 });
 
+// Explicit C-Panel & Admin Static Route Handlers (Mounted before Vite middleware)
+app.use('/cpanel', express.static(path.join(process.cwd(), 'cpanel')));
+app.get('/cpanel', (req, res) => {
+  res.redirect('/cpanel/index.html');
+});
+app.get('/cpanel/index.html', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'cpanel', 'index.html'));
+});
+
+app.use('/admin', express.static(path.join(process.cwd(), 'admin')));
+app.get('/admin', (req, res) => {
+  res.redirect('/admin/index.html');
+});
+app.get('/admin/index.html', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'admin', 'index.html'));
+});
+
+app.use('/assets', express.static(path.join(process.cwd(), 'assets')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
 // Explicit API 404 JSON Catch-All: Prevents any missing /api/* endpoint from falling through to HTML SPA
 app.all('/api/*', (req, res) => {
   res.status(404).setHeader('Content-Type', 'application/json').json({
@@ -331,6 +351,12 @@ async function start() {
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
+    app.get('/cpanel/*', (req, res) => {
+      res.sendFile(path.join(distPath, 'cpanel', 'index.html'));
+    });
+    app.get('/admin/*', (req, res) => {
+      res.sendFile(path.join(distPath, 'admin', 'index.html'));
+    });
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });

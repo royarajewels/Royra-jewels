@@ -1423,8 +1423,8 @@ function refreshCurrentPageView() {
 function getProductVariantImages(product, finishName) {
   if (!product) {
     return {
-      primary: "assets/products/product-01.jpg",
-      gallery: ["assets/products/product-01.jpg"]
+      primary: "assets/products/variant-unavailable.svg",
+      gallery: ["assets/products/variant-unavailable.svg"]
     };
   }
 
@@ -1437,36 +1437,50 @@ function getProductVariantImages(product, finishName) {
     );
     if (variantKey && product.variants[variantKey]) {
       const v = product.variants[variantKey];
-      const primary = v.primary || v.image || (Array.isArray(v.gallery) && v.gallery[0]) || product.image;
-      const gallery = (Array.isArray(v.gallery) && v.gallery.length > 0)
-        ? v.gallery
-        : [primary];
-      return { primary, gallery };
+      const primary = v.primary || v.image || (Array.isArray(v.gallery) && v.gallery[0]);
+      if (primary) {
+        const gallery = (Array.isArray(v.gallery) && v.gallery.length > 0)
+          ? v.gallery
+          : [primary];
+        return { primary, gallery };
+      }
     }
   }
 
-  // 2. Intelligent finish fallback if explicit variants map isn't populated
+  // 2. Fallback checking for metal type naming if explicit variants map isn't populated
   const isSilver = /silver|white\s*gold|platinum|rhodium/i.test(normalizedFinish);
   const isRose = /rose\s*gold|pink|copper/i.test(normalizedFinish);
+  const isGold = /gold|yellow/i.test(normalizedFinish);
 
   if (isSilver) {
-    const silverPrimary = product.secondImage || (product.gallery && product.gallery[1]) || "assets/products/product-04.jpg";
-    const silverGallery = product.gallery && product.gallery.length > 1
-      ? [silverPrimary, ...product.gallery.filter(g => g !== silverPrimary)]
-      : [silverPrimary, "assets/products/product-05.jpg", "assets/products/product-08.jpg", "assets/products/product-14.jpg"];
-    return { primary: silverPrimary, gallery: silverGallery };
+    const silverPrimary = product.secondImage || (product.gallery && product.gallery[1]);
+    if (silverPrimary) {
+      const silverGallery = product.gallery && product.gallery.length > 1
+        ? [silverPrimary, ...product.gallery.filter(g => g !== silverPrimary)]
+        : [silverPrimary];
+      return { primary: silverPrimary, gallery: silverGallery };
+    }
   } else if (isRose) {
-    const rosePrimary = (product.gallery && product.gallery[2]) || "assets/products/product-03.jpg";
-    const roseGallery = product.gallery && product.gallery.length > 2
-      ? [rosePrimary, ...product.gallery.filter(g => g !== rosePrimary)]
-      : [rosePrimary, "assets/products/product-10.jpg", "assets/products/product-11.jpg", "assets/products/roy-untitled-3.jpg"];
-    return { primary: rosePrimary, gallery: roseGallery };
+    const rosePrimary = (product.gallery && product.gallery[2]);
+    if (rosePrimary) {
+      const roseGallery = product.gallery && product.gallery.length > 2
+        ? [rosePrimary, ...product.gallery.filter(g => g !== rosePrimary)]
+        : [rosePrimary];
+      return { primary: rosePrimary, gallery: roseGallery };
+    }
+  } else if (isGold) {
+    const goldPrimary = product.image || (product.gallery && product.gallery[0]);
+    if (goldPrimary) {
+      const goldGallery = (product.gallery && product.gallery.length > 0) ? product.gallery : [goldPrimary];
+      return { primary: goldPrimary, gallery: goldGallery };
+    }
   }
 
-  // Default / Gold
-  const goldPrimary = product.image || (product.gallery && product.gallery[0]) || "assets/products/roy-wh00829.webp";
-  const goldGallery = (product.gallery && product.gallery.length > 0) ? product.gallery : [goldPrimary];
-  return { primary: goldPrimary, gallery: goldGallery };
+  // 3. If no variant-specific image exists, show the dedicated unavailable placeholder
+  return {
+    primary: "assets/products/variant-unavailable.svg",
+    gallery: ["assets/products/variant-unavailable.svg"]
+  };
 }
 window.getProductVariantImages = getProductVariantImages;
 
@@ -2678,21 +2692,8 @@ function updatePdpGalleryForFinish(product, finishName) {
     let imagesList = [];
     if (variantData.gallery && variantData.gallery.length > 0) {
       imagesList = [...variantData.gallery];
-    } else {
-      imagesList = [variantData.primary || product.image];
-    }
-
-    // Ensure at least 4 thumbnails for luxury layout
-    const extraFallbacks = [
-      "assets/products/product-01.jpg",
-      "assets/products/product-02.jpg",
-      "assets/products/product-03.jpg",
-      "assets/products/product-04.jpg"
-    ];
-    for (const fb of extraFallbacks) {
-      if (imagesList.length < 4 && !imagesList.includes(fb)) {
-        imagesList.push(fb);
-      }
+    } else if (variantData.primary) {
+      imagesList = [variantData.primary];
     }
 
     thumbsContainer.innerHTML = imagesList.map((img, idx) => `

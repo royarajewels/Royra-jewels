@@ -26,7 +26,9 @@ const CPanelState = {
   },
   rolesPermissions: {
     'Super Admin': ['all'],
-    'System Admin': ['files_write', 'env_edit', 'backup_create', 'api_manage', 'cache_clear'],
+    'System Admin': ['files_write', 'env_edit', 'backup_create', 'api_manage', 'cache_clear', 'content_all'],
+    'Content Manager': ['content_banners', 'content_media', 'content_sections', 'content_seo', 'content_schedule', 'content_publish', 'read_only'],
+    'Product Manager': ['content_media', 'content_sections', 'read_only'],
     'Deployment Manager': ['git_sync', 'deploy_trigger', 'rollback', 'logs_view'],
     'Database Admin': ['db_view', 'db_ping', 'backup_create', 'backup_restore', 'logs_view'],
     'Support / Viewer': ['read_only']
@@ -270,6 +272,13 @@ function switchTab(tabId) {
   const subTitle = document.getElementById('cp-page-subtitle');
   if (subTitle) {
     const titles = {
+      'content-dashboard': 'Website Content Studio Overview & Publishing Hub',
+      banners: 'Hero & Promotional Banner Manager with Device Viewport Preview',
+      medialibrary: 'Central Media Library & High-Resolution Asset Management',
+      'homepage-sections': 'Visual Homepage Section Reordering & Layout Studio',
+      'seo-manager': 'Search Engine Optimization & SERP Snippet Preview Simulator',
+      'scheduled-content': 'Automated Seasonal Campaigns & Flash Sale Scheduler',
+      'publish-history': 'Content Deployment History & Publishing Audit Trail',
       dashboard: 'System Overview & Live Health Telemetry',
       filemanager: 'Enterprise Workspace File System Manager',
       database: 'Relational & Cloud Database Connections',
@@ -313,6 +322,27 @@ async function renderActiveTab() {
   if (window.lucide) lucide.createIcons();
 
   switch (CPanelState.activeTab) {
+    case 'content-dashboard':
+      await renderContentDashboard(container);
+      break;
+    case 'banners':
+      await renderBannersManager(container);
+      break;
+    case 'medialibrary':
+      await renderMediaLibrary(container);
+      break;
+    case 'homepage-sections':
+      await renderHomepageSections(container);
+      break;
+    case 'seo-manager':
+      await renderSeoManager(container);
+      break;
+    case 'scheduled-content':
+      await renderScheduledContent(container);
+      break;
+    case 'publish-history':
+      await renderPublishHistory(container);
+      break;
     case 'dashboard':
       await renderDashboard(container);
       break;
@@ -2014,6 +2044,913 @@ async function openChangeRoleModal(userId, userName, currentRole) {
     renderUsers(document.getElementById('cpanel-content-area'));
   } else {
     showToast(res.error || 'Role update failed', 'error');
+  }
+}
+
+// =============================================================
+// WEBSITE CONTENT STUDIO MODULES
+// =============================================================
+
+// 1. CONTENT STUDIO DASHBOARD
+async function renderContentDashboard(container) {
+  const data = await apiCall('/api/cpanel/content-overview');
+  const stats = data.stats || {
+    banners: { total: 3, published: 3, scheduled: 0, draft: 0 },
+    media: { totalFiles: 10, formattedSize: '1.45 MB' },
+    homepage: { totalSections: 9, activeSections: 9, disabledSections: 0 },
+    seo: { healthScore: 96, indexedPages: 48, sitemapStatus: 'Active' },
+    scheduled: { pendingCount: 2 }
+  };
+
+  const html = `
+    <div class="content-studio-header">
+      <div>
+        <h2 style="font-family:var(--cp-font-serif);font-size:20px;font-weight:600;color:var(--cp-text-main)">Website Content Studio</h2>
+        <div style="font-size:12px;color:var(--cp-text-secondary);margin-top:2px">Publish, schedule, and orchestrate luxury marketing banners, media assets, and homepage layouts.</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button type="button" class="cp-btn cp-btn-primary" onclick="openNewBannerModal()">
+          <i data-lucide="plus-circle"></i> New Campaign Banner
+        </button>
+        <button type="button" class="cp-btn cp-btn-outline" onclick="openMediaUploadModal()">
+          <i data-lucide="upload-cloud"></i> Upload Media
+        </button>
+        <a href="../index.html" target="_blank" class="cp-btn cp-btn-outline" style="text-decoration:none">
+          <i data-lucide="external-link"></i> Live Storefront
+        </a>
+      </div>
+    </div>
+
+    <!-- METRICS GRID -->
+    <div class="cp-grid-4" style="margin-bottom:24px">
+      <div class="cp-stat-card">
+        <div class="cp-stat-header">
+          <span class="cp-stat-title">Active Live Banners</span>
+          <i data-lucide="flag" style="width:16px;height:16px;color:var(--cp-gold)"></i>
+        </div>
+        <div class="cp-stat-value">${stats.banners.published} <span style="font-size:12px;color:var(--cp-text-muted);font-weight:normal">/ ${stats.banners.total} Total</span></div>
+        <div class="cp-stat-footer" style="color:#15803D">
+          <i data-lucide="check-circle" style="width:12px;height:12px"></i> ${stats.banners.scheduled} Scheduled Campaigns
+        </div>
+      </div>
+
+      <div class="cp-stat-card">
+        <div class="cp-stat-header">
+          <span class="cp-stat-title">Media Assets Stored</span>
+          <i data-lucide="image" style="width:16px;height:16px;color:#1D4ED8"></i>
+        </div>
+        <div class="cp-stat-value">${stats.media.totalFiles} <span style="font-size:12px;color:var(--cp-text-muted);font-weight:normal">Files</span></div>
+        <div class="cp-stat-footer" style="color:var(--cp-text-muted)">
+          <i data-lucide="hard-drive" style="width:12px;height:12px"></i> ${stats.media.formattedSize} Used (WebP Optimized)
+        </div>
+      </div>
+
+      <div class="cp-stat-card">
+        <div class="cp-stat-header">
+          <span class="cp-stat-title">Homepage Sections</span>
+          <i data-lucide="layers" style="width:16px;height:16px;color:#9333EA"></i>
+        </div>
+        <div class="cp-stat-value">${stats.homepage.activeSections} <span style="font-size:12px;color:var(--cp-text-muted);font-weight:normal">/ ${stats.homepage.totalSections} Enabled</span></div>
+        <div class="cp-stat-footer" style="color:#15803D">
+          <i data-lucide="sparkles" style="width:12px;height:12px"></i> High-conversion luxury layout
+        </div>
+      </div>
+
+      <div class="cp-stat-card">
+        <div class="cp-stat-header">
+          <span class="cp-stat-title">SEO Health Score</span>
+          <i data-lucide="search" style="width:16px;height:16px;color:#0D9488"></i>
+        </div>
+        <div class="cp-stat-value">${stats.seo.healthScore} <span style="font-size:12px;color:#15803D;font-weight:bold">/ 100</span></div>
+        <div class="cp-stat-footer" style="color:#15803D">
+          <i data-lucide="check" style="width:12px;height:12px"></i> ${stats.seo.indexedPages} indexed URLs • Sitemap Live
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT BANNERS & QUICK LAUNCHPAD -->
+    <div class="cp-grid-2" style="margin-bottom:24px">
+      <!-- HERO BANNERS HIGHLIGHT -->
+      <div class="cp-card">
+        <div class="cp-card-header">
+          <h3 class="cp-card-title"><i data-lucide="flag"></i> Active Campaign Banners</h3>
+          <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="switchTab('banners')">Manage All Banners</button>
+        </div>
+        <div class="cp-card-body" style="padding:0">
+          <div style="display:flex;flex-direction:column;divide-y:1px solid var(--cp-border)">
+            ${(data.recentBanners || []).map(b => `
+              <div style="display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--cp-border-light)">
+                <img src="${escHtml(b.desktopImage)}" style="width:70px;height:42px;object-fit:cover;border-radius:4px;border:1px solid var(--cp-border)" alt="${escHtml(b.title)}" />
+                <div style="flex:1;min-width:0">
+                  <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(b.title)}</div>
+                  <div style="font-size:11px;color:var(--cp-gold);font-weight:600">${escHtml(b.subtitle || b.position.toUpperCase())}</div>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="openBannerPreviewModal('${b.id}')" title="Preview on Devices"><i data-lucide="smartphone"></i></button>
+                  <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="openEditBannerModal('${b.id}')" title="Edit Banner"><i data-lucide="edit-2"></i></button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK CONTENT CONTROLS & PUBLISHING ACTIVITY -->
+      <div class="cp-card">
+        <div class="cp-card-header">
+          <h3 class="cp-card-title"><i data-lucide="history"></i> Recent Content Deployments</h3>
+          <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="switchTab('publish-history')">View Audit</button>
+        </div>
+        <div class="cp-card-body" style="padding:0">
+          <div style="display:flex;flex-direction:column">
+            ${(data.recentPublishLogs || []).map(log => `
+              <div style="padding:10px 16px;border-bottom:1px solid var(--cp-border-light);font-size:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+                  <span style="font-weight:600;color:var(--cp-text-main)">${escHtml(log.itemType)}: ${escHtml(log.itemName)}</span>
+                  <span class="cp-badge ${log.action === 'PUBLISH' ? 'cp-badge-success' : 'cp-badge-info'}">${escHtml(log.action)}</span>
+                </div>
+                <div style="color:var(--cp-text-secondary);font-size:11.5px">${escHtml(log.details)}</div>
+                <div style="color:var(--cp-text-muted);font-size:10.5px;margin-top:2px">${new Date(log.timestamp).toLocaleString()} • ${escHtml(log.user)}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+// 2. BANNERS MANAGER
+async function renderBannersManager(container) {
+  const data = await apiCall('/api/cpanel/banners');
+  const banners = data.banners || [];
+
+  const html = `
+    <div class="content-studio-header">
+      <div>
+        <h2 style="font-family:var(--cp-font-serif);font-size:20px;font-weight:600;color:var(--cp-text-main)">Banner & Campaign Manager</h2>
+        <div style="font-size:12px;color:var(--cp-text-secondary);margin-top:2px">Manage desktop (1920x700) and mobile (1080x1350) hero carousels, promo strips, and editorial banners.</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="cp-btn cp-btn-primary" onclick="openNewBannerModal()">
+          <i data-lucide="plus-circle"></i> Create New Banner
+        </button>
+        <button type="button" class="cp-btn cp-btn-outline" onclick="openBannerPreviewModal(null)">
+          <i data-lucide="eye"></i> Storefront Device Simulator
+        </button>
+      </div>
+    </div>
+
+    <!-- BANNER ASPECT RATIO NOTICE -->
+    <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;font-size:12.5px;color:#92400E">
+      <i data-lucide="info" style="width:20px;height:20px;flex-shrink:0;color:#B45309"></i>
+      <div>
+        <strong>Recommended Banner Specifications:</strong> Desktop Hero: <strong>1920 × 700 px (WebP/JPG)</strong> • Mobile Hero: <strong>1080 × 1350 px (4:5 Portrait)</strong> • Category/Mid-Page: <strong>1400 × 500 px</strong>. All assets are automatically served via Edge CDN.
+      </div>
+    </div>
+
+    <!-- BANNERS GRID -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(360px, 1fr));gap:20px">
+      ${banners.map(b => `
+        <div class="banner-card">
+          <div class="banner-preview-box">
+            <img src="${escHtml(b.desktopImage)}" alt="${escHtml(b.title)}" />
+            <div class="banner-overlay-badge">
+              <span class="cp-badge ${b.status === 'published' ? 'cp-badge-success' : b.status === 'scheduled' ? 'cp-badge-warning' : 'cp-badge-neutral'}">
+                ${escHtml(b.status.toUpperCase())}
+              </span>
+              <span class="cp-badge cp-badge-info" style="background:#1E1D1B;color:#F4EFE6;border:1px solid #4D473B">
+                ${escHtml(b.position.toUpperCase())}
+              </span>
+            </div>
+          </div>
+
+          <div class="banner-card-body">
+            <div class="banner-subtitle">${escHtml(b.subtitle || 'ROYRA SIGNATURE')}</div>
+            <h4 class="banner-title">${escHtml(b.title)}</h4>
+            <p class="banner-desc">${escHtml(b.description || 'No description entered.')}</p>
+
+            <div class="banner-meta-row">
+              <span><strong>CTA:</strong> "${escHtml(b.ctaText)}" &rarr; ${escHtml(b.ctaUrl)}</span>
+              <span>Order: #${b.sortOrder}</span>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--cp-text-muted)">
+              <span><i data-lucide="eye" style="width:11px;height:11px;display:inline"></i> ${b.viewsCount || 0} Impressions</span>
+              <span><i data-lucide="mouse-pointer" style="width:11px;height:11px;display:inline"></i> ${b.clicksCount || 0} Clicks (${b.viewsCount ? ((b.clicksCount / b.viewsCount) * 100).toFixed(1) : 0}% CTR)</span>
+            </div>
+          </div>
+
+          <div class="banner-card-actions">
+            <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" style="flex:1" onclick="openBannerPreviewModal('${b.id}')">
+              <i data-lucide="smartphone"></i> Preview
+            </button>
+            <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="openEditBannerModal('${b.id}')" title="Edit">
+              <i data-lucide="edit-3"></i>
+            </button>
+            <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="duplicateBanner('${b.id}')" title="Duplicate">
+              <i data-lucide="copy"></i>
+            </button>
+            <button type="button" class="cp-btn cp-btn-sm cp-btn-danger" onclick="deleteBanner('${b.id}')" title="Delete">
+              <i data-lucide="trash-2"></i>
+            </button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+// 3. MEDIA LIBRARY MODULE
+async function renderMediaLibrary(container) {
+  const selectedFolder = CPanelState.selectedMediaFolder || 'all';
+  const data = await apiCall(`/api/cpanel/media?folder=${selectedFolder}`);
+  const items = data.media || [];
+  const folders = data.folders || [];
+
+  const html = `
+    <div class="content-studio-header">
+      <div>
+        <h2 style="font-family:var(--cp-font-serif);font-size:20px;font-weight:600;color:var(--cp-text-main)">Media Library & High-Resolution Asset Hub</h2>
+        <div style="font-size:12px;color:var(--cp-text-secondary);margin-top:2px">Upload, organize, and inspect product photos, variant angles (Gold/Silver/Rose), CAD models, and banners.</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="cp-btn cp-btn-primary" onclick="openMediaUploadModal()">
+          <i data-lucide="upload-cloud"></i> Upload New File
+        </button>
+      </div>
+    </div>
+
+    <!-- FOLDER FILTER PILLS -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+      ${folders.map(f => `
+        <button type="button" class="cp-btn cp-btn-sm ${selectedFolder === f.id ? 'cp-btn-primary' : 'cp-btn-outline'}" onclick="filterMediaFolder('${f.id}')">
+          ${escHtml(f.name)} (${f.count})
+        </button>
+      `).join('')}
+    </div>
+
+    <!-- MEDIA GRID -->
+    <div class="media-grid">
+      ${items.map(m => `
+        <div class="media-card" onclick="selectMediaItem('${m.id}', '${m.url}', '${m.name}')">
+          <div class="media-thumb">
+            ${m.format === 'pdf' ? `
+              <div style="text-align:center;color:#F4EFE6">
+                <i data-lucide="file-text" style="width:36px;height:36px;margin:0 auto 4px"></i>
+                <div style="font-size:10px">PDF Document</div>
+              </div>
+            ` : `
+              <img src="${escHtml(m.url)}" alt="${escHtml(m.altText || m.name)}" />
+            `}
+          </div>
+          <div class="media-info">
+            <div class="media-name" title="${escHtml(m.name)}">${escHtml(m.name)}</div>
+            <div class="media-sub">
+              <span>${escHtml(m.dimensions)}</span>
+              <span>${(m.sizeBytes / 1024).toFixed(0)} KB</span>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+function filterMediaFolder(folderId) {
+  CPanelState.selectedMediaFolder = folderId;
+  renderMediaLibrary(document.getElementById('cpanel-content-area'));
+}
+
+// 4. HOMEPAGE SECTIONS STUDIO
+async function renderHomepageSections(container) {
+  const data = await apiCall('/api/cpanel/homepage-sections');
+  const sections = data.sections || [];
+
+  const html = `
+    <div class="content-studio-header">
+      <div>
+        <h2 style="font-family:var(--cp-font-serif);font-size:20px;font-weight:600;color:var(--cp-text-main)">Homepage Visual Section Studio</h2>
+        <div style="font-size:12px;color:var(--cp-text-secondary);margin-top:2px">Reorder, enable/disable, and personalize copy and call-to-actions across storefront homepage sections.</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="../index.html" target="_blank" class="cp-btn cp-btn-outline" style="text-decoration:none">
+          <i data-lucide="external-link"></i> Live Preview Storefront
+        </a>
+      </div>
+    </div>
+
+    <!-- SECTIONS LIST -->
+    <div style="max-width:850px">
+      ${sections.map((sec, idx) => `
+        <div class="section-sort-item ${sec.enabled ? '' : 'disabled'}" id="sec-row-${sec.id}">
+          <div style="display:flex;align-items:center;gap:12px;flex:1">
+            <div style="font-weight:700;color:var(--cp-gold);font-size:14px;width:24px">#${idx + 1}</div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:14px;color:var(--cp-text-main)">${escHtml(sec.name)}</div>
+              <div style="font-size:11.5px;color:var(--cp-text-secondary)">"${escHtml(sec.title)}" • ${escHtml(sec.subtitle || 'Default style')}</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px">
+            <button type="button" class="cp-btn cp-btn-sm ${sec.enabled ? 'cp-btn-success' : 'cp-btn-outline'}" onclick="toggleHomepageSection('${sec.id}', ${!sec.enabled})">
+              <i data-lucide="${sec.enabled ? 'check' : 'eye-off'}"></i> ${sec.enabled ? 'Enabled' : 'Disabled'}
+            </button>
+            <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="openEditSectionModal('${sec.id}')">
+              <i data-lucide="settings-2"></i> Configure
+            </button>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" style="padding:2px 6px" onclick="moveSection('${sec.id}', -1)" ${idx === 0 ? 'disabled' : ''}>▲</button>
+              <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" style="padding:2px 6px" onclick="moveSection('${sec.id}', 1)" ${idx === sections.length - 1 ? 'disabled' : ''}>▼</button>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+async function toggleHomepageSection(sectionId, enabled) {
+  const res = await apiCall('/api/cpanel/homepage-sections/toggle', 'POST', { sectionId, enabled });
+  if (res.success) {
+    showToast(res.message, 'success');
+    renderHomepageSections(document.getElementById('cpanel-content-area'));
+  } else {
+    showToast(res.error || 'Failed to toggle section', 'error');
+  }
+}
+
+async function moveSection(sectionId, direction) {
+  const data = await apiCall('/api/cpanel/homepage-sections');
+  const sections = data.sections || [];
+  const index = sections.findIndex(s => s.id === sectionId);
+  if (index === -1) return;
+
+  const targetIndex = index + direction;
+  if (targetIndex < 0 || targetIndex >= sections.length) return;
+
+  const item = sections.splice(index, 1)[0];
+  sections.splice(targetIndex, 0, item);
+
+  const orderedIds = sections.map(s => s.id);
+  const res = await apiCall('/api/cpanel/homepage-sections/reorder', 'POST', { orderedIds });
+  if (res.success) {
+    showToast('Section order updated', 'success');
+    renderHomepageSections(document.getElementById('cpanel-content-area'));
+  }
+}
+
+// 5. SEO & SERP MANAGER
+async function renderSeoManager(container) {
+  const data = await apiCall('/api/cpanel/seo');
+  const seo = data.seo || {};
+
+  const html = `
+    <div class="content-studio-header">
+      <div>
+        <h2 style="font-family:var(--cp-font-serif);font-size:20px;font-weight:600;color:var(--cp-text-main)">SEO & Search Engine Preview Studio</h2>
+        <div style="font-size:12px;color:var(--cp-text-secondary);margin-top:2px">Configure canonical tags, OpenGraph social cards, JSON-LD rich snippets, and Google SERP rendering.</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="cp-btn cp-btn-primary" onclick="saveSeoSettings()">
+          <i data-lucide="save"></i> Save & Sync Search Engine Schema
+        </button>
+      </div>
+    </div>
+
+    <div class="cp-grid-2">
+      <!-- GOOGLE SERP SIMULATOR CARD -->
+      <div class="cp-card">
+        <div class="cp-card-header">
+          <h3 class="cp-card-title"><i data-lucide="search"></i> Google Live Search Result Simulator</h3>
+          <span class="cp-badge cp-badge-success">SEO Score: 98/100</span>
+        </div>
+        <div class="cp-card-body">
+          <div class="serp-preview-card">
+            <div class="serp-url">
+              <span style="background:#E8F0FE;color:#1A73E8;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:bold">royrajewels.com</span>
+              <span>https://royrajewels.com</span>
+            </div>
+            <div class="serp-title" id="serp-preview-title">${escHtml(seo.siteTitle)}</div>
+            <div class="serp-desc" id="serp-preview-desc">${escHtml(seo.metaDescription)}</div>
+          </div>
+
+          <div style="margin-top:20px;padding:12px;background:var(--cp-surface-subtle);border-radius:8px;font-size:12px;color:var(--cp-text-secondary)">
+            <strong>Rich Snippets Included:</strong> Product Schema (JSON-LD), Organization BIS 916 Hallmark, BreadcrumbList, In-Stock Availability, Free Insured Shipping.
+          </div>
+        </div>
+      </div>
+
+      <!-- SEO EDITING FORM -->
+      <div class="cp-card">
+        <div class="cp-card-header">
+          <h3 class="cp-card-title"><i data-lucide="edit"></i> Global Meta Tags Editor</h3>
+        </div>
+        <div class="cp-card-body" style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label class="cp-label">Meta Title (Max 60 chars recommended)</label>
+            <input type="text" id="seo-input-title" class="cp-input" value="${escHtml(seo.siteTitle)}" oninput="updateSerpPreview()" />
+          </div>
+
+          <div>
+            <label class="cp-label">Meta Description (150-160 chars recommended)</label>
+            <textarea id="seo-input-desc" class="cp-input" rows="3" oninput="updateSerpPreview()">${escHtml(seo.metaDescription)}</textarea>
+          </div>
+
+          <div>
+            <label class="cp-label">Canonical URL</label>
+            <input type="text" id="seo-input-canonical" class="cp-input" value="${escHtml(seo.canonicalUrl)}" />
+          </div>
+
+          <div>
+            <label class="cp-label">Target Search Keywords</label>
+            <input type="text" id="seo-input-keywords" class="cp-input" value="${escHtml(seo.keywords)}" />
+          </div>
+
+          <div>
+            <label class="cp-label">Robots.txt Directives</label>
+            <textarea id="seo-input-robots" class="cp-input cp-font-mono" rows="3">${escHtml(seo.robotsTxt)}</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+function updateSerpPreview() {
+  const title = document.getElementById('seo-input-title')?.value || 'Royra Jewels';
+  const desc = document.getElementById('seo-input-desc')?.value || '';
+  const titleEl = document.getElementById('serp-preview-title');
+  const descEl = document.getElementById('serp-preview-desc');
+  if (titleEl) titleEl.innerText = title;
+  if (descEl) descEl.innerText = desc;
+}
+
+async function saveSeoSettings() {
+  const siteTitle = document.getElementById('seo-input-title')?.value;
+  const metaDescription = document.getElementById('seo-input-desc')?.value;
+  const canonicalUrl = document.getElementById('seo-input-canonical')?.value;
+  const keywords = document.getElementById('seo-input-keywords')?.value;
+  const robotsTxt = document.getElementById('seo-input-robots')?.value;
+
+  const res = await apiCall('/api/cpanel/seo', 'POST', {
+    siteTitle,
+    metaDescription,
+    canonicalUrl,
+    keywords,
+    robotsTxt
+  });
+
+  if (res.success) {
+    showToast(res.message, 'success');
+  } else {
+    showToast(res.error || 'Failed to save SEO settings', 'error');
+  }
+}
+
+// 6. SCHEDULED CONTENT MODULE
+async function renderScheduledContent(container) {
+  const data = await apiCall('/api/cpanel/scheduled');
+  const items = data.scheduledItems || [];
+
+  const html = `
+    <div class="content-studio-header">
+      <div>
+        <h2 style="font-family:var(--cp-font-serif);font-size:20px;font-weight:600;color:var(--cp-text-main)">Scheduled Campaigns & Automation Queue</h2>
+        <div style="font-size:12px;color:var(--cp-text-secondary);margin-top:2px">Automate flash sales, festival banner switches (Akshaya Tritiya, Diwali, Valentine), and timed promotions.</div>
+      </div>
+    </div>
+
+    <div class="cp-card">
+      <div class="cp-card-body" style="padding:0">
+        <table class="cp-table">
+          <thead>
+            <tr>
+              <th>Campaign Name</th>
+              <th>Content Type</th>
+              <th>Publish Start</th>
+              <th>Auto Unpublish</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map(s => `
+              <tr>
+                <td><strong>${escHtml(s.title)}</strong></td>
+                <td><span class="cp-badge cp-badge-info">${escHtml(s.type.toUpperCase())}</span></td>
+                <td>${new Date(s.publishAt).toLocaleString()}</td>
+                <td>${new Date(s.unpublishAt).toLocaleString()}</td>
+                <td><span class="cp-badge ${s.status === 'active' ? 'cp-badge-success' : 'cp-badge-warning'}">${escHtml(s.status.toUpperCase())}</span></td>
+                <td>
+                  <button type="button" class="cp-btn cp-btn-sm cp-btn-danger" onclick="cancelScheduledItem('${s.id}')">Cancel</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+async function cancelScheduledItem(id) {
+  const res = await apiCall(`/api/cpanel/scheduled/${id}`, 'DELETE');
+  if (res.success) {
+    showToast(res.message, 'success');
+    renderScheduledContent(document.getElementById('cpanel-content-area'));
+  }
+}
+
+// 7. PUBLISH HISTORY MODULE
+async function renderPublishHistory(container) {
+  const data = await apiCall('/api/cpanel/publish-history');
+  const logs = data.history || [];
+
+  const html = `
+    <div class="content-studio-header">
+      <div>
+        <h2 style="font-family:var(--cp-font-serif);font-size:20px;font-weight:600;color:var(--cp-text-main)">Content Publishing & Deployment Audit Log</h2>
+        <div style="font-size:12px;color:var(--cp-text-secondary);margin-top:2px">Immutable historical record of every marketing banner, visual layout, and metadata change.</div>
+      </div>
+    </div>
+
+    <div class="cp-card">
+      <div class="cp-card-body" style="padding:0">
+        <table class="cp-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>User & Role</th>
+              <th>Item Type</th>
+              <th>Item Name</th>
+              <th>Action</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${logs.map(l => `
+              <tr>
+                <td style="font-size:11.5px;color:var(--cp-text-muted);white-space:nowrap">${new Date(l.timestamp).toLocaleString()}</td>
+                <td><strong>${escHtml(l.user)}</strong><div style="font-size:10.5px;color:var(--cp-gold)">${escHtml(l.role)}</div></td>
+                <td>${escHtml(l.itemType)}</td>
+                <td><strong>${escHtml(l.itemName)}</strong></td>
+                <td><span class="cp-badge ${l.action === 'PUBLISH' ? 'cp-badge-success' : 'cp-badge-info'}">${escHtml(l.action)}</span></td>
+                <td style="font-size:12px;color:var(--cp-text-secondary)">${escHtml(l.details)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+// -------------------------------------------------------------
+// MODALS & ACTIONS (Banner CRUD, Device Preview, Media Upload)
+// -------------------------------------------------------------
+
+function openBannerPreviewModal(bannerId) {
+  const modal = document.createElement('div');
+  modal.className = 'cp-modal-backdrop';
+  modal.id = 'banner-device-preview-modal';
+
+  modal.innerHTML = `
+    <div class="cp-modal-card" style="max-width:1050px;width:95%">
+      <div class="cp-modal-header" style="justify-content:space-between">
+        <div>
+          <h3 class="cp-modal-title"><i data-lucide="smartphone"></i> Live Storefront Viewport Simulator</h3>
+          <div style="font-size:11.5px;color:var(--cp-text-secondary)">Inspect responsive rendering on UltraWide, Desktop (1920px), Tablet (768px), and Mobile (375px).</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button type="button" class="cp-btn cp-btn-sm cp-btn-primary" onclick="setSimulatorDevice('desktop')">Desktop 1920</button>
+          <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="setSimulatorDevice('tablet')">Tablet 768</button>
+          <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="setSimulatorDevice('mobile')">Mobile 375</button>
+          <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="closeModal('banner-device-preview-modal')">✕</button>
+        </div>
+      </div>
+      <div class="cp-modal-body" style="padding:24px;background:#141312;display:flex;align-items:center;justify-content:center;min-height:540px">
+        <div id="viewport-frame" class="viewport-simulator-frame desktop">
+          <iframe src="../index.html" class="viewport-screen" style="border:none" title="Live Preview"></iframe>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  if (window.lucide) lucide.createIcons();
+}
+
+function setSimulatorDevice(device) {
+  const frame = document.getElementById('viewport-frame');
+  if (!frame) return;
+  frame.className = `viewport-simulator-frame ${device}`;
+}
+
+function closeModal(modalId) {
+  const m = document.getElementById(modalId);
+  if (m) m.remove();
+}
+
+function openNewBannerModal() {
+  openBannerFormModal(null);
+}
+
+async function openEditBannerModal(bannerId) {
+  const data = await apiCall('/api/cpanel/banners');
+  const banner = (data.banners || []).find(b => b.id === bannerId);
+  if (banner) openBannerFormModal(banner);
+}
+
+function openBannerFormModal(banner) {
+  const isEdit = Boolean(banner && banner.id);
+  const modal = document.createElement('div');
+  modal.className = 'cp-modal-backdrop';
+  modal.id = 'banner-form-modal';
+
+  modal.innerHTML = `
+    <div class="cp-modal-card" style="max-width:650px;width:95%">
+      <div class="cp-modal-header">
+        <h3 class="cp-modal-title"><i data-lucide="flag"></i> ${isEdit ? 'Edit Campaign Banner' : 'Create New Campaign Banner'}</h3>
+        <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="closeModal('banner-form-modal')">✕</button>
+      </div>
+      <form onsubmit="handleBannerFormSubmit(event, '${isEdit ? banner.id : ''}')">
+        <div class="cp-modal-body" style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <label class="cp-label">Banner Title <span style="color:#B91C1C">*</span></label>
+            <input type="text" id="bform-title" class="cp-input" required value="${escHtml(banner?.title || '')}" placeholder="e.g. THE RADIANCE OF HIGH HEIRLOOMS" />
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label class="cp-label">Subtitle / Season Tag</label>
+              <input type="text" id="bform-subtitle" class="cp-input" value="${escHtml(banner?.subtitle || '')}" placeholder="e.g. SPRING / SUMMER 2026" />
+            </div>
+            <div>
+              <label class="cp-label">Position / Placement</label>
+              <select id="bform-position" class="cp-input">
+                <option value="hero" ${banner?.position === 'hero' ? 'selected' : ''}>Hero Top Carousel</option>
+                <option value="promo-top" ${banner?.position === 'promo-top' ? 'selected' : ''}>Top Announcement Strip</option>
+                <option value="mid-page" ${banner?.position === 'mid-page' ? 'selected' : ''}>Mid-Page Story Editorial</option>
+                <option value="footer-promo" ${banner?.position === 'footer-promo' ? 'selected' : ''}>Footer VIP Promo</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="cp-label">Desktop Image (1920 × 700 px)</label>
+            <input type="text" id="bform-desktop-image" class="cp-input" required value="${escHtml(banner?.desktopImage || 'assets/products/roy-wh00829.webp')}" placeholder="assets/products/... or upload URL" />
+          </div>
+
+          <div>
+            <label class="cp-label">Mobile Image (1080 × 1350 px Portrait)</label>
+            <input type="text" id="bform-mobile-image" class="cp-input" value="${escHtml(banner?.mobileImage || 'assets/products/roy-wh00829.webp')}" placeholder="assets/products/..." />
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label class="cp-label">Button Text</label>
+              <input type="text" id="bform-cta-text" class="cp-input" value="${escHtml(banner?.ctaText || 'DISCOVER COLLECTION')}" />
+            </div>
+            <div>
+              <label class="cp-label">Button Destination URL</label>
+              <input type="text" id="bform-cta-url" class="cp-input" value="${escHtml(banner?.ctaUrl || 'shop.html')}" />
+            </div>
+          </div>
+
+          <div>
+            <label class="cp-label">Status</label>
+            <select id="bform-status" class="cp-input">
+              <option value="published" ${banner?.status === 'published' ? 'selected' : ''}>Published (Active Live)</option>
+              <option value="scheduled" ${banner?.status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
+              <option value="draft" ${banner?.status === 'draft' ? 'selected' : ''}>Draft</option>
+              <option value="archived" ${banner?.status === 'archived' ? 'selected' : ''}>Archived</option>
+            </select>
+          </div>
+        </div>
+        <div class="cp-modal-footer">
+          <button type="button" class="cp-btn cp-btn-outline" onclick="closeModal('banner-form-modal')">Cancel</button>
+          <button type="submit" class="cp-btn cp-btn-primary">${isEdit ? 'Save Changes' : 'Publish Banner'}</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  if (window.lucide) lucide.createIcons();
+}
+
+async function handleBannerFormSubmit(e, bannerId) {
+  e.preventDefault();
+  const payload = {
+    title: document.getElementById('bform-title')?.value,
+    subtitle: document.getElementById('bform-subtitle')?.value,
+    position: document.getElementById('bform-position')?.value,
+    desktopImage: document.getElementById('bform-desktop-image')?.value,
+    mobileImage: document.getElementById('bform-mobile-image')?.value,
+    ctaText: document.getElementById('bform-cta-text')?.value,
+    ctaUrl: document.getElementById('bform-cta-url')?.value,
+    status: document.getElementById('bform-status')?.value
+  };
+
+  let res;
+  if (bannerId) {
+    res = await apiCall(`/api/cpanel/banners/${bannerId}`, 'PUT', payload);
+  } else {
+    res = await apiCall('/api/cpanel/banners', 'POST', payload);
+  }
+
+  if (res.success) {
+    showToast(res.message, 'success');
+    closeModal('banner-form-modal');
+    renderBannersManager(document.getElementById('cpanel-content-area'));
+  } else {
+    showToast(res.error || 'Failed to save banner', 'error');
+  }
+}
+
+async function duplicateBanner(bannerId) {
+  const data = await apiCall('/api/cpanel/banners');
+  const banner = (data.banners || []).find(b => b.id === bannerId);
+  if (!banner) return;
+
+  const duplicatePayload = {
+    ...banner,
+    title: `${banner.title} (Copy)`,
+    status: 'draft'
+  };
+
+  const res = await apiCall('/api/cpanel/banners', 'POST', duplicatePayload);
+  if (res.success) {
+    showToast('Banner duplicated as draft', 'success');
+    renderBannersManager(document.getElementById('cpanel-content-area'));
+  }
+}
+
+async function deleteBanner(bannerId) {
+  if (!confirm('Are you sure you want to delete this banner from the store?')) return;
+  const res = await apiCall(`/api/cpanel/banners/${bannerId}`, 'DELETE');
+  if (res.success) {
+    showToast(res.message, 'success');
+    renderBannersManager(document.getElementById('cpanel-content-area'));
+  } else {
+    showToast(res.error || 'Failed to delete banner', 'error');
+  }
+}
+
+function openMediaUploadModal() {
+  const modal = document.createElement('div');
+  modal.className = 'cp-modal-backdrop';
+  modal.id = 'media-upload-modal';
+
+  modal.innerHTML = `
+    <div class="cp-modal-card" style="max-width:540px;width:95%">
+      <div class="cp-modal-header">
+        <h3 class="cp-modal-title"><i data-lucide="upload-cloud"></i> Upload Media Asset</h3>
+        <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="closeModal('media-upload-modal')">✕</button>
+      </div>
+      <div class="cp-modal-body" style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <label class="cp-label">Destination Folder</label>
+          <select id="mu-folder" class="cp-input">
+            <option value="banners">Banners (1920x700 / 1080x1350)</option>
+            <option value="products">Product Catalog Photos (1000x1000)</option>
+            <option value="variants">Variant Images (Gold, Silver, Rose Gold)</option>
+            <option value="cad">CAD 3D Models & Renders</option>
+            <option value="certificates">Certificates & Hallmark Documents</option>
+            <option value="collections">Collection Editorial Graphics</option>
+            <option value="icons">Brand SVGs & Icons</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="cp-label">Asset Name</label>
+          <input type="text" id="mu-name" class="cp-input" placeholder="e.g. signature-solitaire-gold-main.webp" />
+        </div>
+
+        <div>
+          <label class="cp-label">Image / File URL or Relative Path</label>
+          <input type="text" id="mu-url" class="cp-input" placeholder="assets/products/..." value="assets/products/product-01.jpg" />
+        </div>
+
+        <div style="padding:16px;border:2px dashed var(--cp-border);border-radius:8px;text-align:center;color:var(--cp-text-secondary);font-size:12px">
+          <i data-lucide="image" style="width:28px;height:28px;margin:0 auto 6px;color:var(--cp-gold)"></i>
+          <div>Drag & drop photos or select from device</div>
+          <div style="font-size:10.5px;color:var(--cp-text-muted);margin-top:2px">Supports JPG, PNG, WEBP, SVG, PDF (Max 25MB)</div>
+        </div>
+      </div>
+      <div class="cp-modal-footer">
+        <button type="button" class="cp-btn cp-btn-outline" onclick="closeModal('media-upload-modal')">Cancel</button>
+        <button type="button" class="cp-btn cp-btn-primary" onclick="submitMediaUpload()">Upload & Add to Library</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  if (window.lucide) lucide.createIcons();
+}
+
+async function submitMediaUpload() {
+  const folder = document.getElementById('mu-folder')?.value;
+  const name = document.getElementById('mu-name')?.value || `asset-${Date.now()}.webp`;
+  const url = document.getElementById('mu-url')?.value;
+
+  if (!url) {
+    showToast('Asset URL is required', 'warning');
+    return;
+  }
+
+  const res = await apiCall('/api/cpanel/media', 'POST', {
+    name,
+    url,
+    folder,
+    dimensions: '1000x1000',
+    sizeBytes: 154000,
+    format: name.split('.').pop() || 'webp'
+  });
+
+  if (res.success) {
+    showToast(res.message, 'success');
+    closeModal('media-upload-modal');
+    renderMediaLibrary(document.getElementById('cpanel-content-area'));
+  }
+}
+
+async function openEditSectionModal(sectionId) {
+  const data = await apiCall('/api/cpanel/homepage-sections');
+  const sec = (data.sections || []).find(s => s.id === sectionId);
+  if (!sec) return;
+
+  const modal = document.createElement('div');
+  modal.className = 'cp-modal-backdrop';
+  modal.id = 'edit-section-modal';
+
+  modal.innerHTML = `
+    <div class="cp-modal-card" style="max-width:540px;width:95%">
+      <div class="cp-modal-header">
+        <h3 class="cp-modal-title"><i data-lucide="settings-2"></i> Configure Section: ${escHtml(sec.name)}</h3>
+        <button type="button" class="cp-btn cp-btn-sm cp-btn-outline" onclick="closeModal('edit-section-modal')">✕</button>
+      </div>
+      <div class="cp-modal-body" style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <label class="cp-label">Section Heading</label>
+          <input type="text" id="sec-edit-title" class="cp-input" value="${escHtml(sec.title)}" />
+        </div>
+        <div>
+          <label class="cp-label">Section Subtitle</label>
+          <input type="text" id="sec-edit-subtitle" class="cp-input" value="${escHtml(sec.subtitle || '')}" />
+        </div>
+        <div>
+          <label class="cp-label">CTA Text</label>
+          <input type="text" id="sec-edit-cta-text" class="cp-input" value="${escHtml(sec.ctaText || '')}" />
+        </div>
+        <div>
+          <label class="cp-label">CTA Link URL</label>
+          <input type="text" id="sec-edit-cta-url" class="cp-input" value="${escHtml(sec.ctaUrl || '')}" />
+        </div>
+      </div>
+      <div class="cp-modal-footer">
+        <button type="button" class="cp-btn cp-btn-outline" onclick="closeModal('edit-section-modal')">Cancel</button>
+        <button type="button" class="cp-btn cp-btn-primary" onclick="saveSectionConfig('${sec.id}')">Save Section</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  if (window.lucide) lucide.createIcons();
+}
+
+async function saveSectionConfig(sectionId) {
+  const title = document.getElementById('sec-edit-title')?.value;
+  const subtitle = document.getElementById('sec-edit-subtitle')?.value;
+  const ctaText = document.getElementById('sec-edit-cta-text')?.value;
+  const ctaUrl = document.getElementById('sec-edit-cta-url')?.value;
+
+  const res = await apiCall(`/api/cpanel/homepage-sections/${sectionId}`, 'PUT', {
+    title,
+    subtitle,
+    ctaText,
+    ctaUrl
+  });
+
+  if (res.success) {
+    showToast('Section settings saved', 'success');
+    closeModal('edit-section-modal');
+    renderHomepageSections(document.getElementById('cpanel-content-area'));
   }
 }
 
