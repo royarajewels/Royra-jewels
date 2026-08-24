@@ -452,6 +452,42 @@ window.initOrdersPage = async function(){
   await load();
 };
 
+// Centralized, idempotent Order Modal Close Controller
+window.closeOrderModal = function() {
+  const modal = document.getElementById('ops-order-modal');
+  if (modal) {
+    modal.classList.remove('open');
+    modal.remove();
+  }
+  document.body.classList.remove('ops-modal-open', 'modal-open');
+  document.body.style.overflow = '';
+  if (window._orderModalEscHandler) {
+    document.removeEventListener('keydown', window._orderModalEscHandler);
+    window._orderModalEscHandler = null;
+  }
+};
+window.closeOpsOrderModal = window.closeOrderModal;
+
+// Global event delegation for modal closing (attached exactly once)
+if (!window._orderModalDelegationAttached) {
+  window._orderModalDelegationAttached = true;
+  document.addEventListener('click', function(e) {
+    const closeBtn = e.target.closest && e.target.closest('.ops-close, #ops-order-modal-close, [data-close-order-modal], .btn-order-modal-close');
+    if (closeBtn && document.getElementById('ops-order-modal')) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.closeOrderModal();
+      return;
+    }
+    const modalEl = document.getElementById('ops-order-modal');
+    if (modalEl && e.target === modalEl) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.closeOrderModal();
+    }
+  }, true);
+}
+
 window.viewOrder = async function(id){
   const o = await RoyraDB.getOrder(id);
   if (!o) {
@@ -536,9 +572,9 @@ window.viewOrder = async function(id){
   }).join('');
 
   const modalHtml = `
-    <div class="ops-modal open" id="ops-order-modal">
-      <div class="ops-modal-card">
-        <button type="button" class="ops-close" onclick="document.getElementById('ops-order-modal').remove()"><i data-lucide="x"></i></button>
+    <div class="ops-modal open" id="ops-order-modal" role="dialog" aria-modal="true" aria-labelledby="ops-order-title-${o.id}">
+      <div class="ops-modal-card" id="ops-order-modal-card">
+        <button type="button" class="ops-close" id="ops-order-modal-close" aria-label="Close Order Details" title="Close (Esc)" onclick="window.closeOrderModal()"><i data-lucide="x"></i></button>
         
         <!-- Header with Title and Print Button -->
         <div class="ops-order-header">
@@ -547,7 +583,7 @@ window.viewOrder = async function(id){
               <i data-lucide="shopping-bag" style="width:24px;height:24px"></i>
             </div>
             <div>
-              <h2 class="ops-order-title">${esc(o.order_number)}</h2>
+              <h2 class="ops-order-title" id="ops-order-title-${o.id}">${esc(o.order_number)}</h2>
               <div class="ops-order-meta-sub">
                 <span><i data-lucide="calendar" style="width:14px;height:14px"></i> ${new Date(o.created_at).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })}</span>
                 <span><i data-lucide="user" style="width:14px;height:14px"></i> ${esc(o.customer_name)}</span>
@@ -711,15 +747,57 @@ window.viewOrder = async function(id){
           `).join('') || '<p style="color:#777;margin:4px 0">No previous status history logged.</p>'}
         </div>
 
+        <!-- Modal Footer Actions -->
+        <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:24px;padding-top:16px;border-top:1px solid #e7e3dd">
+          <button type="button" class="btn-action btn-order-modal-close" style="padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer" onclick="window.closeOrderModal()">Close</button>
+        </div>
+
       </div>
     </div>
   `;
 
-  // Remove existing modal if any
+  // Remove existing modal if any and cleanup
   const existing = document.getElementById('ops-order-modal');
   if (existing) existing.remove();
+  if (window._orderModalEscHandler) {
+    document.removeEventListener('keydown', window._orderModalEscHandler);
+    window._orderModalEscHandler = null;
+  }
 
   document.body.insertAdjacentHTML('beforeend', modalHtml);
+  document.body.classList.add('ops-modal-open');
+  document.body.style.overflow = 'hidden';
+
+  const modalEl = document.getElementById('ops-order-modal');
+  const closeBtn = document.getElementById('ops-order-modal-close');
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.closeOrderModal();
+    });
+  }
+
+  if (modalEl) {
+    modalEl.addEventListener('click', function(e) {
+      if (e.target === modalEl) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.closeOrderModal();
+      }
+    });
+  }
+
+  // Register Escape key listener
+  window._orderModalEscHandler = function(e) {
+    if (e.key === 'Escape' || e.keyCode === 27) {
+      e.preventDefault();
+      window.closeOrderModal();
+    }
+  };
+  document.addEventListener('keydown', window._orderModalEscHandler);
+
   refreshIcons();
 };
 
