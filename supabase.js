@@ -992,7 +992,7 @@
         start_at: banner.start_at ? new Date(banner.start_at).toISOString() : null,
         end_at: banner.end_at ? new Date(banner.end_at).toISOString() : null,
         alt_text: banner.alt_text || banner.title || internalName,
-        created_by: banner.created_by || 'Admin',
+        created_by: (typeof banner.created_by === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(banner.created_by)) ? banner.created_by : null,
         updated_at: new Date().toISOString()
       };
 
