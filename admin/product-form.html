@@ -176,22 +176,49 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="input-short-desc" class="form-label">Short Description</label>
-                  <input type="text" id="input-short-desc" class="form-input" placeholder="Brief summary for listings..." />
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <label for="input-short-desc" class="form-label" style="margin-bottom: 0;">Short Description</label>
+                    <span style="font-size: 11px; color: var(--admin-text-secondary);">Used for catalogue listings & SEO summary</span>
+                  </div>
+                  <div class="rich-text-toolbar" data-target="input-short-desc">
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-short-desc', '**', '**')" title="Bold"><b>B</b></button>
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-short-desc', '*', '*')" title="Italic"><i>I</i></button>
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-short-desc', '✦ ', '')" title="Jewel Diamond Bullet">✦</button>
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-short-desc', '• ', '')" title="Bullet List">•</button>
+                    <button type="button" class="rich-btn" onclick="clearRichFormat('input-short-desc')" title="Clear formatting">Clear</button>
+                  </div>
+                  <input type="text" id="input-short-desc" class="form-input rich-text-textarea" placeholder="e.g. ✦ Handcrafted 18K solid gold band set with certified lab-grown diamonds." />
                 </div>
 
                 <div class="form-group">
-                  <label for="input-full-desc" class="form-label">Full Product Story & Description</label>
-                  <textarea id="input-full-desc" class="form-textarea" rows="4" placeholder="Detailed craftsmanship story, stone brilliance, comfort band details..."></textarea>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <label for="input-full-desc" class="form-label" style="margin-bottom: 0;">Full Product Story & Craftsmanship</label>
+                    <button type="button" class="btn-admin-secondary" style="padding: 2px 8px; font-size: 11px; height: auto;" onclick="toggleDescPreview()">👁 Toggle Preview</button>
+                  </div>
+                  <div class="rich-text-toolbar" data-target="input-full-desc">
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-full-desc', '**', '**')" title="Bold"><b>B</b></button>
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-full-desc', '*', '*')" title="Italic"><i>I</i></button>
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-full-desc', '### ', '')" title="Heading">H3</button>
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-full-desc', '• ', '')" title="Bullet List">• List</button>
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-full-desc', '1. ', '')" title="Numbered List">1. List</button>
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-full-desc', '✦ ', '')" title="Diamond Bullet">✦ Jewel Bullet</button>
+                    <button type="button" class="rich-btn" onclick="applyRichFormat('input-full-desc', '[', '](https://)')" title="Link">Link</button>
+                    <button type="button" class="rich-btn" onclick="clearRichFormat('input-full-desc')" title="Clear formatting">Clear</button>
+                  </div>
+                  <textarea id="input-full-desc" class="form-textarea rich-text-textarea" rows="5" placeholder="Detailed craftsmanship story, stone brilliance, hallmarking, comfort band details..."></textarea>
+                  <div id="desc-preview-container" style="display: none; background: #FAF9F6; border: 1px solid var(--admin-border); border-radius: 4px; padding: 14px; margin-top: 8px; font-size: 13.5px; line-height: 1.6;"></div>
                 </div>
               </div>
 
               <!-- 2. PRODUCT MASTER GALLERY & VARIANT IMAGES MATRIX -->
               <div class="form-section">
-                <h3 class="form-section-title">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                  Product Master Media (Default)
-                </h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h3 class="form-section-title" style="margin-bottom: 0;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    Master Media Gallery
+                  </h3>
+                  <span style="font-size: 11px; color: var(--admin-accent); font-weight: 600;">Drag, Reorder & Assign to Metal</span>
+                </div>
 
                 <!-- DROPZONE -->
                 <div id="image-dropzone" class="image-upload-dropzone">
@@ -200,150 +227,253 @@
                     <polyline points="17 8 12 3 7 8"/>
                     <line x1="12" y1="3" x2="12" y2="15"/>
                   </svg>
-                  <div class="dropzone-text">Click to upload or drag & drop product photos</div>
-                  <div class="dropzone-subtext">Supports JPG, JPEG, PNG, WEBP. The first image serves as the main catalogue photo.</div>
+                  <div class="dropzone-text">Click to upload or drag & drop high-res jewellery photos</div>
+                  <div class="dropzone-subtext">Supports JPG, PNG, WEBP. The first image serves as catalogue cover. Assign metal variants below.</div>
                   <input type="file" id="image-file-input" multiple accept="image/jpeg,image/png,image/webp" style="display: none;" />
                 </div>
 
                 <!-- PREVIEWS -->
-                <div class="form-label" style="margin-top: 16px;">Master Gallery (<span style="color: var(--admin-accent); font-weight: 700;">★ Star</span> to select Main/Featured Image)</div>
+                <div class="form-label" style="margin-top: 16px;">Uploaded Photos (<span style="color: var(--admin-accent); font-weight: 700;">★ Star</span> = Main cover, or click metal badge to assign)</div>
                 <div id="image-preview-grid" class="image-preview-grid">
                   <!-- Rendered dynamically -->
                 </div>
               </div>
 
-              <!-- 3. VARIANT MATRIX & METAL-SPECIFIC IMAGE MAPPING (GOLD / SILVER / ROSE GOLD) -->
+              <!-- 3. ADVANCED JEWELLERY VARIANT MATRIX (METAL + SIZE COMBINATIONS) -->
               <div class="form-section">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                   <h3 class="form-section-title" style="margin-bottom: 0;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>
-                    Metal Variants & Specific Image Sets
+                    Jewellery Variant Matrix (Metal × Size)
                   </h3>
-                  <span style="font-size: 11px; color: var(--admin-accent); font-weight: 600;">Shopify-Style Variant Engine</span>
+                  <span style="font-size: 11px; background: var(--admin-accent-light); color: var(--admin-accent); padding: 3px 8px; border-radius: 4px; font-weight: 700;">Shopify / ERP Grade Matrix</span>
                 </div>
-                <p style="font-size: 12px; color: var(--admin-text-muted); margin-bottom: 16px;">
-                  Assign dedicated primary and gallery photos for each finish. When customers click Gold, Silver, or Rose Gold on the product page, only that variant's images will be shown.
+                <p style="font-size: 12px; color: var(--admin-text-secondary); margin-bottom: 16px;">
+                  Define available metals and sizes for this jewel. The engine creates Cartesian combinations with individual SKU, price, stock, and image mappings.
                 </p>
 
-                <!-- VARIANT TABS -->
-                <div class="variant-matrix-tabs" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--admin-border); padding-bottom: 8px;">
-                  <button type="button" class="btn-admin-secondary variant-tab-btn active" data-vtab="gold" onclick="switchVariantTab('gold', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 600;">
-                    🟡 Yellow Gold
-                  </button>
-                  <button type="button" class="btn-admin-secondary variant-tab-btn" data-vtab="silver" onclick="switchVariantTab('silver', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 600;">
-                    ⚪ 925 Sterling Silver / Rhodium
-                  </button>
-                  <button type="button" class="btn-admin-secondary variant-tab-btn" data-vtab="rose" onclick="switchVariantTab('rose', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 600;">
-                    🌸 18K Rose Gold
-                  </button>
+                <!-- OPTIONS BUILDER -->
+                <div class="variant-options-box">
+                  <!-- OPTION 1: METALS / FINISHES -->
+                  <div class="option-group-card">
+                    <div class="option-group-header">
+                      <div class="option-group-title">
+                        <span>Option 1: Metals & Finishes</span>
+                      </div>
+                      <span style="font-size: 11px; color: var(--admin-text-muted);">Customer selectable metal</span>
+                    </div>
+                    <div id="metal-chips-wrap" class="option-chips-wrap">
+                      <!-- Rendered dynamically -->
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                      <input type="text" id="new-metal-input" class="form-input" placeholder="Add custom finish (e.g. 14K White Gold, Platinum 950)" style="max-width: 320px; font-size: 12px; padding: 6px 10px;" />
+                      <button type="button" class="btn-admin-secondary" onclick="addCustomMetalOption()" style="padding: 6px 12px; font-size: 12px;">+ Add Metal</button>
+                    </div>
+                    <div class="preset-pills-row">
+                      <span style="font-size: 11px; color: var(--admin-text-muted); align-self: center;">Quick presets:</span>
+                      <button type="button" class="preset-pill" onclick="addPresetMetal('Gold')">+ Yellow Gold</button>
+                      <button type="button" class="preset-pill" onclick="addPresetMetal('Silver')">+ 925 Sterling Silver</button>
+                      <button type="button" class="preset-pill" onclick="addPresetMetal('Rose Gold')">+ 18K Rose Gold</button>
+                      <button type="button" class="preset-pill" onclick="addPresetMetal('Platinum')">+ Platinum 950</button>
+                      <button type="button" class="preset-pill" onclick="addPresetMetal('White Gold')">+ White Gold</button>
+                    </div>
+                  </div>
+
+                  <!-- OPTION 2: SIZES / LENGTHS -->
+                  <div class="option-group-card">
+                    <div class="option-group-header">
+                      <div class="option-group-title">
+                        <span>Option 2: Sizes / Lengths / Dimensions</span>
+                      </div>
+                      <span style="font-size: 11px; color: var(--admin-text-muted);">Ring size, necklace length, bracelet circumference</span>
+                    </div>
+                    <div id="size-chips-wrap" class="option-chips-wrap">
+                      <!-- Rendered dynamically -->
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                      <input type="text" id="new-size-input" class="form-input" placeholder="Add custom size (e.g. 8.5, 18 inch, Large)" style="max-width: 320px; font-size: 12px; padding: 6px 10px;" />
+                      <button type="button" class="btn-admin-secondary" onclick="addCustomSizeOption()" style="padding: 6px 12px; font-size: 12px;">+ Add Size</button>
+                    </div>
+                    <div class="preset-pills-row">
+                      <span style="font-size: 11px; color: var(--admin-text-muted); align-self: center;">Quick presets:</span>
+                      <button type="button" class="preset-pill" onclick="addPresetSizes('rings')">+ Standard Ring Sizes (4 to 12)</button>
+                      <button type="button" class="preset-pill" onclick="addPresetSizes('necklaces')">+ Standard Lengths (16&quot;, 18&quot;, 20&quot;)</button>
+                      <button type="button" class="preset-pill" onclick="addPresetSizes('bracelets')">+ Bracelet Sizes (6&quot;, 6.5&quot;, 7&quot;, 7.5&quot;, 8&quot;)</button>
+                      <button type="button" class="preset-pill" onclick="addPresetSizes('general')">+ S / M / L</button>
+                    </div>
+                  </div>
+
+                  <!-- GENERATE MATRIX BUTTON -->
+                  <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px;">
+                    <button type="button" class="btn-admin-primary" onclick="generateVariantMatrix(true)" style="padding: 8px 16px; font-size: 12.5px;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                      Generate / Refresh Variant Matrix
+                    </button>
+                  </div>
                 </div>
 
-                <!-- GOLD VARIANT PANEL -->
-                <div id="vpanel-gold" class="variant-panel active" style="background: rgba(212, 163, 89, 0.05); padding: 16px; border-radius: 8px; border: 1px solid rgba(212, 163, 89, 0.2); margin-bottom: 12px;">
-                  <div style="font-weight: 700; font-size: 13px; color: #B38E46; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                    <span>YELLOW GOLD VARIANT</span>
-                    <label style="margin-left: auto; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="v-gold-active" checked /> Enabled for Storefront
-                    </label>
+                <!-- MATRIX BULK ACTIONS & TAB BAR -->
+                <div class="matrix-toolbar">
+                  <div class="matrix-toolbar-left" id="matrix-metal-tabs">
+                    <button type="button" class="matrix-metal-tab active" data-filter="all" onclick="filterMatrixByMetal('all', this)">All Combinations (<span id="matrix-total-count">0</span>)</button>
                   </div>
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label class="form-label">Variant SKU</label>
-                      <input type="text" id="v-gold-sku" class="form-input" placeholder="e.g. ROY-RG-01-GLD" />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Variant Price (₹)</label>
-                      <input type="number" id="v-gold-price" class="form-input" placeholder="Override price or leave blank for base" />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Variant Stock</label>
-                      <input type="number" id="v-gold-stock" class="form-input" placeholder="Stock count" value="10" />
-                    </div>
+                  <div class="matrix-toolbar-right">
+                    <button type="button" class="btn-admin-secondary" onclick="bulkApplyBasePrice()" style="padding: 4px 8px; font-size: 11.5px;" title="Apply base price from pricing card to all variants">⚡ Sync Base Price</button>
+                    <button type="button" class="btn-admin-secondary" onclick="bulkApplyBaseStock()" style="padding: 4px 8px; font-size: 11.5px;" title="Apply base stock quantity to all variants">⚡ Sync Base Stock</button>
+                    <button type="button" class="btn-admin-secondary" onclick="bulkRegenerateSkus()" style="padding: 4px 8px; font-size: 11.5px;" title="Regenerate all SKUs based on parent SKU and attributes">⚡ Auto-SKUs</button>
+                    <button type="button" class="btn-admin-secondary" onclick="toggleAllVariantsActive(true)" style="padding: 4px 8px; font-size: 11.5px;">✓ Enable All</button>
                   </div>
-                  <div class="form-group">
-                    <label class="form-label">Gold Primary Image URL / Path <span class="required">*</span></label>
-                    <div style="display: flex; gap: 8px;">
-                      <input type="text" id="v-gold-primary-img" class="form-input" placeholder="e.g. assets/products/roy-wh00829.webp" oninput="updateVariantPreview('gold')" />
-                      <button type="button" class="btn-admin-secondary" onclick="pickFromMasterGallery('gold', 'primary')" style="white-space: nowrap; font-size: 11px;">Pick Uploaded</button>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Gold Additional Gallery Images (Comma-separated URLs)</label>
-                    <textarea id="v-gold-gallery" class="form-textarea" rows="2" placeholder="e.g. assets/products/roy-2.jpg, assets/products/roy-ig-1.jpg" oninput="updateVariantPreview('gold')"></textarea>
-                  </div>
-                  <div id="v-gold-preview-strip" style="display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding: 4px 0;"></div>
                 </div>
 
-                <!-- SILVER VARIANT PANEL -->
-                <div id="vpanel-silver" class="variant-panel" style="display: none; background: rgba(160, 174, 192, 0.05); padding: 16px; border-radius: 8px; border: 1px solid rgba(160, 174, 192, 0.2); margin-bottom: 12px;">
-                  <div style="font-weight: 700; font-size: 13px; color: #718096; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                    <span>SILVER / RHODIUM VARIANT</span>
-                    <label style="margin-left: auto; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="v-silver-active" checked /> Enabled for Storefront
-                    </label>
-                  </div>
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label class="form-label">Variant SKU</label>
-                      <input type="text" id="v-silver-sku" class="form-input" placeholder="e.g. ROY-RG-01-SLV" />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Variant Price (₹)</label>
-                      <input type="number" id="v-silver-price" class="form-input" placeholder="Override price or leave blank for base" />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Variant Stock</label>
-                      <input type="number" id="v-silver-stock" class="form-input" placeholder="Stock count" value="10" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Silver Primary Image URL / Path <span class="required">*</span></label>
-                    <div style="display: flex; gap: 8px;">
-                      <input type="text" id="v-silver-primary-img" class="form-input" placeholder="e.g. assets/products/product-04.jpg" oninput="updateVariantPreview('silver')" />
-                      <button type="button" class="btn-admin-secondary" onclick="pickFromMasterGallery('silver', 'primary')" style="white-space: nowrap; font-size: 11px;">Pick Uploaded</button>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Silver Additional Gallery Images (Comma-separated URLs)</label>
-                    <textarea id="v-silver-gallery" class="form-textarea" rows="2" placeholder="e.g. assets/products/product-05.jpg, assets/products/product-08.jpg" oninput="updateVariantPreview('silver')"></textarea>
-                  </div>
-                  <div id="v-silver-preview-strip" style="display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding: 4px 0;"></div>
+                <!-- COMBINATIONS MATRIX TABLE -->
+                <div class="variant-matrix-table-wrap">
+                  <table class="variant-matrix-table">
+                    <thead>
+                      <tr>
+                        <th style="width: 40px; text-align: center;">Active</th>
+                        <th>Variant Combination</th>
+                        <th style="width: 170px;">SKU</th>
+                        <th style="width: 110px;">Price (₹)</th>
+                        <th style="width: 110px;">Compare (₹)</th>
+                        <th style="width: 80px;">Stock</th>
+                        <th style="width: 130px;">Image</th>
+                        <th style="width: 40px; text-align: center;">Del</th>
+                      </tr>
+                    </thead>
+                    <tbody id="variant-matrix-tbody">
+                      <!-- Rendered dynamically -->
+                    </tbody>
+                  </table>
                 </div>
 
-                <!-- ROSE GOLD VARIANT PANEL -->
-                <div id="vpanel-rose" class="variant-panel" style="display: none; background: rgba(229, 124, 142, 0.05); padding: 16px; border-radius: 8px; border: 1px solid rgba(229, 124, 142, 0.2); margin-bottom: 12px;">
-                  <div style="font-weight: 700; font-size: 13px; color: #D53F8C; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                    <span>ROSE GOLD VARIANT</span>
-                    <label style="margin-left: auto; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="v-rose-active" checked /> Enabled for Storefront
-                    </label>
+                <!-- DEDICATED METAL IMAGE SETS ACCORDION -->
+                <div style="margin-top: 24px; border-top: 1px solid var(--admin-border); padding-top: 18px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h4 style="font-size: 13px; font-weight: 700; color: var(--admin-text); text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">
+                      Default Metal Image Packs (Gold / Silver / Rose Gold)
+                    </h4>
+                    <span style="font-size: 11px; color: var(--admin-text-secondary);">Shown on product page switch</span>
                   </div>
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label class="form-label">Variant SKU</label>
-                      <input type="text" id="v-rose-sku" class="form-input" placeholder="e.g. ROY-RG-01-RSG" />
+
+                  <div class="variant-matrix-tabs" style="display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid var(--admin-border); padding-bottom: 8px;">
+                    <button type="button" class="btn-admin-secondary variant-tab-btn active" data-vtab="gold" onclick="switchVariantTab('gold', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 600;">
+                      🟡 Yellow Gold
+                    </button>
+                    <button type="button" class="btn-admin-secondary variant-tab-btn" data-vtab="silver" onclick="switchVariantTab('silver', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 600;">
+                      ⚪ 925 Sterling Silver / Rhodium
+                    </button>
+                    <button type="button" class="btn-admin-secondary variant-tab-btn" data-vtab="rose" onclick="switchVariantTab('rose', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 600;">
+                      🌸 18K Rose Gold
+                    </button>
+                  </div>
+
+                  <!-- GOLD VARIANT PANEL -->
+                  <div id="vpanel-gold" class="variant-panel active" style="background: rgba(212, 163, 89, 0.05); padding: 16px; border-radius: 8px; border: 1px solid rgba(212, 163, 89, 0.2); margin-bottom: 12px;">
+                    <div style="font-weight: 700; font-size: 13px; color: #B38E46; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                      <span>YELLOW GOLD IMAGE SET</span>
+                      <label style="margin-left: auto; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" id="v-gold-active" checked /> Enabled for Storefront
+                      </label>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Variant SKU</label>
+                        <input type="text" id="v-gold-sku" class="form-input" placeholder="e.g. ROY-RG-01-GLD" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Default Price (₹)</label>
+                        <input type="number" id="v-gold-price" class="form-input" placeholder="Override price or leave blank for base" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Default Stock</label>
+                        <input type="number" id="v-gold-stock" class="form-input" placeholder="Stock count" value="10" />
+                      </div>
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Variant Price (₹)</label>
-                      <input type="number" id="v-rose-price" class="form-input" placeholder="Override price or leave blank for base" />
+                      <label class="form-label">Gold Primary Image URL / Path <span class="required">*</span></label>
+                      <div style="display: flex; gap: 8px;">
+                        <input type="text" id="v-gold-primary-img" class="form-input" placeholder="e.g. assets/products/roy-wh00829.webp" oninput="updateVariantPreview('gold')" />
+                        <button type="button" class="btn-admin-secondary" onclick="pickFromMasterGallery('gold', 'primary')" style="white-space: nowrap; font-size: 11px;">Pick Uploaded</button>
+                      </div>
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Variant Stock</label>
-                      <input type="number" id="v-rose-stock" class="form-input" placeholder="Stock count" value="10" />
+                      <label class="form-label">Gold Additional Gallery Images (Comma-separated URLs)</label>
+                      <textarea id="v-gold-gallery" class="form-textarea" rows="2" placeholder="e.g. assets/products/roy-2.jpg, assets/products/roy-ig-1.jpg" oninput="updateVariantPreview('gold')"></textarea>
                     </div>
+                    <div id="v-gold-preview-strip" style="display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding: 4px 0;"></div>
                   </div>
-                  <div class="form-group">
-                    <label class="form-label">Rose Gold Primary Image URL / Path <span class="required">*</span></label>
-                    <div style="display: flex; gap: 8px;">
-                      <input type="text" id="v-rose-primary-img" class="form-input" placeholder="e.g. assets/products/product-03.jpg" oninput="updateVariantPreview('rose')" />
-                      <button type="button" class="btn-admin-secondary" onclick="pickFromMasterGallery('rose', 'primary')" style="white-space: nowrap; font-size: 11px;">Pick Uploaded</button>
+
+                  <!-- SILVER VARIANT PANEL -->
+                  <div id="vpanel-silver" class="variant-panel" style="display: none; background: rgba(160, 174, 192, 0.05); padding: 16px; border-radius: 8px; border: 1px solid rgba(160, 174, 192, 0.2); margin-bottom: 12px;">
+                    <div style="font-weight: 700; font-size: 13px; color: #718096; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                      <span>SILVER / RHODIUM IMAGE SET</span>
+                      <label style="margin-left: auto; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" id="v-silver-active" checked /> Enabled for Storefront
+                      </label>
                     </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Variant SKU</label>
+                        <input type="text" id="v-silver-sku" class="form-input" placeholder="e.g. ROY-RG-01-SLV" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Default Price (₹)</label>
+                        <input type="number" id="v-silver-price" class="form-input" placeholder="Override price or leave blank for base" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Default Stock</label>
+                        <input type="number" id="v-silver-stock" class="form-input" placeholder="Stock count" value="10" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Silver Primary Image URL / Path <span class="required">*</span></label>
+                      <div style="display: flex; gap: 8px;">
+                        <input type="text" id="v-silver-primary-img" class="form-input" placeholder="e.g. assets/products/product-04.jpg" oninput="updateVariantPreview('silver')" />
+                        <button type="button" class="btn-admin-secondary" onclick="pickFromMasterGallery('silver', 'primary')" style="white-space: nowrap; font-size: 11px;">Pick Uploaded</button>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Silver Additional Gallery Images (Comma-separated URLs)</label>
+                      <textarea id="v-silver-gallery" class="form-textarea" rows="2" placeholder="e.g. assets/products/product-05.jpg, assets/products/product-08.jpg" oninput="updateVariantPreview('silver')"></textarea>
+                    </div>
+                    <div id="v-silver-preview-strip" style="display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding: 4px 0;"></div>
                   </div>
-                  <div class="form-group">
-                    <label class="form-label">Rose Gold Additional Gallery Images (Comma-separated URLs)</label>
-                    <textarea id="v-rose-gallery" class="form-textarea" rows="2" placeholder="e.g. assets/products/product-10.jpg, assets/products/product-11.jpg" oninput="updateVariantPreview('rose')"></textarea>
+
+                  <!-- ROSE GOLD VARIANT PANEL -->
+                  <div id="vpanel-rose" class="variant-panel" style="display: none; background: rgba(229, 124, 142, 0.05); padding: 16px; border-radius: 8px; border: 1px solid rgba(229, 124, 142, 0.2); margin-bottom: 12px;">
+                    <div style="font-weight: 700; font-size: 13px; color: #D53F8C; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                      <span>ROSE GOLD IMAGE SET</span>
+                      <label style="margin-left: auto; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" id="v-rose-active" checked /> Enabled for Storefront
+                      </label>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Variant SKU</label>
+                        <input type="text" id="v-rose-sku" class="form-input" placeholder="e.g. ROY-RG-01-RSG" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Default Price (₹)</label>
+                        <input type="number" id="v-rose-price" class="form-input" placeholder="Override price or leave blank for base" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Default Stock</label>
+                        <input type="number" id="v-rose-stock" class="form-input" placeholder="Stock count" value="10" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Rose Gold Primary Image URL / Path <span class="required">*</span></label>
+                      <div style="display: flex; gap: 8px;">
+                        <input type="text" id="v-rose-primary-img" class="form-input" placeholder="e.g. assets/products/product-03.jpg" oninput="updateVariantPreview('rose')" />
+                        <button type="button" class="btn-admin-secondary" onclick="pickFromMasterGallery('rose', 'primary')" style="white-space: nowrap; font-size: 11px;">Pick Uploaded</button>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Rose Gold Additional Gallery Images (Comma-separated URLs)</label>
+                      <textarea id="v-rose-gallery" class="form-textarea" rows="2" placeholder="e.g. assets/products/product-10.jpg, assets/products/product-11.jpg" oninput="updateVariantPreview('rose')"></textarea>
+                    </div>
+                    <div id="v-rose-preview-strip" style="display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding: 4px 0;"></div>
                   </div>
-                  <div id="v-rose-preview-strip" style="display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding: 4px 0;"></div>
                 </div>
 
               </div>

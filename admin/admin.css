@@ -1353,3 +1353,345 @@ svg.lucide {
   stroke-width: 1.75px;
   color: var(--admin-accent);
 }
+
+/* ==========================================================================
+   ADVANCED JEWELLERY VARIANT MATRIX & OPTIONS BUILDER
+   ========================================================================== */
+.variant-options-box {
+  background: #FAFAF8;
+  border: 1px solid #EAE6DF;
+  border-radius: var(--admin-radius-md);
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.option-group-card {
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.option-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.option-group-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--admin-text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.option-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.option-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: #F4F2EE;
+  border: 1px solid #DFD9CF;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--admin-text);
+}
+
+.option-chip.selected {
+  background: var(--admin-accent-light);
+  border-color: var(--admin-accent);
+  color: var(--admin-accent);
+  font-weight: 600;
+}
+
+.option-chip-remove {
+  background: none;
+  border: none;
+  color: #8C867D;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.option-chip-remove:hover {
+  color: var(--admin-danger);
+}
+
+.preset-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.preset-pill {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--admin-text-secondary);
+  background: #EFECE6;
+  border: 1px dashed #D0C9BD;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preset-pill:hover {
+  background: var(--admin-accent);
+  color: #FFFFFF;
+  border-color: var(--admin-accent);
+}
+
+/* VARIANT MATRIX BULK ACTIONS BAR */
+.matrix-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #F5F3EF;
+  border: 1px solid #E5E0D6;
+  border-radius: var(--admin-radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.matrix-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.matrix-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.matrix-metal-tab {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--admin-text-secondary);
+  cursor: pointer;
+}
+
+.matrix-metal-tab.active {
+  background: #FFFFFF;
+  color: var(--admin-text);
+  border-color: #D1CBC0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* VARIANT MATRIX TABLE */
+.variant-matrix-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-sm);
+  background: #FFFFFF;
+}
+
+.variant-matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.variant-matrix-table th {
+  background: #F9F8F6;
+  color: var(--admin-text-secondary);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--admin-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.variant-matrix-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #EFEFEF;
+  vertical-align: middle;
+}
+
+.variant-matrix-table tr:hover td {
+  background-color: #FDFBF7;
+}
+
+.variant-matrix-table tr.row-inactive td {
+  opacity: 0.55;
+  background-color: #FBFBFB;
+}
+
+.matrix-cell-input {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 12.5px;
+  font-family: inherit;
+  border: 1px solid var(--admin-border);
+  border-radius: 4px;
+  background: #FFFFFF;
+  color: var(--admin-text);
+  outline: none;
+}
+
+.matrix-cell-input:focus {
+  border-color: var(--admin-accent);
+}
+
+.matrix-cell-input.sku-input {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+}
+
+.matrix-img-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #DDD7CC;
+  background: #FAF8F5;
+  cursor: pointer;
+}
+
+/* RICH TEXT TOOLBAR */
+.rich-text-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 8px;
+  background: #F7F5F1;
+  border: 1px solid var(--admin-border);
+  border-bottom: none;
+  border-radius: var(--admin-radius-sm) var(--admin-radius-sm) 0 0;
+}
+
+.rich-btn {
+  background: #FFFFFF;
+  border: 1px solid #D5D0C5;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--admin-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.rich-btn:hover {
+  background: var(--admin-accent-light);
+  border-color: var(--admin-accent);
+  color: var(--admin-accent);
+}
+
+.rich-text-textarea {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* MEDIA CARD ACTION BADGES */
+.media-assign-bar,
+.preview-metal-assign-bar {
+  display: flex;
+  gap: 3px;
+  margin-top: 6px;
+  justify-content: center;
+}
+
+.btn-assign-metal,
+.assign-badge-btn {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: 1px solid #DDD;
+  background: #FFF;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-assign-metal.gold:hover,
+.assign-badge-btn.gold:hover {
+  background: #FEF3C7;
+  border-color: #D97706;
+  color: #B45309;
+}
+
+.btn-assign-metal.silver:hover,
+.assign-badge-btn.silver:hover {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+  color: #374151;
+}
+
+.btn-assign-metal.rose:hover,
+.assign-badge-btn.rose:hover {
+  background: #FFE4E6;
+  border-color: #FB7185;
+  color: #BE123C;
+}
+
+.badge-metal-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.matrix-metal-tab {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--admin-border);
+  background: #FFF;
+  color: var(--admin-text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.matrix-metal-tab:hover {
+  background: #F7F5F1;
+  border-color: #D5D0C5;
+}
+
+.matrix-metal-tab.active {
+  background: var(--admin-accent);
+  color: #FFF;
+  border-color: var(--admin-accent);
+}
+
+.variant-row-inactive td {
+  opacity: 0.45;
+  background-color: #FAFAFA;
+}
+
+

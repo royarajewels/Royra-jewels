@@ -89,38 +89,71 @@ function getApiBaseUrl() {
   const host = window.location.hostname;
   const port = window.location.port;
 
-  // 3. Localhost & Local Development
+  // 3. Localhost & Local Development (auto-detect port 3000 / origin)
   if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0') {
-    // If we are on port 3000, origin is direct backend.
-    // If on port 3002 or others, Vite proxy transparently routes /api to http://localhost:3000.
-    return window.location.origin;
+    if (port === '3000') return window.location.origin;
+    if (port) return window.location.origin; // Vite proxy routes /api to :3000
+    return 'http://localhost:3000';
   }
 
   // 4. GitHub Pages static hosting (e.g. *.github.io)
-  if (host.endsWith('github.io')) {
-    // GitHub Pages cannot execute Node APIs; return saved custom URL or origin
-    return localStorage.getItem('royra_cpanel_api_base') || window.location.origin;
+  if (host.includes('github.io')) {
+    // GitHub Pages cannot execute Node APIs without a configured backend URL
+    return '';
   }
 
   // 5. Cloud Run / Production container / custom domain
   return window.location.origin;
 }
 
+function updateApiBaseStatusBadge() {
+  const label = document.getElementById('cpanel-api-base-label');
+  const pill = document.getElementById('cpanel-api-base-pill');
+  if (!label) return;
+
+  const base = getApiBaseUrl();
+  const host = window.location.hostname;
+  const isGithubPages = host.includes('github.io');
+
+  if (base) {
+    const display = base.replace(/^https?:\/\//, '');
+    label.textContent = `API: ${display.length > 22 ? display.slice(0, 20) + '...' : display}`;
+    if (pill) {
+      pill.style.background = '#2A2418';
+      pill.style.borderColor = '#5C4824';
+      pill.style.color = '#F3D89D';
+    }
+  } else if (isGithubPages) {
+    label.textContent = 'API: Set Backend URL';
+    if (pill) {
+      pill.style.background = '#3B1F1F';
+      pill.style.borderColor = '#8B2C2C';
+      pill.style.color = '#FCA5A5';
+    }
+  } else {
+    label.textContent = 'API: Local / Direct';
+  }
+}
+
 function setCustomApiBase() {
-  const current = localStorage.getItem('royra_cpanel_api_base') || getApiBaseUrl();
+  const current = localStorage.getItem('royra_cpanel_api_base') || getApiBaseUrl() || '';
   const input = prompt(
-    'Enter C-Panel Backend API Base URL:\n(e.g., http://localhost:3000, http://localhost:3002, or your deployed Cloud Run URL)',
+    'ROYRA JEWELS C-PANEL BACKEND API CONFIGURATION\n\n' +
+    'Enter your deployed backend API Base URL:\n' +
+    '(e.g., http://localhost:3000, https://my-royra-api.run.app, or your custom server)\n\n' +
+    'Note: GitHub Pages is a static host and requires this setting to connect to the Node.js C-Panel backend.',
     current
   );
   if (input !== null) {
-    const trimmed = input.trim();
+    const trimmed = input.trim().replace(/\/+$/, '');
     if (trimmed) {
       localStorage.setItem('royra_cpanel_api_base', trimmed);
-      showToast(`API Base updated to ${trimmed}`, 'success');
+      showToast(`C-Panel API Base configured to: ${trimmed}`, 'success');
     } else {
       localStorage.removeItem('royra_cpanel_api_base');
-      showToast('API Base reset to automatic detection', 'info');
+      showToast('C-Panel API Base reset to automatic detection', 'info');
     }
+    updateApiBaseStatusBadge();
     renderActiveTab();
   }
 }
@@ -129,6 +162,28 @@ function setCustomApiBase() {
 async function apiCall(endpoint, method = 'GET', body = null) {
   const startTime = performance.now();
   const base = getApiBaseUrl();
+  const host = window.location.hostname;
+  const isGithubPages = host.includes('github.io');
+
+  // Check if unconfigured on GitHub Pages
+  if (!base && isGithubPages) {
+    CPanelState.diagnostics = {
+      apiBase: 'Unconfigured (GitHub Pages Static Host)',
+      endpoint,
+      httpStatus: 'NOT_CONFIGURED',
+      contentType: 'none',
+      responseTimeMs: 0,
+      lastError: 'Production backend API is not configured. GitHub Pages is static and cannot execute Node.js APIs.'
+    };
+    updateApiBaseStatusBadge();
+    return {
+      success: false,
+      status: 'unconfigured',
+      isApiUnavailable: true,
+      error: 'Production backend API is not configured. GitHub Pages is static and cannot execute Node.js endpoints. Click "Change API Base" to set your deployed Node.js backend URL.'
+    };
+  }
+
   let fullUrl = endpoint.startsWith('http') ? endpoint : (base ? `${base}${endpoint}` : endpoint);
 
   const options = {
@@ -2977,5 +3032,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Initial load
+  updateApiBaseStatusBadge();
   switchTab(CPanelState.activeTab);
 });

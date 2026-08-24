@@ -142,9 +142,9 @@
         </div>
 
         <div class="cpanel-topbar-right">
-          <div class="cpanel-live-pill">
+          <div class="cpanel-live-pill" id="cpanel-api-base-pill" onclick="setCustomApiBase()" style="cursor: pointer;" title="Click to view or change C-Panel Backend API Base URL">
             <span class="cpanel-live-dot"></span>
-            <span>Host: Online</span>
+            <span id="cpanel-api-base-label">API: Connecting...</span>
           </div>
 
           <div class="cpanel-role-switcher" title="Switch C-Panel simulation role">
@@ -178,6 +178,7 @@
   <div id="cp-toast-container" class="cp-toast-container"></div>
 
   <!-- SCRIPTS -->
+  <script src="../config.js"></script>
   <script src="cpanel.js"></script>
 </body>
 </html>

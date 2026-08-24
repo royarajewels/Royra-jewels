@@ -2712,6 +2712,41 @@ function setPdpImage(src, thumbBtn) {
   if (thumbBtn) thumbBtn.classList.add("active");
 }
 
+function updatePdpVariantDetails() {
+  if (!currentPdpProduct) return;
+  
+  // Find matching matrix combination if available
+  let matchedComb = null;
+  if (currentPdpProduct.variants_matrix && Array.isArray(currentPdpProduct.variants_matrix)) {
+    matchedComb = currentPdpProduct.variants_matrix.find(c => 
+      c.metal.toLowerCase() === currentPdpFinish.toLowerCase() && 
+      String(c.size) === String(currentPdpSize)
+    );
+  }
+
+  // Update Price & Strikethrough if combination has price
+  const priceEl = document.getElementById("pdp-product-price");
+  const oldPriceEl = document.getElementById("pdp-product-old-price");
+  const activePrice = matchedComb?.price || currentPdpProduct.price;
+  const activeOldPrice = matchedComb?.comparePrice || currentPdpProduct.oldPrice;
+
+  if (priceEl && activePrice) {
+    priceEl.textContent = formatINR(activePrice);
+  }
+  if (oldPriceEl) {
+    if (activeOldPrice) {
+      oldPriceEl.textContent = formatINR(activeOldPrice);
+      oldPriceEl.style.display = "inline";
+    } else {
+      oldPriceEl.style.display = "none";
+    }
+  }
+
+  // Update gallery for metal finish
+  updatePdpGalleryForFinish(currentPdpProduct, currentPdpFinish);
+}
+window.updatePdpVariantDetails = updatePdpVariantDetails;
+
 function setPdpFinish(finishName, btn) {
   currentPdpFinish = finishName;
   const label = document.getElementById("pdp-selected-finish-label");
@@ -2719,16 +2754,15 @@ function setPdpFinish(finishName, btn) {
   document.querySelectorAll("#pdp-finish-options .finish-btn").forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
 
-  // Dynamically update main image and gallery rail for this metal finish
-  if (currentPdpProduct) {
-    updatePdpGalleryForFinish(currentPdpProduct, finishName);
-  }
+  updatePdpVariantDetails();
 }
 
 function setPdpSize(size, btn) {
   currentPdpSize = size;
   document.querySelectorAll("#pdp-size-selector .size-btn").forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
+
+  updatePdpVariantDetails();
 }
 
 function incrementPdpQty() {

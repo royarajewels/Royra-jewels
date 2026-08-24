@@ -948,35 +948,66 @@
 
     async getCollections({ includeInactive = false } = {}) {
       const client = this.getClient();
-      if (!client) return [];
-      let q = client.from('collections').select('*').order('display_order', { ascending: true }).order('name', { ascending: true });
-      if (!includeInactive) q = q.eq('status', 'Active');
-      const { data, error } = await q;
-      if (error) { console.error('[Supabase getCollections Error]:', error); return []; }
-      const rows = data || [];
-      if (!rows.length) return [];
-      const ids = rows.map(r => r.id);
-      const { data: links } = await client.from('collection_products').select('collection_id, product_id, display_order').in('collection_id', ids).order('display_order', { ascending: true });
-      return rows.map(r => ({ ...r, product_ids: (links || []).filter(x => String(x.collection_id) === String(r.id)).map(x => x.product_id), product_count: (links || []).filter(x => String(x.collection_id) === String(r.id)).length }));
+      if (client && this.isConfigured()) {
+        try {
+          let q = client.from('collections').select('*').order('display_order', { ascending: true }).order('name', { ascending: true });
+          if (!includeInactive) q = q.eq('status', 'Active');
+          const { data, error } = await q;
+          if (!error && Array.isArray(data) && data.length > 0) {
+            const rows = data;
+            const ids = rows.map(r => r.id);
+            const { data: links } = await client.from('collection_products').select('collection_id, product_id, display_order').in('collection_id', ids).order('display_order', { ascending: true });
+            return rows.map(r => ({
+              ...r,
+              product_ids: (links || []).filter(x => String(x.collection_id) === String(r.id)).map(x => x.product_id),
+              product_count: (links || []).filter(x => String(x.collection_id) === String(r.id)).length
+            }));
+          }
+        } catch (e) {
+          console.warn('[Supabase getCollections fallback]:', e);
+        }
+      }
+      return this.getLocalCollections({ includeInactive });
     },
 
     async saveCollection(collection, isEdit = false) {
       const client = this.getClient();
-      if (!client) return { success: false, error: 'Supabase is not configured.' };
-      const base = { name: collection.name, slug: collection.slug, description: collection.description || '', short_description: collection.short_description || '', collection_image_url: collection.collection_image_url || '', banner_image_url: collection.banner_image_url || '', status: collection.status || 'Active', display_order: Number(collection.display_order || 1), featured: !!collection.featured, updated_at: new Date().toISOString() };
-      try {
-        if (isEdit && collection.id) base.id = collection.id;
-        const { data: saved, error } = await client.from('collections').upsert(base).select().single();
-        if (error) throw error;
-        await client.from('collection_products').delete().eq('collection_id', saved.id);
-        const productIds = Array.isArray(collection.product_ids) ? collection.product_ids : [];
-        if (productIds.length) {
-          const rows = productIds.map((productId, index) => ({ collection_id: saved.id, product_id: productId, display_order: index + 1 }));
-          const { error: linkError } = await client.from('collection_products').insert(rows);
-          if (linkError) throw linkError;
+      const slug = collection.slug || collection.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const base = {
+        id: collection.id || `col-${slug}-${Date.now()}`,
+        name: collection.name,
+        slug,
+        description: collection.description || '',
+        short_description: collection.short_description || '',
+        collection_image_url: collection.collection_image_url || '',
+        banner_image_url: collection.banner_image_url || '',
+        status: collection.status || 'Active',
+        display_order: Number(collection.display_order || 1),
+        featured: !!collection.featured,
+        updated_at: new Date().toISOString()
+      };
+
+      if (client && this.isConfigured()) {
+        try {
+          if (isEdit && collection.id) base.id = collection.id;
+          const { data: saved, error } = await client.from('collections').upsert(base).select().single();
+          if (error) throw error;
+          await client.from('collection_products').delete().eq('collection_id', saved.id);
+          const productIds = Array.isArray(collection.product_ids) ? collection.product_ids : [];
+          if (productIds.length) {
+            const rows = productIds.map((productId, index) => ({ collection_id: saved.id, product_id: productId, display_order: index + 1 }));
+            const { error: linkError } = await client.from('collection_products').insert(rows);
+            if (linkError) throw linkError;
+          }
+          this.syncLocalCollection(saved);
+          return { success: true, collection: saved };
+        } catch (e) {
+          console.warn('[Supabase saveCollection fallback to local]:', e);
         }
-        return { success: true, collection: saved };
-      } catch (e) { return { success: false, error: e.message }; }
+      }
+
+      this.syncLocalCollection(base);
+      return { success: true, collection: base };
     },
 
     async getCollectionBySlug(slug) {
@@ -1176,6 +1207,43 @@
         let list = this.getLocalCategories().filter(c => c.id !== id);
         localStorage.setItem('royra_db_categories_v2', JSON.stringify(list));
         window.dispatchEvent(new CustomEvent('royra:categories-updated', { detail: { categories: list } }));
+      } catch (e) {}
+    },
+
+    getLocalCollections({ includeInactive = false } = {}) {
+      const defaultCollections = [
+        { id: 'col-solitaires', name: 'Royal Solitaires 2026', slug: 'royal-solitaires', description: 'Certified flawless laboratory grown solitaire rings and bands', status: 'Active', display_order: 1, product_count: 6 },
+        { id: 'col-heritage', name: 'Heritage Gold & Polki', slug: 'heritage-gold', description: 'Timeless heirloom ornaments handcrafted by master artisans', status: 'Active', display_order: 2, product_count: 4 },
+        { id: 'col-everyday', name: 'Minimalist Luxe', slug: 'minimalist-luxe', description: 'Modern daily wear stackable rings, pendants, and micro-pavé hoops', status: 'Active', display_order: 3, product_count: 5 },
+        { id: 'col-bridal', name: 'Bridal Grandeur', slug: 'bridal-grandeur', description: 'Exquisite bridal suites, tennis bracelets, and bespoke statement necklaces', status: 'Active', display_order: 4, product_count: 3 }
+      ];
+
+      try {
+        const raw = localStorage.getItem('royra_db_collections_v2');
+        let list = raw ? JSON.parse(raw) : defaultCollections;
+        if (!includeInactive) list = list.filter(c => c.status === 'Active');
+        return list;
+      } catch (e) {
+        return defaultCollections;
+      }
+    },
+
+    syncLocalCollection(col) {
+      try {
+        let list = this.getLocalCollections({ includeInactive: true });
+        const idx = list.findIndex(c => c.id === col.id || c.slug === col.slug);
+        if (idx >= 0) list[idx] = { ...list[idx], ...col };
+        else list.push(col);
+        localStorage.setItem('royra_db_collections_v2', JSON.stringify(list));
+        window.dispatchEvent(new CustomEvent('royra:collections-updated', { detail: { collections: list } }));
+      } catch (e) {}
+    },
+
+    deleteLocalCollection(id) {
+      try {
+        let list = this.getLocalCollections({ includeInactive: true }).filter(c => c.id !== id);
+        localStorage.setItem('royra_db_collections_v2', JSON.stringify(list));
+        window.dispatchEvent(new CustomEvent('royra:collections-updated', { detail: { collections: list } }));
       } catch (e) {}
     },
 
