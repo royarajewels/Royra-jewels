@@ -79,18 +79,25 @@
     async function load() {
       banners = await window.RoyraDB.getBanners({ includeInactive: true });
       tbody.innerHTML = banners.length ? banners.map(b => `<tr>
-        <td>${b.desktop_image_url ? `<img class="cms-table-img" src="${esc(b.desktop_image_url)}">` : '—'}</td>
-        <td><strong>${esc(b.name)}</strong><div class="cms-muted">${esc(b.title || '')}</div></td>
-        <td>${esc(b.status)}</td><td>${b.display_order ?? 0}</td>
+        <td>${b.desktop_image_url ? `<img class="cms-table-img" src="${esc(b.desktop_image_url)}" alt="Banner thumbnail">` : '—'}</td>
+        <td><strong>${esc(b.internal_name || b.name || b.title || 'Untitled Banner')}</strong><div class="cms-muted">${esc(b.title || '')}</div></td>
+        <td><span class="status-badge ${String(b.status).toLowerCase() === 'published' || String(b.status).toLowerCase() === 'active' ? 'active' : 'draft'}">${esc(b.status || 'published')}</span></td>
+        <td>${b.display_order ?? 0}</td>
         <td><div class="action-buttons-group"><button class="btn-action edit" type="button" data-edit-banner="${b.id}"><i data-lucide="edit-2"></i> Edit</button><button class="btn-action danger" type="button" data-delete-banner="${b.id}"><i data-lucide="trash-2"></i> Delete</button></div></td>
       </tr>`).join('') : '<tr><td colspan="5" class="cms-empty">No banners yet.</td></tr>';
-      if (window.refreshLucideIcons) window.refreshLucideIcons(); tbody.querySelectorAll('[data-edit-banner]').forEach(b => b.onclick = () => fill(banners.find(x => String(x.id) === String(b.dataset.editBanner))));
-      tbody.querySelectorAll('[data-delete-banner]').forEach(b => b.onclick = async () => { if(!confirm('Delete banner?')) return; const r=await window.RoyraDB.deleteBanner(b.dataset.deleteBanner); if(!r.success) toast(r.error,'error'); else {toast('Banner deleted.');load();} });
+      if (window.refreshLucideIcons) window.refreshLucideIcons();
+      tbody.querySelectorAll('[data-edit-banner]').forEach(b => b.onclick = () => fill(banners.find(x => String(x.id) === String(b.dataset.editBanner))));
+      tbody.querySelectorAll('[data-delete-banner]').forEach(b => b.onclick = async () => {
+        if (!confirm('Delete banner?')) return;
+        const r = await window.RoyraDB.deleteBanner(b.dataset.deleteBanner);
+        if (!r.success) toast(r.error, 'error');
+        else { toast('Banner deleted.'); load(); }
+      });
     }
 
     function fill(b) {
       editId.value = b?.id || '';
-      $('banner-name').value = b?.name || '';
+      $('banner-name').value = b?.internal_name || b?.name || '';
       $('banner-title').value = b?.title || '';
       $('banner-subtitle').value = b?.subtitle || '';
       $('banner-description').value = b?.description || '';
@@ -98,29 +105,84 @@
       $('banner-mobile-url').value = b?.mobile_image_url || '';
       $('banner-button-text').value = b?.button_text || 'SHOP NOW →';
       $('banner-button-link').value = b?.button_link || 'shop.html';
-      $('banner-status').value = b?.status || 'Active';
+      
+      const st = b?.status || 'published';
+      if (status) {
+        let found = false;
+        for (let i = 0; i < status.options.length; i++) {
+          if (status.options[i].value.toLowerCase() === st.toLowerCase()) {
+            status.selectedIndex = i;
+            found = true;
+            break;
+          }
+        }
+        if (!found) status.value = st;
+      }
+
       $('banner-order').value = b?.display_order ?? 1;
       listImage.src = b?.desktop_image_url || '';
       listImage.style.display = b?.desktop_image_url ? 'block' : 'none';
-      window.scrollTo({top:0, behavior:'smooth'});
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     $('banner-clear')?.addEventListener('click', () => fill(null));
-    $('banner-upload-desktop')?.addEventListener('change', async e => { const f=e.target.files?.[0]; if(!f) return; const r=await window.RoyraDB.uploadMedia(f,'banner'); if(!r.success) return toast(r.error,'error'); $('banner-desktop-url').value=r.url; listImage.src=r.url; listImage.style.display='block'; toast('Desktop banner uploaded.'); });
-    $('banner-upload-mobile')?.addEventListener('change', async e => { const f=e.target.files?.[0]; if(!f) return; const r=await window.RoyraDB.uploadMedia(f,'banner'); if(!r.success) return toast(r.error,'error'); $('banner-mobile-url').value=r.url; toast('Mobile banner uploaded.'); });
-    $('banner-media-select')?.addEventListener('change', e => { if(e.target.value){$('banner-desktop-url').value=e.target.value; listImage.src=e.target.value; listImage.style.display='block';} });
+    $('banner-desktop-url')?.addEventListener('input', e => {
+      const url = e.target.value.trim();
+      listImage.src = url;
+      listImage.style.display = url ? 'block' : 'none';
+    });
+    $('banner-upload-desktop')?.addEventListener('change', async e => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const r = await window.RoyraDB.uploadMedia(f, 'banner');
+      if (!r.success) return toast(r.error, 'error');
+      $('banner-desktop-url').value = r.url;
+      listImage.src = r.url;
+      listImage.style.display = 'block';
+      toast('Desktop banner uploaded.');
+    });
+    $('banner-upload-mobile')?.addEventListener('change', async e => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const r = await window.RoyraDB.uploadMedia(f, 'banner');
+      if (!r.success) return toast(r.error, 'error');
+      $('banner-mobile-url').value = r.url;
+      toast('Mobile banner uploaded.');
+    });
+    $('banner-media-select')?.addEventListener('change', e => {
+      if (e.target.value) {
+        $('banner-desktop-url').value = e.target.value;
+        listImage.src = e.target.value;
+        listImage.style.display = 'block';
+      }
+    });
 
     form.addEventListener('submit', async e => {
       e.preventDefault();
+      const internalName = $('banner-name').value.trim();
+      const titleVal = $('banner-title').value.trim();
+      const statusVal = status.value;
+      const isAct = statusVal.toLowerCase() === 'published' || statusVal.toLowerCase() === 'active';
       const payload = {
         id: editId.value || null,
-        name: $('banner-name').value.trim(), title: $('banner-title').value.trim(), subtitle: $('banner-subtitle').value.trim(),
-        description: $('banner-description').value.trim(), desktop_image_url: $('banner-desktop-url').value.trim(), mobile_image_url: $('banner-mobile-url').value.trim(),
-        button_text: $('banner-button-text').value.trim(), button_link: $('banner-button-link').value.trim(), status: status.value, display_order: Number($('banner-order').value||1)
+        internal_name: internalName,
+        name: internalName,
+        title: titleVal,
+        subtitle: $('banner-subtitle').value.trim(),
+        description: $('banner-description').value.trim(),
+        desktop_image_url: $('banner-desktop-url').value.trim(),
+        mobile_image_url: $('banner-mobile-url').value.trim(),
+        button_text: $('banner-button-text').value.trim(),
+        button_link: $('banner-button-link').value.trim(),
+        status: statusVal,
+        is_active: isAct,
+        display_order: Number($('banner-order').value || 1)
       };
       const r = await window.RoyraDB.saveBanner(payload, Boolean(payload.id));
       if (!r.success) return toast(r.error || 'Unable to save banner.', 'error');
-      toast('Banner saved.'); fill(null); await load();
+      toast('Banner saved.');
+      fill(null);
+      await load();
     });
 
     await loadMediaPicker();

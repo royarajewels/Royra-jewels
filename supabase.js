@@ -921,29 +921,109 @@
     async getBanners({ includeInactive = false } = {}) {
       const client = this.getClient();
       if (!client) return [];
-      let q = client.from('banners').select('*').order('display_order', { ascending: true }).order('created_at', { ascending: false });
-      if (!includeInactive) q = q.eq('status', 'Active');
-      const { data, error } = await q;
-      if (error) { console.error('[Supabase getBanners Error]:', error); return []; }
-      return data || [];
+      try {
+        let q = client.from('banners').select('*').order('display_order', { ascending: true }).order('created_at', { ascending: false });
+        if (!includeInactive) {
+          q = q.or('status.eq.published,status.eq.Active,is_active.eq.true');
+        }
+        const { data, error } = await q;
+        if (error) {
+          console.warn('[Supabase getBanners query with filter error, attempting simple query]:', error.message);
+          const { data: rawData, error: rawError } = await client.from('banners').select('*').order('display_order', { ascending: true });
+          if (rawError) {
+            console.error('[Supabase getBanners Error]:', rawError);
+            return [];
+          }
+          if (!includeInactive && rawData) {
+            const now = new Date();
+            return rawData.filter(b => {
+              const st = String(b.status || '').toLowerCase();
+              const isAct = b.is_active !== false && b.is_active !== 'false';
+              const isPub = st === 'published' || st === 'active' || st === '';
+              if (!isAct || !isPub) return false;
+              if (b.start_at && new Date(b.start_at) > now) return false;
+              if (b.end_at && new Date(b.end_at) < now) return false;
+              return true;
+            });
+          }
+          return rawData || [];
+        }
+        if (!includeInactive && data) {
+          const now = new Date();
+          return data.filter(b => {
+            const st = String(b.status || '').toLowerCase();
+            const isAct = b.is_active !== false && b.is_active !== 'false';
+            const isPub = st === 'published' || st === 'active' || (!b.status && isAct);
+            if (!isAct || !isPub) return false;
+            if (b.start_at && new Date(b.start_at) > now) return false;
+            if (b.end_at && new Date(b.end_at) < now) return false;
+            return true;
+          });
+        }
+        return data || [];
+      } catch (e) {
+        console.error('[Supabase getBanners Exception]:', e);
+        return [];
+      }
     },
 
     async saveBanner(banner, isEdit = false) {
       const client = this.getClient();
       if (!client) return { success: false, error: 'Supabase is not configured.' };
-      const payload = { name: banner.name, title: banner.title || '', subtitle: banner.subtitle || '', description: banner.description || '', desktop_image_url: banner.desktop_image_url || '', mobile_image_url: banner.mobile_image_url || '', button_text: banner.button_text || 'SHOP NOW →', button_link: banner.button_link || 'shop.html', status: banner.status || 'Active', display_order: Number(banner.display_order || 1), updated_at: new Date().toISOString() };
+      
+      const internalName = (banner.internal_name || banner.name || banner.title || 'Banner').trim();
+      const statusRaw = (banner.status || 'published').trim();
+      const isStatusActive = statusRaw.toLowerCase() === 'published' || statusRaw.toLowerCase() === 'active';
+      const isActive = banner.is_active !== undefined ? Boolean(banner.is_active) : isStatusActive;
+      
+      const payload = {
+        title: banner.title || '',
+        internal_name: internalName,
+        name: internalName,
+        subtitle: banner.subtitle || '',
+        description: banner.description || '',
+        desktop_image_url: banner.desktop_image_url || '',
+        mobile_image_url: banner.mobile_image_url || '',
+        button_text: banner.button_text || 'SHOP NOW →',
+        button_link: banner.button_link || 'shop.html',
+        display_order: Number(banner.display_order || 1),
+        is_active: isActive,
+        status: statusRaw,
+        start_at: banner.start_at ? new Date(banner.start_at).toISOString() : null,
+        end_at: banner.end_at ? new Date(banner.end_at).toISOString() : null,
+        alt_text: banner.alt_text || banner.title || internalName,
+        created_by: banner.created_by || 'Admin',
+        updated_at: new Date().toISOString()
+      };
+
       try {
-        if (isEdit && banner.id) payload.id = banner.id;
-        const { data, error } = await client.from('banners').upsert(payload).select().single();
-        if (error) throw error;
-        return { success: true, banner: data };
-      } catch (e) { return { success: false, error: e.message }; }
+        if (isEdit && banner.id) {
+          payload.id = banner.id;
+          const { data, error } = await client.from('banners').upsert(payload).select().single();
+          if (error) throw error;
+          return { success: true, banner: data };
+        } else {
+          const { data, error } = await client.from('banners').insert(payload).select().single();
+          if (error) throw error;
+          return { success: true, banner: data };
+        }
+      } catch (e) {
+        console.error('[Supabase saveBanner Error]:', e);
+        return { success: false, error: e.message || 'Failed to save banner' };
+      }
     },
 
     async deleteBanner(id) {
       const client = this.getClient();
-      try { const { error } = await client.from('banners').delete().eq('id', id); if (error) throw error; return { success: true }; }
-      catch (e) { return { success: false, error: e.message }; }
+      if (!client) return { success: false, error: 'Supabase is not configured.' };
+      try {
+        const { error } = await client.from('banners').delete().eq('id', id);
+        if (error) throw error;
+        return { success: true };
+      } catch (e) {
+        console.error('[Supabase deleteBanner Error]:', e);
+        return { success: false, error: e.message || 'Failed to delete banner' };
+      }
     },
 
     async getCollections({ includeInactive = false } = {}) {

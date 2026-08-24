@@ -70,6 +70,9 @@ function escHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+// Default production backend URL for Royra Jewels C-Panel
+const DEFAULT_PROD_API_BASE = 'https://ais-dev-qvmgzjx5odfaoem7rmqock-197524094525.asia-southeast1.run.app';
+
 // API Base Configuration and resolution
 function getApiBaseUrl() {
   // 1. Explicit override in localStorage
@@ -98,8 +101,9 @@ function getApiBaseUrl() {
 
   // 4. GitHub Pages static hosting (e.g. *.github.io)
   if (host.includes('github.io')) {
-    // GitHub Pages cannot execute Node APIs without a configured backend URL
-    return '';
+    // If window.__ENV__.API_BASE is set, it was returned above.
+    // If not set, use DEFAULT_PROD_API_BASE or fallback to ''
+    return DEFAULT_PROD_API_BASE || '';
   }
 
   // 5. Cloud Run / Production container / custom domain
@@ -441,6 +445,56 @@ async function renderActiveTab() {
   if (window.lucide) lucide.createIcons();
 }
 
+// Reusable tab error rendering with diagnostics & change API base control
+function renderTabError(container, res, moduleName = 'Module', directEndpoint = '') {
+  const isUnconfigured = res.status === 'unconfigured' || res.isApiUnavailable;
+  const base = getApiBaseUrl();
+  const directLink = directEndpoint ? (base ? `${base}${directEndpoint}` : directEndpoint) : '';
+
+  container.innerHTML = `
+    <div class="cp-card" style="border-left: 4px solid ${isUnconfigured ? '#DC2626' : '#D97706'}; padding: 24px;">
+      <div style="display:flex;align-items:flex-start;gap:16px">
+        <div style="width:40px;height:40px;border-radius:8px;background:${isUnconfigured ? '#FEE2E2' : '#FEF3C7'};color:${isUnconfigured ? '#DC2626' : '#D97706'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i data-lucide="server-off" style="width:20px;height:20px"></i>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:16px;font-weight:700;color:#1C1917;margin-bottom:4px">
+            ${isUnconfigured ? 'Production Backend API is Not Configured' : `${moduleName} Telemetry Unavailable`}
+          </div>
+          <div style="font-size:13.5px;color:#57534E;line-height:1.6;margin-bottom:12px">
+            ${escHtml(res.error || `The ${moduleName} endpoint is currently not responding.`)}
+          </div>
+          
+          <!-- Diagnostics Panel in Error State -->
+          <div style="background:#FBF9F5;border:1px solid #EAE5DB;border-radius:6px;padding:12px;margin-bottom:14px;font-family:monospace;font-size:12px;display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px">
+            <div><strong>API Base:</strong> ${escHtml(CPanelState.diagnostics.apiBase || 'None')}</div>
+            <div><strong>Endpoint:</strong> ${escHtml(CPanelState.diagnostics.endpoint)}</div>
+            <div><strong>HTTP Status:</strong> ${escHtml(CPanelState.diagnostics.httpStatus)}</div>
+            <div><strong>Content-Type:</strong> ${escHtml(CPanelState.diagnostics.contentType)}</div>
+            <div><strong>Response Time:</strong> ${CPanelState.diagnostics.responseTimeMs} ms</div>
+            <div><strong>Last Error:</strong> ${escHtml(CPanelState.diagnostics.lastError || 'None')}</div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="cp-btn cp-btn-gold cp-btn-sm" onclick="setCustomApiBase()">
+              <i data-lucide="settings-2"></i> Change API Base
+            </button>
+            <button class="cp-btn cp-btn-outline cp-btn-sm" onclick="renderActiveTab()">
+              <i data-lucide="refresh-cw"></i> Retry Connection
+            </button>
+            ${directLink ? `
+              <a href="${escHtml(directLink)}" target="_blank" class="cp-btn cp-btn-outline cp-btn-sm">
+                <i data-lucide="external-link"></i> Test Direct
+              </a>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  if (window.lucide) lucide.createIcons();
+}
+
 // -------------------------------------------------------------
 // 1. DASHBOARD MODULE
 // -------------------------------------------------------------
@@ -450,41 +504,7 @@ async function renderDashboard(container) {
   const res = await apiCall('/api/cpanel/overview');
   
   if (!res.success) {
-    container.innerHTML = `
-      <div class="cp-card" style="border-left: 4px solid #D97706; padding: 24px;">
-        <div style="display:flex;align-items:flex-start;gap:16px">
-          <div style="width:40px;height:40px;border-radius:8px;background:#FEF3C7;color:#D97706;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <i data-lucide="server-off" style="width:20px;height:20px"></i>
-          </div>
-          <div style="flex:1">
-            <div style="font-size:16px;font-weight:700;color:#1C1917;margin-bottom:4px">C-Panel Telemetry Bridge Unavailable</div>
-            <div style="font-size:13.5px;color:#57534E;line-height:1.6;margin-bottom:12px">
-              ${escHtml(res.error || 'The server overview endpoint is currently not responding with JSON.')}
-            </div>
-            
-            <!-- Diagnostics Panel in Error State -->
-            <div style="background:#FBF9F5;border:1px solid #EAE5DB;border-radius:6px;padding:12px;margin-bottom:14px;font-family:monospace;font-size:12px;display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px">
-              <div><strong>API Base:</strong> ${escHtml(CPanelState.diagnostics.apiBase)}</div>
-              <div><strong>Endpoint:</strong> ${escHtml(CPanelState.diagnostics.endpoint)}</div>
-              <div><strong>HTTP Status:</strong> ${escHtml(CPanelState.diagnostics.httpStatus)}</div>
-              <div><strong>Content-Type:</strong> ${escHtml(CPanelState.diagnostics.contentType)}</div>
-              <div><strong>Response Time:</strong> ${CPanelState.diagnostics.responseTimeMs} ms</div>
-              <div><strong>Last Error:</strong> ${escHtml(CPanelState.diagnostics.lastError || 'None')}</div>
-            </div>
-
-            <div style="display:flex;gap:10px;align-items:center">
-              <button class="cp-btn cp-btn-gold cp-btn-sm" onclick="renderActiveTab()">
-                <i data-lucide="refresh-cw"></i> Retry Connection
-              </button>
-              <a href="/api/cpanel/overview" target="_blank" class="cp-btn cp-btn-outline cp-btn-sm">
-                <i data-lucide="external-link"></i> Test Endpoint Direct
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    if (window.lucide) lucide.createIcons();
+    renderTabError(container, res, 'C-Panel Telemetry Bridge', '/api/cpanel/overview');
     return;
   }
 
@@ -739,7 +759,7 @@ async function renderFileManager(container, dir = CPanelState.currentDir) {
   CPanelState.currentDir = dir;
   const res = await apiCall(`/api/cpanel/files?dir=${encodeURIComponent(dir)}`);
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to read directory: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'File Manager', `/api/cpanel/files?dir=${encodeURIComponent(dir)}`);
     return;
   }
 
@@ -834,7 +854,7 @@ async function renderFileManager(container, dir = CPanelState.currentDir) {
                     <button class="cp-btn cp-btn-outline cp-btn-sm" title="View / Edit Code" onclick="openFileEditor('${escHtml(i.relativePath)}')">
                       <i data-lucide="edit-3"></i> Edit
                     </button>
-                    <a class="cp-btn cp-btn-outline cp-btn-sm" title="Download" href="/api/cpanel/files/download?path=${encodeURIComponent(i.relativePath)}" download>
+                    <a class="cp-btn cp-btn-outline cp-btn-sm" title="Download" href="${(getApiBaseUrl() || '') + '/api/cpanel/files/download?path=' + encodeURIComponent(i.relativePath)}" download>
                       <i data-lucide="download"></i>
                     </a>
                   ` : ''}
@@ -1011,7 +1031,9 @@ function openUploadModal() {
 
     showToast(`Uploading ${file.name}...`, 'info');
     try {
-      const res = await fetch(`/api/cpanel/files/upload?dir=${encodeURIComponent(CPanelState.currentDir)}`, {
+      const base = getApiBaseUrl();
+      const uploadUrl = (base ? base : '') + `/api/cpanel/files/upload?dir=${encodeURIComponent(CPanelState.currentDir)}`;
+      const res = await fetch(uploadUrl, {
         method: 'POST',
         headers: {
           'x-admin-email': CPanelState.userEmail,
@@ -1039,7 +1061,7 @@ function openUploadModal() {
 async function renderDatabase(container) {
   const res = await apiCall('/api/cpanel/database/info');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch database information: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'Database & Connection Management', '/api/cpanel/database/info');
     return;
   }
 
@@ -1145,7 +1167,7 @@ async function runDbBenchmark() {
 async function renderEnvVariables(container) {
   const res = await apiCall('/api/cpanel/env');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch environment variables: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'Environment Variables Registry', '/api/cpanel/env');
     return;
   }
 
@@ -1288,7 +1310,7 @@ function openAddEnvModal() {
 async function renderGitHubDeploy(container) {
   const res = await apiCall('/api/cpanel/github/status');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch deployment status: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'GitHub & Deployment Pipeline', '/api/cpanel/github/status');
     return;
   }
 
@@ -1436,7 +1458,7 @@ async function openRollbackModal() {
 async function renderBackups(container) {
   const res = await apiCall('/api/cpanel/backups');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch backups: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'Backup & Restore Vault', '/api/cpanel/backups');
     return;
   }
 
@@ -1482,7 +1504,7 @@ async function renderBackups(container) {
                 <td style="color:#8C867D">${new Date(b.createdAt).toLocaleString('en-IN')}</td>
                 <td><code style="font-size:11px;color:#8C867D">${escHtml(b.checksum.slice(0, 16))}...</code></td>
                 <td style="text-align:right;white-space:nowrap">
-                  <a class="cp-btn cp-btn-outline cp-btn-sm" href="${escHtml(b.downloadUrl)}" download>
+                  <a class="cp-btn cp-btn-outline cp-btn-sm" href="${escHtml((getApiBaseUrl() || '') + (b.downloadUrl.startsWith('/') ? b.downloadUrl : '/' + b.downloadUrl))}" download>
                     <i data-lucide="download"></i> Download
                   </a>
                   <button class="cp-btn cp-btn-danger cp-btn-sm" onclick="triggerRestore('${escHtml(b.id)}')">
@@ -1535,7 +1557,7 @@ async function triggerRestore(backupId) {
 async function renderLogs(container) {
   const res = await apiCall('/api/cpanel/logs');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch logs: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'Live System Logs', '/api/cpanel/logs');
     return;
   }
 
@@ -1550,10 +1572,10 @@ async function renderLogs(container) {
           <div class="cp-card-subtitle">Real-time application events, API calls, database errors & security alerts.</div>
         </div>
         <div style="display:flex;gap:8px">
-          <a class="cp-btn cp-btn-outline cp-btn-sm" href="/api/cpanel/logs/export?format=csv" download>
+          <a class="cp-btn cp-btn-outline cp-btn-sm" href="${(getApiBaseUrl() || '') + '/api/cpanel/logs/export?format=csv'}" download>
             <i data-lucide="download"></i> Export CSV
           </a>
-          <a class="cp-btn cp-btn-outline cp-btn-sm" href="/api/cpanel/logs/export?format=json" download>
+          <a class="cp-btn cp-btn-outline cp-btn-sm" href="${(getApiBaseUrl() || '') + '/api/cpanel/logs/export?format=json'}" download>
             <i data-lucide="download"></i> Export JSON
           </a>
         </div>
@@ -1624,7 +1646,7 @@ function filterLogs() {
 async function renderDomain(container) {
   const res = await apiCall('/api/cpanel/domain/status');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch domain status: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'Domain & SSL Status', '/api/cpanel/domain/status');
     return;
   }
 
@@ -1698,7 +1720,7 @@ async function renderDomain(container) {
 async function renderStorage(container) {
   const res = await apiCall('/api/cpanel/storage/stats');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch storage stats: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'Storage & Media Usage', '/api/cpanel/storage/stats');
     return;
   }
 
@@ -1786,7 +1808,7 @@ async function renderStorage(container) {
 async function renderApiControl(container) {
   const res = await apiCall('/api/cpanel/api/stats');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch API stats: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'API Gateway & Key Controls', '/api/cpanel/api/stats');
     return;
   }
 
@@ -1895,7 +1917,7 @@ async function revokeApiKey(keyId) {
 async function renderSecurity(container) {
   const res = await apiCall('/api/cpanel/security/audit');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch security logs: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'Security & Audit Trail', '/api/cpanel/security/audit');
     return;
   }
 
@@ -2005,7 +2027,7 @@ async function revokeSession(sessionId) {
 async function renderUsers(container) {
   const res = await apiCall('/api/cpanel/users');
   if (!res.success) {
-    container.innerHTML = `<div class="cp-card"><p style="color:#B91C1C">Failed to fetch users: ${escHtml(res.error)}</p></div>`;
+    renderTabError(container, res, 'C-Panel Administrators & Role Matrix', '/api/cpanel/users');
     return;
   }
 
