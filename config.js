@@ -21,6 +21,6 @@ window.__ENV__ = window.__ENV__ || {
 
   // 3. NODE.JS BACKEND / C-PANEL API BASE URL
   // In Local Development: Leave empty to auto-detect http://localhost:3000 (or Vite proxy on :3002)
-  // In Production / GitHub Pages: Set to your deployed Node.js backend URL (e.g. "https://my-royra-api.run.app")
-  API_BASE: ""
+  // In Production / GitHub Pages: Set to your deployed Node.js backend URL
+  API_BASE: "https://ais-dev-qvmgzjx5odfaoem7rmqock-197524094525.asia-southeast1.run.app"
 };

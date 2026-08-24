@@ -359,6 +359,169 @@ async function renderActiveTab() {
   if (window.lucide) lucide.createIcons();
 }
 
+// Interactive Direct Health Endpoint Tester
+async function runDirectApiHealthTest(customBase) {
+  const base = (customBase || getApiBaseUrl() || DEFAULT_PROD_API_BASE).replace(/\/+$/, '');
+  const targetUrl = `${base}/api/cpanel/health`;
+  
+  let modalEl = document.getElementById('cp-test-direct-modal');
+  if (!modalEl) {
+    modalEl = document.createElement('div');
+    modalEl.id = 'cp-test-direct-modal';
+    modalEl.className = 'cp-modal-backdrop';
+    document.body.appendChild(modalEl);
+  }
+
+  modalEl.innerHTML = `
+    <div class="cp-modal" style="max-width: 620px;">
+      <div class="cp-modal-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <i data-lucide="activity" style="width:18px;height:18px;color:#A68B5B"></i>
+          <span class="cp-modal-title">Live Backend Health Test</span>
+        </div>
+        <button class="cp-btn cp-btn-outline cp-btn-sm" onclick="document.getElementById('cp-test-direct-modal').remove()">✕</button>
+      </div>
+      <div class="cp-modal-body" id="cp-test-direct-body">
+        <div style="text-align:center;padding:30px;color:#8C867D">
+          <i data-lucide="loader-2" class="animate-spin" style="width:24px;height:24px;margin-bottom:8px"></i>
+          <div>Connecting to ${escHtml(targetUrl)}...</div>
+        </div>
+      </div>
+      <div class="cp-modal-footer">
+        <button class="cp-btn cp-btn-outline cp-btn-sm" onclick="runDirectApiHealthTest('${escHtml(base)}')">
+          <i data-lucide="refresh-cw"></i> Re-test
+        </button>
+        <a href="${escHtml(targetUrl)}" target="_blank" class="cp-btn cp-btn-outline cp-btn-sm">
+          <i data-lucide="external-link"></i> Open URL in New Tab
+        </a>
+        <button class="cp-btn cp-btn-gold cp-btn-sm" onclick="document.getElementById('cp-test-direct-modal').remove()">Close</button>
+      </div>
+    </div>
+  `;
+  if (window.lucide) lucide.createIcons();
+
+  const startTime = performance.now();
+  let httpStatus = 'Pending';
+  let contentType = 'none';
+  let responseBody = '';
+  let isSuccess = false;
+  let latencyMs = 0;
+
+  try {
+    const res = await fetch(targetUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'x-admin-email': CPanelState.userEmail,
+        'x-admin-role': CPanelState.currentRole
+      }
+    });
+
+    latencyMs = Math.round(performance.now() - startTime);
+    httpStatus = `${res.status} ${res.statusText || (res.status === 200 ? 'OK' : '')}`;
+    contentType = res.headers.get('content-type') || 'none';
+    isSuccess = res.ok && contentType.includes('application/json');
+
+    const text = await res.text();
+    try {
+      const parsed = JSON.parse(text);
+      responseBody = JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      responseBody = text;
+    }
+  } catch (err) {
+    latencyMs = Math.round(performance.now() - startTime);
+    httpStatus = 'NETWORK_ERROR';
+    contentType = 'none';
+    responseBody = `Error: ${err.message || 'Failed to fetch'}\n\nTroubleshooting tips:\n1. Ensure Cloud Run service is listening on 0.0.0.0 and process.env.PORT\n2. Verify CORS headers allow requests from ${window.location.origin}\n3. Check if HTTPS / certificate is valid`;
+  }
+
+  const bodyContainer = document.getElementById('cp-test-direct-body');
+  if (bodyContainer) {
+    bodyContainer.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:10px;font-size:12px;background:#FAF8F4;border:1px solid #EAE5DB;border-radius:6px;padding:12px">
+          <div><span style="color:#8C867D">Target URL:</span><br><strong style="font-family:monospace;word-break:break-all">${escHtml(targetUrl)}</strong></div>
+          <div><span style="color:#8C867D">HTTP Status:</span><br><span class="cp-status ${isSuccess ? 'online' : 'critical'}">${escHtml(httpStatus)}</span></div>
+          <div><span style="color:#8C867D">Content-Type:</span><br><strong style="font-family:monospace">${escHtml(contentType)}</strong></div>
+          <div><span style="color:#8C867D">Latency:</span><br><strong style="font-family:monospace">${latencyMs} ms</strong></div>
+        </div>
+        
+        <div>
+          <div style="font-size:12px;font-weight:600;color:#58544E;margin-bottom:4px">Response Body:</div>
+          <pre style="background:#1C1917;color:${isSuccess ? '#86EFAC' : '#FCA5A5'};font-family:monospace;font-size:11.5px;padding:12px;border-radius:6px;max-height:220px;overflow-y:auto;white-space:pre-wrap;word-break:break-all">${escHtml(responseBody)}</pre>
+        </div>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+  }
+}
+
+// Reusable tab error rendering with diagnostics & change API base control
+function renderTabError(container, res, moduleName = 'Module', directEndpoint = '') {
+  const base = getApiBaseUrl();
+  const hasBase = Boolean(base && base.trim());
+  const isNetworkError = CPanelState.diagnostics.httpStatus === 'NETWORK_ERROR' || !res.ok;
+  
+  let errorTitle = 'Production Backend API Unreachable';
+  let suggestedAction = 'Verify your Cloud Run service is active, listening on 0.0.0.0 and process.env.PORT, and CORS is enabled for this domain.';
+  
+  if (!hasBase) {
+    errorTitle = 'Production Backend API is Not Configured';
+    suggestedAction = 'Click "Change API Base" to enter your deployed Node.js backend URL.';
+  } else if (!isNetworkError && res.status) {
+    errorTitle = `${moduleName} Telemetry Unavailable (HTTP ${CPanelState.diagnostics.httpStatus})`;
+    suggestedAction = 'The server responded with an error status. Check server logs in C-Panel or Cloud Run console.';
+  }
+
+  container.innerHTML = `
+    <div class="cp-card" style="border-left: 4px solid #DC2626; padding: 24px;">
+      <div style="display:flex;align-items:flex-start;gap:16px">
+        <div style="width:40px;height:40px;border-radius:8px;background:#FEE2E2;color:#DC2626;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i data-lucide="server-off" style="width:20px;height:20px"></i>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:16px;font-weight:700;color:#1C1917;margin-bottom:4px">
+            ${escHtml(errorTitle)}
+          </div>
+          <div style="font-size:13.5px;color:#57534E;line-height:1.6;margin-bottom:12px">
+            ${escHtml(res.error || `The ${moduleName} endpoint is currently not responding.`)}
+          </div>
+          
+          <!-- Diagnostics Panel in Error State -->
+          <div style="background:#FBF9F5;border:1px solid #EAE5DB;border-radius:6px;padding:12px;margin-bottom:14px;font-family:monospace;font-size:12px;display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px">
+            <div><strong>API Base:</strong> ${escHtml(CPanelState.diagnostics.apiBase || base || 'None')}</div>
+            <div><strong>Endpoint:</strong> ${escHtml(CPanelState.diagnostics.endpoint)}</div>
+            <div><strong>HTTP Status:</strong> <span style="color:#DC2626;font-weight:700">${escHtml(CPanelState.diagnostics.httpStatus)}</span></div>
+            <div><strong>Content-Type:</strong> ${escHtml(CPanelState.diagnostics.contentType)}</div>
+            <div><strong>Response Time:</strong> ${CPanelState.diagnostics.responseTimeMs} ms</div>
+            <div><strong>Network Error:</strong> ${escHtml(CPanelState.diagnostics.lastError || 'Failed to fetch')}</div>
+            <div style="grid-column: 1 / -1; font-family: var(--cp-font); font-size: 11.5px; color: #78716C; margin-top: 4px;">
+              <strong>Suggested Action:</strong> ${escHtml(suggestedAction)}
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="cp-btn cp-btn-gold cp-btn-sm" onclick="runDirectApiHealthTest('${escHtml(base || '')}')">
+              <i data-lucide="activity"></i> Test Direct
+            </button>
+            <button class="cp-btn cp-btn-outline cp-btn-sm" onclick="setCustomApiBase()">
+              <i data-lucide="settings-2"></i> Change API Base
+            </button>
+            <button class="cp-btn cp-btn-outline cp-btn-sm" onclick="renderActiveTab()">
+              <i data-lucide="refresh-cw"></i> Retry Connection
+            </button>
+            <a href="${escHtml((base || DEFAULT_PROD_API_BASE) + '/api/cpanel/health')}" target="_blank" class="cp-btn cp-btn-outline cp-btn-sm" style="font-size:11px">
+              <i data-lucide="external-link"></i> Open Health in New Tab
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  if (window.lucide) lucide.createIcons();
+}
+
 // -------------------------------------------------------------
 // 1. DASHBOARD MODULE
 // -------------------------------------------------------------
@@ -368,41 +531,7 @@ async function renderDashboard(container) {
   const res = await apiCall('/api/cpanel/overview');
   
   if (!res.success) {
-    container.innerHTML = `
-      <div class="cp-card" style="border-left: 4px solid #D97706; padding: 24px;">
-        <div style="display:flex;align-items:flex-start;gap:16px">
-          <div style="width:40px;height:40px;border-radius:8px;background:#FEF3C7;color:#D97706;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <i data-lucide="server-off" style="width:20px;height:20px"></i>
-          </div>
-          <div style="flex:1">
-            <div style="font-size:16px;font-weight:700;color:#1C1917;margin-bottom:4px">C-Panel Telemetry Bridge Unavailable</div>
-            <div style="font-size:13.5px;color:#57534E;line-height:1.6;margin-bottom:12px">
-              ${escHtml(res.error || 'The server overview endpoint is currently not responding with JSON.')}
-            </div>
-            
-            <!-- Diagnostics Panel in Error State -->
-            <div style="background:#FBF9F5;border:1px solid #EAE5DB;border-radius:6px;padding:12px;margin-bottom:14px;font-family:monospace;font-size:12px;display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:8px">
-              <div><strong>API Base:</strong> ${escHtml(CPanelState.diagnostics.apiBase)}</div>
-              <div><strong>Endpoint:</strong> ${escHtml(CPanelState.diagnostics.endpoint)}</div>
-              <div><strong>HTTP Status:</strong> ${escHtml(CPanelState.diagnostics.httpStatus)}</div>
-              <div><strong>Content-Type:</strong> ${escHtml(CPanelState.diagnostics.contentType)}</div>
-              <div><strong>Response Time:</strong> ${CPanelState.diagnostics.responseTimeMs} ms</div>
-              <div><strong>Last Error:</strong> ${escHtml(CPanelState.diagnostics.lastError || 'None')}</div>
-            </div>
-
-            <div style="display:flex;gap:10px;align-items:center">
-              <button class="cp-btn cp-btn-gold cp-btn-sm" onclick="renderActiveTab()">
-                <i data-lucide="refresh-cw"></i> Retry Connection
-              </button>
-              <a href="/api/cpanel/overview" target="_blank" class="cp-btn cp-btn-outline cp-btn-sm">
-                <i data-lucide="external-link"></i> Test Endpoint Direct
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    if (window.lucide) lucide.createIcons();
+    renderTabError(container, res, 'C-Panel Telemetry Bridge', '/api/cpanel/overview');
     return;
   }
 
