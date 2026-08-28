@@ -1,4 +1,6 @@
+import fs from 'fs';
 
+const css = `
 /* ==========================================================================
    ROYRA JEWELS - PROFESSIONAL ADMIN DASHBOARD STYLES
    Matches Shopify-style SaaS Admin UI
@@ -509,7 +511,6 @@ body.admin-body {
   align-items: center;
   gap: 12px;
 }
-a {
-  text-decoration: none;
-  color: inherit;
-}
+`
+fs.writeFileSync('admin.css', css, 'utf8');
+console.log('CSS Rewritten');

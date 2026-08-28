@@ -6,6 +6,8 @@ import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import cpanelRouter from './server/cpanel';
 import aiRouter from './server/ai';
+import nodemailer from 'nodemailer';
+import PDFDocument from 'pdfkit';
 
 dotenv.config();
 
@@ -327,7 +329,119 @@ app.post('/api/integration/web-order', async (req, res) => {
   }
 });
 
-// 3. Test Endpoint for testing with sample payload without touching checkout
+// 3. Generate Invoice and send email
+app.post('/api/integration/generate-invoice', async (req, res) => {
+  try {
+    const { orderId, emailTo } = req.body;
+    
+    if (!orderId || !emailTo) {
+      return res.status(400).json({ success: false, error: 'Missing orderId or emailTo' });
+    }
+    
+    // Generate PDF in memory
+    const doc = new PDFDocument({ margin: 50 });
+    const buffers: Buffer[] = [];
+    doc.on('data', buffers.push.bind(buffers));
+    
+    const generatePdf = new Promise<Buffer>((resolve, reject) => {
+      doc.on('end', () => resolve(Buffer.concat(buffers)));
+      doc.on('error', reject);
+    });
+
+    // Add company header
+    doc.fontSize(20).text('ROYRA JEWELS', { align: 'center' });
+    doc.fontSize(10).text('22 Nagole Jaipur Colony Main Road, Jaipur, 302001', { align: 'center' });
+    doc.moveDown(2);
+    
+    // Add Invoice info
+    doc.fontSize(16).text('INVOICE', { underline: true });
+    doc.fontSize(12).text(`Order Number: #${orderId}`);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`);
+    doc.text(`Customer Email: ${emailTo}`);
+    doc.moveDown(2);
+    
+    // Add Items (Mock data for demo)
+    doc.fontSize(14).text('Items:', { underline: true });
+    doc.fontSize(12).text('1x Diamond Flower Charm Studs (ROY-1002)');
+    doc.fontSize(10).text('   Metal: Rose Gold, Purity: 18K');
+    doc.fontSize(10).text('   Gross Wt: 2.5g | Net Wt: 2.2g | Stones: Diamond (0.1ct)');
+    doc.fontSize(12).text('   Price: ₹11,000.00');
+    doc.moveDown(1);
+    
+    // Add Totals
+    doc.text('--------------------------------------------------');
+    doc.text('Subtotal: ₹11,000.00');
+    doc.text('Discount: -₹5,000.00');
+    doc.fontSize(14).text('Total: ₹6,000.00', { bold: true });
+    
+    doc.end();
+    
+    const pdfBuffer = await generatePdf;
+
+    // Determine if SMTP is configured, else fallback to mock/ethereal
+    const smtpHost = process.env.SMTP_HOST;
+    let transporter;
+    
+    if (smtpHost) {
+      transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: process.env.SMTP_SECURE === 'true',
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS
+        }
+      });
+    } else {
+      // Create ethereal test account if no real SMTP provided
+      console.log('[ERP Bridge] SMTP credentials missing. Using Ethereal test account.');
+      const testAccount = await nodemailer.createTestAccount();
+      transporter = nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        secure: false,
+        auth: {
+          user: testAccount.user,
+          pass: testAccount.pass
+        }
+      });
+    }
+
+    const mailOptions = {
+      from: '"Royra Jewels" <noreply@royrajewels.com>',
+      to: emailTo,
+      subject: `Invoice for Order #${orderId}`,
+      text: `Dear Customer,\n\nPlease find attached the invoice for your order #${orderId}.\n\nThank you for shopping with Royra Jewels!`,
+      html: `<p>Dear Customer,</p><p>Please find attached the invoice for your order <b>#${orderId}</b>.</p><p>Thank you for shopping with <b>Royra Jewels</b>!</p>`,
+      attachments: [
+        {
+          filename: `Royra-Jewels-Invoice-${orderId}.pdf`,
+          content: pdfBuffer,
+          contentType: 'application/pdf'
+        }
+      ]
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[ERP Bridge] Invoice email sent: ${info.messageId}`);
+    
+    if (!smtpHost) {
+      console.log(`[ERP Bridge] Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
+    }
+
+    return res.json({
+      success: true,
+      message: `Invoice for Order #${orderId} generated and sent to ${emailTo}`,
+      previewUrl: !smtpHost ? nodemailer.getTestMessageUrl(info) : null,
+      simulated: !smtpHost
+    });
+  } catch (err: any) {
+    console.error('Invoice generation/sending error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 4. Test Endpoint for testing with sample payload without touching checkout
 app.post('/api/integration/test-sample-order', async (req, res) => {
   const sampleOrder = {
     webOrderId: `TEST-${Date.now()}`,

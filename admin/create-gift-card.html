@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROYRA JEWELS ADMIN | Issue Gift Card</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="admin.css" />
+  <script src="lucide.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="admin-body">
+  <div class="admin-layout">
+    
+    <div id="admin-sidebar-overlay" class="admin-sidebar-overlay" onclick="toggleAdminSidebar()"></div>
+    <aside id="admin-sidebar" class="admin-sidebar">
+      <!-- Replaced by script -->
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-menu-toggle" onclick="toggleAdminSidebar()">
+            <i data-lucide="menu"></i>
+          </button>
+          <a href="index.html" class="topbar-brand">
+            <span class="brand-logo">RJ</span>
+            <span class="brand-text">ROYRA JEWELS</span>
+          </a>
+        </div>
+        <div class="topbar-center">
+          <div class="global-search">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" placeholder="Search" />
+            <span class="search-shortcut">CTRL K</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button type="button" class="icon-btn"><i data-lucide="bell"></i></button>
+          <div class="profile-dropdown">
+            <div class="avatar">MS</div>
+            <span class="profile-name">Royra Jewels Admin</span>
+            <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+          </div>
+        </div>
+      </header>
+
+      <div class="admin-content" style="max-width: 1000px; margin: 0 auto; padding-top: 24px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="gift-cards.html" style="color: #6D7175; text-decoration: none;"><i data-lucide="arrow-left" style="width:20px;height:20px;"></i></a>
+            <h1 style="font-size: 24px; font-weight: 700; color: #202223; margin: 0;">Issue gift card</h1>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-admin-secondary" style="padding: 6px 12px; font-size: 13px;" onclick="window.history.back()">Discard</button>
+            <button class="btn-admin-primary" style="padding: 6px 12px; font-size: 13px;">Save</button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+          <!-- LEFT COLUMN -->
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <div class="admin-card">
+              <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 14px; font-weight: 600; margin: 0;">Gift card details</h3>
+              </div>
+              <div style="padding: 0 20px 20px 20px;">
+                <div style="margin-bottom: 16px;">
+                  <label style="font-size: 13px; color: #202223; display: block; margin-bottom: 4px;">Gift card code</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="text" class="form-input" style="flex: 1;" value="d83a 1c6b a594 f965" />
+                    <button class="btn-admin-secondary" style="padding: 6px 12px; font-size: 13px;">Generate code</button>
+                  </div>
+                  <div style="font-size: 13px; color: #6D7175; margin-top: 4px;">Code is only visible when creating the gift card.</div>
+                </div>
+                
+                <div>
+                  <label style="font-size: 13px; color: #202223; display: block; margin-bottom: 4px;">Initial value</label>
+                  <div style="position: relative; max-width: 200px;">
+                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6D7175;">₹</span>
+                    <input type="text" class="form-input" style="padding-left: 28px;" value="1,000.00" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div style="padding: 16px 20px; border-bottom: 1px solid var(--admin-border);">
+                <h3 style="font-size: 14px; font-weight: 600; margin: 0;">Expiration date</h3>
+              </div>
+              <div style="padding: 20px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #202223; margin-bottom: 12px; cursor: pointer;">
+                  <input type="radio" name="expiry" checked /> No expiration date
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #202223; cursor: pointer;">
+                  <input type="radio" name="expiry" /> Set expiration date
+                </label>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div style="padding: 16px 20px; border-bottom: 1px solid var(--admin-border);">
+                <h3 style="font-size: 14px; font-weight: 600; margin: 0;">Internal notes</h3>
+              </div>
+              <div style="padding: 20px;">
+                <input type="text" class="form-input" placeholder="e.g. Apology for delayed shipping" />
+                <div style="font-size: 13px; color: #6D7175; margin-top: 4px;">These notes are private and won't be shared with the customer.</div>
+              </div>
+            </div>
+            
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div>
+            <div class="admin-card">
+              <div style="padding: 16px 20px; border-bottom: 1px solid var(--admin-border);">
+                <h3 style="font-size: 14px; font-weight: 600; margin: 0;">Customer</h3>
+              </div>
+              <div style="padding: 20px;">
+                <div class="global-search" style="background: transparent; border: 1px solid #C9CCCF; border-radius: 4px; padding: 4px 8px; margin-bottom: 12px;">
+                  <i data-lucide="search" style="color: #8C9196; width: 14px;"></i>
+                  <input type="text" placeholder="Search customers" style="color: #202223; border: none; background: transparent; outline: none; font-size: 13px; width: 100%;" />
+                </div>
+                <div style="font-size: 13px; color: #6D7175;">
+                  Find or create a customer to issue the gift card to.
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        <div style="border-top: 1px solid var(--admin-border); margin-top: 32px; padding: 20px 0; display: flex; justify-content: flex-end; gap: 8px;">
+          <button class="btn-admin-secondary" style="padding: 6px 12px; font-size: 13px;" onclick="window.history.back()">Discard</button>
+          <button class="btn-admin-primary" style="padding: 6px 12px; font-size: 13px;">Save</button>
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <script src="../config.js"></script>
+  <script src="../supabase.js"></script>
+  <script src="admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

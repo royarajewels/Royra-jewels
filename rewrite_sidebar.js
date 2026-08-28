@@ -1,22 +1,7 @@
-<!DOCTYPE html><html lang="en"><head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROYRA JEWELS ADMIN</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Supabase JS Client CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="admin.css" />
-  <link rel="stylesheet" href="ops.css" />
-  <!-- Lucide Icons -->
-  <script src="lucide.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
-</head><body class="admin-body"><div class="admin-layout">    
-    <!-- MOBILE OVERLAY -->
-    <div id="admin-sidebar-overlay" class="admin-sidebar-overlay" onclick="toggleAdminSidebar()"></div>
-                                <!-- SIDEBAR -->
+import fs from 'fs';
+import path from 'path';
+
+const newSidebar = `    <!-- SIDEBAR -->
     <aside id="admin-sidebar" class="admin-sidebar">
       <nav class="sidebar-nav">
         <a href="index.html" class="nav-link"><i data-lucide="home"></i><span>Home</span></a>
@@ -76,34 +61,18 @@
           </div>
         </div>
       </div>
-    </aside>
-<main class="admin-main">
-      <header class="admin-topbar">
-        <div class="topbar-left">
-          <button type="button" class="mobile-menu-toggle" onclick="toggleAdminSidebar()">
-            <i data-lucide="menu"></i>
-          </button>
-          <a href="index.html" class="topbar-brand">
-            <span class="brand-logo">RJ</span>
-            <span class="brand-text">ROYRA JEWELS</span>
-          </a>
-        </div>
-        <div class="topbar-center">
-          <div class="global-search">
-            <i data-lucide="search" class="search-icon"></i>
-            <input type="text" placeholder="Search" />
-            <span class="search-shortcut">CTRL K</span>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <button type="button" class="icon-btn"><i data-lucide="bell"></i></button>
-          <button type="button" class="icon-btn"><i data-lucide="help-circle"></i></button>
-          <div class="profile-dropdown">
-            <div class="avatar">MS</div>
-            <span class="profile-name">Royra Jewels Admin</span>
-            <i data-lucide="chevron-down"></i>
-          </div>
-        </div>
-      </header>
-<div class="admin-content ops-page"><div class="ops-table-wrap"><table class="admin-table"><thead><tr><th>Refund</th><th>Order</th><th>Customer</th><th>Amount</th><th>Status</th><th>Reason</th></tr></thead><tbody id="refunds-tbody"></tbody></table></div></div></main></div><script src="../config.js"></script><script src="../supabase.js"></script><script src="admin.js"></script><script src="ops.js"></script><script>document.addEventListener("DOMContentLoaded",()=>{initRefundsPage();});</script>  <div id="admin-toast-container" class="admin-toast-container"></div>
-</body></html>
+    </aside>`;
+
+const files = fs.readdirSync('admin').filter(f => f.endsWith('.html'));
+
+files.forEach(file => {
+  const filePath = path.join('admin', file);
+  let content = fs.readFileSync(filePath, 'utf8');
+  
+  const sidebarRegex = /<!-- SIDEBAR -->[\s\S]*?<\/aside>/;
+  if (sidebarRegex.test(content)) {
+    content = content.replace(sidebarRegex, newSidebar);
+    fs.writeFileSync(filePath, content, 'utf8');
+    console.log(`Updated sidebar in ${file}`);
+  }
+});

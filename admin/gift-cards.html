@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROYRA JEWELS ADMIN | Customers</title>
+  <title>ROYRA JEWELS ADMIN | Gift Cards</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -48,62 +48,38 @@
         </div>
       </header>
 
-      <div class="admin-content" style="max-width: 1200px; margin: 0 auto;">
+      <div class="admin-content" style="max-width: 1000px; margin: 0 auto; padding-top: 24px;">
         
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <h1 style="font-size: 20px; font-weight: 600; color: #202223;">Customers</h1>
+          <h1 style="font-size: 20px; font-weight: 600; color: #202223;">Gift cards</h1>
           <div style="display: flex; gap: 8px;">
             <button class="btn-admin-secondary" style="padding: 6px 12px; font-size: 13px;">Export</button>
-            <button class="btn-admin-secondary" style="padding: 6px 12px; font-size: 13px;">Import</button>
-            <button class="btn-admin-primary" style="padding: 6px 12px; font-size: 13px;">Add customer</button>
+            <button class="btn-admin-primary" onclick="window.location.href='create-gift-card.html'" style="padding: 6px 12px; font-size: 13px;">Issue gift card</button>
+          </div>
+        </div>
+
+        <div class="admin-card" style="padding: 64px 20px; text-align: center;">
+          <div style="width: 120px; height: 120px; margin: 0 auto 24px auto;">
+            <!-- Placeholder for illustration -->
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="20" y="30" width="80" height="50" rx="4" fill="#E4E5E7"/>
+              <path d="M20 45H100" stroke="#FFFFFF" stroke-width="2"/>
+              <circle cx="60" cy="55" r="8" fill="#FFFFFF"/>
+              <rect x="30" y="65" width="20" height="4" rx="2" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <h2 style="font-size: 16px; font-weight: 600; color: #202223; margin-bottom: 8px;">Start selling gift cards</h2>
+          <p style="font-size: 14px; color: #6D7175; max-width: 400px; margin: 0 auto 24px auto;">
+            Add a gift card product to your store for customers to purchase. You can also issue gift cards directly to customers.
+          </p>
+          <div style="display: flex; justify-content: center; gap: 12px;">
+            <button class="btn-admin-secondary" onclick="window.location.href='create-gift-card.html'">Issue gift card</button>
+            <button class="btn-admin-primary">Add gift card product</button>
           </div>
         </div>
         
-        <div class="admin-card" style="padding: 12px; display:flex; align-items:center; justify-content: space-between; margin-bottom: 16px;">
-          <div style="display: flex; align-items:center; gap: 8px;">
-            <i data-lucide="sparkles" style="width:16px;height:16px;color:#7b61ff;"></i>
-            <span style="font-size:13px; color:#6D7175;">Describe your segment</span>
-          </div>
-          <i data-lucide="chevron-down" style="width:16px;height:16px;color:#6D7175;"></i>
-        </div>
-
-        <div class="admin-card" style="overflow: visible;">
-          <div style="padding: 12px; border-bottom: 1px solid var(--admin-border); display: flex; align-items: center; gap: 12px;">
-            <div class="global-search" style="background: transparent; border: none; flex: 1;">
-              <i data-lucide="search" style="color: #8C9196; width: 14px; margin-left: 8px;"></i>
-              <input type="text" placeholder="Search customers" style="color: #202223;" />
-            </div>
-            <button class="btn-admin-secondary" style="padding: 6px 12px; border:none; box-shadow:none;"><i data-lucide="layout-template" style="width:16px;height:16px;"></i></button>
-          </div>
-
-          <div style="overflow-x: auto;">
-            <table class="admin-table" style="min-width: 1000px;">
-              <thead>
-                <tr>
-                  <th style="width: 40px;"><input type="checkbox" /></th>
-                  <th>Customer name</th>
-                  <th>Email subscription</th>
-                  <th>Location</th>
-                  <th>Orders</th>
-                  <th>Amount spent</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><input type="checkbox" /></td>
-                  <td style="font-weight: 500;">Sonu Sharma</td>
-                  <td></td>
-                  <td>Hyderabad TG, India</td>
-                  <td>1</td>
-                  <td>₹6,000.00</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div style="padding: 40px; text-align: center; color: #6D7175; font-size: 13px;">
-            Learn more about customers
-          </div>
+        <div style="text-align: center; margin-top: 24px;">
+          <a href="#" style="color: #6D7175; font-size: 13px; text-decoration: underline;">Learn more about gift cards</a>
         </div>
 
       </div>

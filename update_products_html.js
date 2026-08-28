@@ -1,125 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROYRA JEWELS ADMIN | Products</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Supabase JS Client CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="admin.css" />
-  <link rel="stylesheet" href="ops.css" />
-  <!-- Lucide Icons -->
-  <script src="lucide.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
-</head>
-<body class="admin-body">
+import fs from 'fs';
+import path from 'path';
 
-  <div class="admin-layout">
-    
-    <!-- MOBILE OVERLAY -->
-    <div id="admin-sidebar-overlay" class="admin-sidebar-overlay" onclick="toggleAdminSidebar()"></div>
-                                <!-- SIDEBAR -->
-    <aside id="admin-sidebar" class="admin-sidebar">
-      <nav class="sidebar-nav">
-        <a href="index.html" class="nav-link"><i data-lucide="home"></i><span>Home</span></a>
-        
-        <div class="nav-group">
-          <a href="orders.html" class="nav-link"><i data-lucide="inbox"></i><span>Orders</span></a>
-          <div class="nav-sub">
-            <a href="#">Drafts</a>
-            <a href="#">Abandoned checkouts</a>
-          </div>
-        </div>
-        
-        <div class="nav-group">
-          <a href="products.html" class="nav-link"><i data-lucide="tag"></i><span>Products</span></a>
-          <div class="nav-sub">
-            <a href="collections.html">Collections</a>
-            <a href="inventory.html">Inventory</a>
-            <a href="purchase-orders.html">Purchase orders</a>
-            <a href="#">Transfers</a>
-            <a href="gift-cards.html">Gift cards</a>
-          </div>
-        </div>
-        
-        <div class="nav-group">
-          <a href="customers.html" class="nav-link"><i data-lucide="users"></i><span>Customers</span></a>
-          <div class="nav-sub">
-            <a href="#">Segments</a>
-            <a href="#">Companies</a>
-          </div>
-        </div>
-        
-        <a href="#" class="nav-link"><i data-lucide="trending-up"></i><span>Growth</span></a>
-        <a href="coupons.html" class="nav-link"><i data-lucide="percent"></i><span>Discounts</span></a>
-        <a href="#" class="nav-link"><i data-lucide="file-text"></i><span>Content</span></a>
-        <a href="#" class="nav-link"><i data-lucide="globe"></i><span>Markets</span></a>
-        <a href="#" class="nav-link"><i data-lucide="bar-chart-2"></i><span>Analytics</span></a>
-        
-        <div class="nav-section-title">Sales channels <i data-lucide="chevron-right" style="width:14px;height:14px;float:right;cursor:pointer;"></i></div>
-        <a href="#" class="nav-link"><i data-lucide="store"></i><span>Online Store</span></a>
-        <a href="#" class="nav-link"><i data-lucide="bot"></i><span>Agentic</span></a>
-        <a href="#" class="nav-link"><i data-lucide="monitor-smartphone"></i><span>Point of Sale</span></a>
-        
-        <div class="nav-section-title">Apps <i data-lucide="chevron-right" style="width:14px;height:14px;float:right;cursor:pointer;"></i></div>
-        <a href="#" class="nav-link"><i data-lucide="message-square"></i><span>Messaging</span></a>
-        <a href="#" class="nav-link"><i data-lucide="message-circle"></i><span>Sidekick conversations</span></a>
-        
-        <div style="margin-top: 16px;"></div>
-        <a href="settings.html" class="nav-link"><i data-lucide="settings"></i><span>Settings</span></a>
-      </nav>
-      
-      <div class="sidebar-footer">
-        <div class="store-info">
-          <div class="store-logo-sm">RJ</div>
-          <div class="store-details">
-            <div class="store-name">Royra Jewels</div>
-            <div class="store-loc">Jaipur, India</div>
-          </div>
-        </div>
-      </div>
-    </aside>
+const file = 'admin/products.html';
+let content = fs.readFileSync(file, 'utf8');
 
-
-    <!-- MAIN PRODUCTS CONTENT -->
-    <main class="admin-main">
-      <!-- TOP BAR -->
-      
-      <header class="admin-topbar">
-        <div class="topbar-left">
-          <button type="button" class="mobile-menu-toggle" onclick="toggleAdminSidebar()">
-            <i data-lucide="menu"></i>
-          </button>
-          <a href="index.html" class="topbar-brand">
-            <span class="brand-logo">RJ</span>
-            <span class="brand-text">ROYRA JEWELS</span>
-          </a>
-        </div>
-        <div class="topbar-center">
-          <div class="global-search">
-            <i data-lucide="search" class="search-icon"></i>
-            <input type="text" placeholder="Search" />
-            <span class="search-shortcut">CTRL K</span>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <button type="button" class="icon-btn"><i data-lucide="bell"></i></button>
-          <button type="button" class="icon-btn"><i data-lucide="help-circle"></i></button>
-          <div class="profile-dropdown">
-            <div class="avatar">MS</div>
-            <span class="profile-name">Royra Jewels Admin</span>
-            <i data-lucide="chevron-down"></i>
-          </div>
-        </div>
-      </header>
-
-
-      <!-- CONTENT BODY -->
-      
+const newContent = `
       <div class="admin-content" style="max-width: 1200px; margin: 0 auto;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
           <h1 style="font-size: 24px; font-weight: 700; color: #202223;">Products</h1>
@@ -253,7 +138,7 @@
                   <td style="padding: 12px;"><input type="checkbox" /></td>
                   <td style="padding: 12px; display: flex; align-items: center; gap: 12px;">
                     <div style="width: 40px; height: 40px; background: #F6F6F7; border-radius: 4px; overflow:hidden; border: 1px solid #E1E3E5;">
-                      <img src="../assets/products/roy-earring-1.jpg" style="width:100%; height:100%; object-fit:cover;" />
+                      <img src="../assets/products/roy-wh00829.webp" style="width:100%; height:100%; object-fit:cover;" />
                     </div>
                     <div>
                       <div style="font-weight: 500;">Pearl Drop Pendant</div>
@@ -281,41 +166,8 @@
           </div>
         </div>
       </div>
-</main>
-  </div>
+`;
 
-  <!-- DELETE CONFIRMATION MODAL -->
-  <div id="delete-confirm-modal" class="admin-modal-backdrop">
-    <div class="admin-modal">
-      <div class="modal-header">
-        <h3 class="modal-title">Delete Product</h3>
-        <button type="button" class="modal-close" onclick="closeDeleteModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        <p style="font-size: 14px; color: #1F1F1F; margin-bottom: 8px;">
-          Are you sure you want to delete <strong id="delete-modal-product-name">this product</strong>?
-        </p>
-        <p style="font-size: 12.5px; color: #EF4444;">
-          This will permanently remove the piece from your inventory and customer catalogue.
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-admin-secondary" onclick="closeDeleteModal()">Cancel</button>
-        <button type="button" class="btn-admin-danger" onclick="executeDeleteProduct()">Delete Product</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="admin-toast-container" class="admin-toast-container"></div>
-
-  <script src="../config.js"></script>
-  <script src="../supabase.js"></script>
-  <script src="admin.js"></script>
-  <script src="ops.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      window.initProductListing();
-    });
-  </script>
-</body>
-</html>
+content = content.replace(/<div class="admin-content">[\s\S]*?(?=<\/main>)/, newContent);
+fs.writeFileSync(file, content, 'utf8');
+console.log('Updated products.html body');

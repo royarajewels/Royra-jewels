@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROYRA JEWELS ADMIN | Order #1001</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="admin.css" />
+  <!-- Lucide Icons -->
+  <script src="lucide.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .timeline-item { display: flex; gap: 16px; margin-bottom: 24px; }
+    .timeline-icon { width: 32px; height: 32px; border-radius: 50%; background: #F3F3F3; display: flex; align-items: center; justify-content: center; color: #6D7175; flex-shrink: 0; }
+    .timeline-content { flex: 1; }
+    .timeline-time { color: #6D7175; font-size: 13px; text-align: right; }
+    
+    .dropdown-menu { display: none; position: absolute; right: 0; top: 100%; background: #FFF; border: 1px solid var(--admin-border); border-radius: var(--admin-radius-sm); box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100; min-width: 200px; padding: 8px 0; }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item { display: block; padding: 8px 16px; font-size: 13px; color: var(--admin-text); text-decoration: none; cursor: pointer; }
+    .dropdown-item:hover { background: #F3F3F3; }
+    
+    /* Modal styles */
+    .admin-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000; align-items: center; justify-content: center; }
+    .admin-modal { background: #FFF; border-radius: var(--admin-radius-md); width: 100%; max-width: 600px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .admin-modal-backdrop.show { display: flex; }
+  </style>
+</head>
+<body class="admin-body">
+  <div class="admin-layout">
+    
+    <div id="admin-sidebar-overlay" class="admin-sidebar-overlay" onclick="toggleAdminSidebar()"></div>
+    <aside id="admin-sidebar" class="admin-sidebar">
+      <!-- Replaced by script -->
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-menu-toggle" onclick="toggleAdminSidebar()">
+            <i data-lucide="menu"></i>
+          </button>
+          <a href="index.html" class="topbar-brand">
+            <span class="brand-logo">RJ</span>
+            <span class="brand-text">ROYRA JEWELS</span>
+          </a>
+        </div>
+        <div class="topbar-center">
+          <div class="global-search">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" placeholder="Search" />
+            <span class="search-shortcut">CTRL K</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button type="button" class="icon-btn"><i data-lucide="bell"></i></button>
+          <div class="profile-dropdown">
+            <div class="avatar">MS</div>
+            <span class="profile-name">Royra Jewels Admin</span>
+            <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+          </div>
+        </div>
+      </header>
+
+      <div class="admin-content" style="max-width: 1000px; margin: 0 auto; padding-top: 24px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+              <a href="orders.html" style="color: #6D7175; text-decoration: none;"><i data-lucide="arrow-left" style="width:20px;height:20px;"></i></a>
+              <h1 style="font-size: 24px; font-weight: 700; color: #202223; margin: 0;">#1001</h1>
+              <span style="background: #FFF5EA; color: #B98900; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500;"><span style="display:inline-block;width:6px;height:6px;background:#B98900;border-radius:50%;margin-right:4px;"></span>Payment pending</span>
+              <span style="background: #FFEA8A; color: #D82C0D; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500;"><span style="display:inline-block;width:6px;height:6px;background:#D82C0D;border-radius:50%;margin-right:4px;"></span>Unfulfilled</span>
+            </div>
+            <div style="color: #6D7175; font-size: 13px; margin-left: 32px;">August 28, 2026 at 5:09 pm from Draft Orders</div>
+          </div>
+          <div style="display: flex; gap: 8px; position: relative;">
+            <button class="btn-admin-secondary" style="padding: 6px 12px; font-size: 13px;">Restock</button>
+            <button class="btn-admin-secondary" style="padding: 6px 12px; font-size: 13px;">Edit</button>
+            <div style="position: relative;">
+              <button class="btn-admin-secondary" onclick="document.getElementById('more-actions-menu').classList.toggle('show')" style="padding: 6px 12px; font-size: 13px;">More actions <i data-lucide="chevron-down" style="width:14px;height:14px;vertical-align:middle;"></i></button>
+              <div id="more-actions-menu" class="dropdown-menu">
+                <a href="#" class="dropdown-item"><i data-lucide="copy" style="width:14px;height:14px;margin-right:8px;vertical-align:middle;"></i> Duplicate</a>
+                <a href="#" class="dropdown-item"><i data-lucide="x" style="width:14px;height:14px;margin-right:8px;vertical-align:middle;"></i> Cancel order</a>
+                <a href="#" class="dropdown-item"><i data-lucide="archive" style="width:14px;height:14px;margin-right:8px;vertical-align:middle;"></i> Archive</a>
+                <a href="#" class="dropdown-item"><i data-lucide="eye" style="width:14px;height:14px;margin-right:8px;vertical-align:middle;"></i> View order status page</a>
+                <div style="border-top: 1px solid var(--admin-border); margin: 4px 0;"></div>
+                <div style="padding: 4px 16px; font-size: 11px; font-weight: 600; color: #6D7175; text-transform: uppercase;">Print</div>
+                <a href="#" class="dropdown-item"><i data-lucide="printer" style="width:14px;height:14px;margin-right:8px;vertical-align:middle;"></i> Print order page</a>
+                <a href="#" class="dropdown-item"><i data-lucide="file-text" style="width:14px;height:14px;margin-right:8px;vertical-align:middle;"></i> Print packing slips</a>
+                <a href="#" class="dropdown-item" onclick="printInvoice()"><i data-lucide="file-text" style="width:14px;height:14px;margin-right:8px;vertical-align:middle;"></i> Print invoice</a>
+                <a href="#" class="dropdown-item" onclick="downloadInvoice()"><i data-lucide="download" style="width:14px;height:14px;margin-right:8px;vertical-align:middle;"></i> Download invoice</a>
+                <div style="border-top: 1px solid var(--admin-border); margin: 4px 0;"></div>
+                <div style="padding: 4px 16px; font-size: 11px; font-weight: 600; color: #6D7175; text-transform: uppercase;">Apps</div>
+                <a href="#" class="dropdown-item" onclick="openInvoiceModal()"><i data-lucide="mail" style="width:14px;height:14px;margin-right:8px;vertical-align:middle;"></i> Resend Attachment Email</a>
+              </div>
+            </div>
+            <button class="btn-admin-secondary" style="padding: 6px 6px;"><i data-lucide="chevron-up" style="width:16px;height:16px;"></i></button>
+            <button class="btn-admin-secondary" style="padding: 6px 6px;"><i data-lucide="chevron-down" style="width:16px;height:16px;"></i></button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+          <!-- LEFT COLUMN -->
+          <div>
+            <!-- Unfulfilled -->
+            <div class="admin-card">
+              <div style="padding: 16px 20px; border-bottom: 1px solid var(--admin-border); display: flex; align-items: center; gap: 8px;">
+                <span style="background: #FFEA8A; color: #D82C0D; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display:inline-flex; align-items:center; gap:4px;"><i data-lucide="package" style="width:12px;height:12px;"></i> Unfulfilled</span>
+              </div>
+              <div style="padding: 16px 20px; border-bottom: 1px solid var(--admin-border);">
+                <div style="font-size: 13px; font-weight: 500; display:flex; align-items:center; gap:8px;"><i data-lucide="truck" style="width:16px;height:16px;color:#6D7175;"></i> Shipping</div>
+              </div>
+              <div style="padding: 16px 20px; display: flex; gap: 16px; align-items: center;">
+                <div style="width: 48px; height: 48px; background: #F6F6F7; border-radius: 4px; border: 1px solid #E1E3E5; overflow:hidden;">
+                  <img src="../assets/products/roy-earring-1.jpg" style="width:100%;height:100%;object-fit:cover;" />
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 600; font-size: 14px; color: #128fdc; cursor: pointer;">Diamond Flower Charm Studs</div>
+                  <div style="font-size: 13px; color: #6D7175;">ROY-1002</div>
+                </div>
+                <div style="font-size: 14px; color: #202223;">
+                  ₹11,000.00 &times; 1
+                </div>
+                <div style="font-size: 14px; font-weight: 500; color: #202223; width: 100px; text-align: right;">
+                  ₹11,000.00
+                </div>
+              </div>
+              <div style="padding: 16px 20px; border-top: 1px solid var(--admin-border); background: #F9FAFB; display: flex; justify-content: flex-end;">
+                <button class="btn-admin-primary" style="padding: 6px 12px; font-size: 13px;">Mark as fulfilled <i data-lucide="chevron-down" style="width:14px;height:14px;margin-left:4px;"></i></button>
+              </div>
+            </div>
+
+            <!-- Payment pending -->
+            <div class="admin-card">
+              <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="background: #FFF5EA; color: #B98900; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display:inline-flex; align-items:center; gap:4px;"><i data-lucide="clock" style="width:12px;height:12px;"></i> Payment pending</span>
+                <button style="background:none;border:none;cursor:pointer;color:#6D7175;"><i data-lucide="more-horizontal" style="width:20px;height:20px;"></i></button>
+              </div>
+              <div style="padding: 0 20px 20px 20px;">
+                <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                  <tr>
+                    <td style="padding: 8px 0; color: #6D7175;">Subtotal</td>
+                    <td style="padding: 8px 0; color: #6D7175;">1 item</td>
+                    <td style="padding: 8px 0; text-align: right;">₹11,000.00</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; color: #6D7175;">Discount</td>
+                    <td style="padding: 8px 0; color: #6D7175;">VWJTGNNN5K08</td>
+                    <td style="padding: 8px 0; text-align: right;">-₹5,000.00</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600; color: #202223;">Total</td>
+                    <td style="padding: 8px 0;"></td>
+                    <td style="padding: 8px 0; font-weight: 600; text-align: right;">₹6,000.00</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; border-top: 1px solid var(--admin-border); color: #6D7175;">Paid</td>
+                    <td style="padding: 8px 0; border-top: 1px solid var(--admin-border);"></td>
+                    <td style="padding: 8px 0; border-top: 1px solid var(--admin-border); text-align: right;">₹0.00</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; font-weight: 600; color: #202223;">Balance</td>
+                    <td style="padding: 8px 0; color: #6D7175; font-size: 13px;">Due Sep 4, 2026 &nbsp; Net 7</td>
+                    <td style="padding: 8px 0; font-weight: 600; text-align: right;">₹6,000.00</td>
+                  </tr>
+                </table>
+              </div>
+              <div style="padding: 16px 20px; border-top: 1px solid var(--admin-border); background: #F9FAFB; display: flex; justify-content: flex-end; gap: 8px;">
+                <button class="btn-admin-secondary" onclick="openInvoiceModal()" style="padding: 6px 12px; font-size: 13px;">Send invoice</button>
+                <button class="btn-admin-primary" style="padding: 6px 12px; font-size: 13px;">Mark as paid</button>
+              </div>
+            </div>
+
+            <!-- Timeline -->
+            <div style="margin-top: 32px;">
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Timeline</h3>
+              <div style="margin-left: 16px; border-left: 2px solid #E1E3E5; padding-left: 24px; position: relative;">
+                
+                <div style="font-size: 12px; font-weight: 600; color: #6D7175; text-transform: uppercase; margin-bottom: 16px; margin-left: -40px;">Today</div>
+
+                <div class="timeline-item" style="margin-left: -42px;">
+                  <div class="timeline-icon"><i data-lucide="mail" style="width:16px;height:16px;"></i></div>
+                  <div class="timeline-content">
+                    <div style="font-size: 14px; color: #202223;">You sent invoice #1001 to Sonu Sharma (roycretion@gmail.com)</div>
+                  </div>
+                  <div class="timeline-time">39 minutes ago</div>
+                </div>
+
+                <div class="timeline-item" style="margin-left: -42px;">
+                  <div class="timeline-icon"><i data-lucide="file-text" style="width:16px;height:16px;"></i></div>
+                  <div class="timeline-content">
+                    <div style="font-size: 14px; color: #202223;">You added payment terms to this order.</div>
+                  </div>
+                  <div class="timeline-time">40 minutes ago</div>
+                </div>
+
+                <div class="timeline-item" style="margin-left: -42px;">
+                  <div class="timeline-icon"><i data-lucide="file-text" style="width:16px;height:16px;"></i></div>
+                  <div class="timeline-content">
+                    <div style="font-size: 14px; color: #202223;">You added a note to this order.</div>
+                  </div>
+                  <div class="timeline-time">40 minutes ago</div>
+                </div>
+
+                <div class="timeline-item" style="margin-left: -42px;">
+                  <div class="timeline-icon"><i data-lucide="check-circle" style="width:16px;height:16px;"></i></div>
+                  <div class="timeline-content">
+                    <div style="font-size: 14px; color: #202223;">Confirmation #2580DV6G8 was generated for this order.</div>
+                  </div>
+                  <div class="timeline-time">40 minutes ago</div>
+                </div>
+
+                <div class="timeline-item" style="margin-left: -42px;">
+                  <div class="timeline-icon"><i data-lucide="user" style="width:16px;height:16px;"></i></div>
+                  <div class="timeline-content">
+                    <div style="font-size: 14px; color: #202223;">You created this order for Sonu Sharma from draft order #D1.</div>
+                  </div>
+                  <div class="timeline-time">40 minutes ago</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div>
+            <!-- Notes -->
+            <div class="admin-card">
+              <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 14px; font-weight: 600; margin: 0;">Notes</h3>
+                <button style="background:none;border:none;cursor:pointer;color:#6D7175;"><i data-lucide="edit-2" style="width:16px;height:16px;"></i></button>
+              </div>
+              <div style="padding: 0 20px 20px 20px; font-size: 14px; color: #202223;">
+                Rose Gold Plating Mett Finish I Need
+              </div>
+            </div>
+
+            <!-- Customer -->
+            <div class="admin-card">
+              <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 14px; font-weight: 600; margin: 0;">Customer</h3>
+                <button style="background:none;border:none;cursor:pointer;color:#6D7175;"><i data-lucide="more-horizontal" style="width:20px;height:20px;"></i></button>
+              </div>
+              <div style="padding: 0 20px 16px 20px; font-size: 14px;">
+                <a href="#" style="color: #128fdc; text-decoration: none; font-weight: 500;">Sonu Sharma</a>
+                <div style="color: #6D7175; margin-top: 4px;">1 order</div>
+              </div>
+              
+              <div style="padding: 16px 20px; border-top: 1px solid var(--admin-border);">
+                <div style="font-size: 13px; font-weight: 600; color: #202223; margin-bottom: 8px;">Contact information</div>
+                <div style="font-size: 14px; color: #6D7175;">No email provided</div>
+              </div>
+
+              <div style="padding: 16px 20px; border-top: 1px solid var(--admin-border);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <div style="font-size: 13px; font-weight: 600; color: #202223;">Shipping address</div>
+                </div>
+                <div style="font-size: 14px; color: #202223; line-height: 1.6;">
+                  Sonu Sharma<br/>
+                  22 Nagole Jaipur Colony Main<br/>
+                  Road Weaker Section Colony<br/>
+                  Nagole<br/>
+                  500068 Hyderabad TG<br/>
+                  India<br/>
+                  +91 63500 00869
+                </div>
+                <a href="#" style="color: #128fdc; text-decoration: none; font-size: 13px; display: inline-block; margin-top: 8px;">View map</a>
+              </div>
+
+              <div style="padding: 16px 20px; border-top: 1px solid var(--admin-border);">
+                <div style="font-size: 13px; font-weight: 600; color: #202223; margin-bottom: 8px;">Billing address</div>
+                <div style="font-size: 14px; color: #6D7175;">Same as shipping address</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Send Invoice Modal -->
+  <div id="invoice-modal" class="admin-modal-backdrop">
+    <div class="admin-modal">
+      <div style="padding: 16px 20px; border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 16px; font-weight: 600; color: #202223; margin: 0;">Send invoice</h3>
+        <button type="button" onclick="closeInvoiceModal()" style="background:none; border:none; cursor:pointer; color:#6D7175;"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+      </div>
+      <div style="padding: 20px;">
+        <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+          <div style="flex: 1;">
+            <label style="font-size: 13px; color: #202223; display: block; margin-bottom: 4px;">To</label>
+            <input type="text" class="form-input" id="invoice-to" value="roycretion@gmail.com" />
+          </div>
+          <div style="flex: 1;">
+            <label style="font-size: 13px; color: #202223; display: block; margin-bottom: 4px;">From</label>
+            <select class="form-select">
+              <option>"Royra Jewels" &lt;priayjit23@gmail.com&gt;</option>
+            </select>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <a href="#" style="color: #128fdc; text-decoration: none; font-size: 13px;">Cc and Bcc recipients <i data-lucide="chevron-down" style="width:12px;height:12px;vertical-align:middle;"></i></a>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 13px; color: #202223; display: block; margin-bottom: 4px;">Subject</label>
+          <input type="text" class="form-input" value="Invoice {{name}}" />
+        </div>
+        
+        <div style="margin-bottom: 8px;">
+          <label style="font-size: 13px; color: #202223; display: block; margin-bottom: 4px;">Custom message (optional)</label>
+          <textarea class="form-textarea" rows="4"></textarea>
+        </div>
+        
+        <div style="font-size: 13px; color: #6D7175;">
+          This template can be edited in <a href="#" style="color: #6D7175; text-decoration: underline;">notifications</a>
+        </div>
+      </div>
+      <div style="padding: 16px 20px; border-top: 1px solid var(--admin-border); display: flex; justify-content: flex-end; gap: 12px; background: #F9FAFB; border-radius: 0 0 var(--admin-radius-md) var(--admin-radius-md);">
+        <button type="button" onclick="closeInvoiceModal()" class="btn-admin-secondary">Cancel</button>
+        <button type="button" onclick="sendInvoice()" class="btn-admin-primary" style="background: #1A1A1A; border-color: #1A1A1A;">Review invoice</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config.js"></script>
+  <script src="../supabase.js"></script>
+  <script src="admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+    
+    function openInvoiceModal() {
+      document.getElementById('invoice-modal').classList.add('show');
+    }
+    
+    function closeInvoiceModal() {
+      document.getElementById('invoice-modal').classList.remove('show');
+    }
+    
+    async function sendInvoice() {
+      const email = document.getElementById('invoice-to').value;
+      if (!email) {
+        alert("Please enter customer email");
+        return;
+      }
+      
+      const btn = event.target;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = 'Sending...';
+      
+      try {
+        const res = await fetch('/api/integration/generate-invoice', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            orderId: '1001',
+            emailTo: email
+          })
+        });
+        
+        if (res.ok) {
+          alert('Invoice sent successfully to ' + email);
+          closeInvoiceModal();
+          // Add timeline entry
+        } else {
+          alert('Failed to send invoice (backend required). Continuing flow.');
+          closeInvoiceModal();
+        }
+      } catch (err) {
+        // Mock success for UI demo
+        alert('Invoice sent to ' + email + ' (Simulated)');
+        closeInvoiceModal();
+      } finally {
+        btn.innerHTML = originalText;
+      }
+    }
+    
+    async function printInvoice() {
+      alert("Opening print view for invoice PDF...");
+    }
+    
+    async function downloadInvoice() {
+      alert("Downloading Royra-Jewels-Invoice-1001.pdf...");
+    }
+  </script>
+</body>
+</html>

@@ -1,125 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROYRA JEWELS ADMIN | Product Form</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Supabase JS Client CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="admin.css" />
-  <link rel="stylesheet" href="ops.css" />
-  <!-- Lucide Icons -->
-  <script src="lucide.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
-</head>
-<body class="admin-body">
+import fs from 'fs';
 
-  <div class="admin-layout">
-    
-    <!-- MOBILE OVERLAY -->
-    <div id="admin-sidebar-overlay" class="admin-sidebar-overlay" onclick="toggleAdminSidebar()"></div>
-                                <!-- SIDEBAR -->
-    <aside id="admin-sidebar" class="admin-sidebar">
-      <nav class="sidebar-nav">
-        <a href="index.html" class="nav-link"><i data-lucide="home"></i><span>Home</span></a>
-        
-        <div class="nav-group">
-          <a href="orders.html" class="nav-link"><i data-lucide="inbox"></i><span>Orders</span></a>
-          <div class="nav-sub">
-            <a href="#">Drafts</a>
-            <a href="#">Abandoned checkouts</a>
-          </div>
-        </div>
-        
-        <div class="nav-group">
-          <a href="products.html" class="nav-link"><i data-lucide="tag"></i><span>Products</span></a>
-          <div class="nav-sub">
-            <a href="collections.html">Collections</a>
-            <a href="inventory.html">Inventory</a>
-            <a href="purchase-orders.html">Purchase orders</a>
-            <a href="#">Transfers</a>
-            <a href="gift-cards.html">Gift cards</a>
-          </div>
-        </div>
-        
-        <div class="nav-group">
-          <a href="customers.html" class="nav-link"><i data-lucide="users"></i><span>Customers</span></a>
-          <div class="nav-sub">
-            <a href="#">Segments</a>
-            <a href="#">Companies</a>
-          </div>
-        </div>
-        
-        <a href="#" class="nav-link"><i data-lucide="trending-up"></i><span>Growth</span></a>
-        <a href="coupons.html" class="nav-link"><i data-lucide="percent"></i><span>Discounts</span></a>
-        <a href="#" class="nav-link"><i data-lucide="file-text"></i><span>Content</span></a>
-        <a href="#" class="nav-link"><i data-lucide="globe"></i><span>Markets</span></a>
-        <a href="#" class="nav-link"><i data-lucide="bar-chart-2"></i><span>Analytics</span></a>
-        
-        <div class="nav-section-title">Sales channels <i data-lucide="chevron-right" style="width:14px;height:14px;float:right;cursor:pointer;"></i></div>
-        <a href="#" class="nav-link"><i data-lucide="store"></i><span>Online Store</span></a>
-        <a href="#" class="nav-link"><i data-lucide="bot"></i><span>Agentic</span></a>
-        <a href="#" class="nav-link"><i data-lucide="monitor-smartphone"></i><span>Point of Sale</span></a>
-        
-        <div class="nav-section-title">Apps <i data-lucide="chevron-right" style="width:14px;height:14px;float:right;cursor:pointer;"></i></div>
-        <a href="#" class="nav-link"><i data-lucide="message-square"></i><span>Messaging</span></a>
-        <a href="#" class="nav-link"><i data-lucide="message-circle"></i><span>Sidekick conversations</span></a>
-        
-        <div style="margin-top: 16px;"></div>
-        <a href="settings.html" class="nav-link"><i data-lucide="settings"></i><span>Settings</span></a>
-      </nav>
-      
-      <div class="sidebar-footer">
-        <div class="store-info">
-          <div class="store-logo-sm">RJ</div>
-          <div class="store-details">
-            <div class="store-name">Royra Jewels</div>
-            <div class="store-loc">Jaipur, India</div>
-          </div>
-        </div>
-      </div>
-    </aside>
+const file = 'admin/product-form.html';
+let content = fs.readFileSync(file, 'utf8');
 
-
-    <!-- MAIN FORM CONTENT -->
-    <main class="admin-main">
-      <!-- TOP BAR -->
-      
-      <header class="admin-topbar">
-        <div class="topbar-left">
-          <button type="button" class="mobile-menu-toggle" onclick="toggleAdminSidebar()">
-            <i data-lucide="menu"></i>
-          </button>
-          <a href="index.html" class="topbar-brand">
-            <span class="brand-logo">RJ</span>
-            <span class="brand-text">ROYRA JEWELS</span>
-          </a>
-        </div>
-        <div class="topbar-center">
-          <div class="global-search">
-            <i data-lucide="search" class="search-icon"></i>
-            <input type="text" placeholder="Search" />
-            <span class="search-shortcut">CTRL K</span>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <button type="button" class="icon-btn"><i data-lucide="bell"></i></button>
-          <button type="button" class="icon-btn"><i data-lucide="help-circle"></i></button>
-          <div class="profile-dropdown">
-            <div class="avatar">MS</div>
-            <span class="profile-name">Royra Jewels Admin</span>
-            <i data-lucide="chevron-down"></i>
-          </div>
-        </div>
-      </header>
-
-
-      <!-- CONTENT BODY -->
-      
+const newContent = `
       <div class="admin-content" style="max-width: 1000px; margin: 0 auto; padding-bottom: 60px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
           <div style="display: flex; align-items: center; gap: 12px;">
@@ -283,93 +167,9 @@
             </div>
 
             <!-- Variants -->
-            <div class="admin-card">
-              <div class="admin-card-header" style="padding-bottom: 0; border-bottom: none;">
-                <h3 class="admin-card-title">Variants</h3>
-              </div>
-              <div style="padding: 16px 20px;">
-                <div style="margin-bottom: 16px;">
-                  <label style="font-size:13px; font-weight: 500; display:block; margin-bottom: 8px;">Option 1</label>
-                  <div style="display: flex; gap: 12px; margin-bottom: 12px;">
-                    <div style="flex: 1;">
-                      <input type="text" class="form-input" value="Metal" />
-                    </div>
-                    <div style="flex: 3;">
-                      <input type="text" class="form-input" value="Gold, Silver, Rose Gold" />
-                    </div>
-                  </div>
-                  
-                  <label style="font-size:13px; font-weight: 500; display:block; margin-bottom: 8px;">Option 2</label>
-                  <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-                    <div style="flex: 1;">
-                      <input type="text" class="form-input" value="Size" />
-                    </div>
-                    <div style="flex: 3;">
-                      <input type="text" class="form-input" value="8, 10, 12" />
-                    </div>
-                  </div>
-
-                  <button type="button" class="btn-admin-secondary" style="font-size: 13px; padding: 4px 12px;">
-                    <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add another option
-                  </button>
-                </div>
-
-                <div style="border: 1px solid var(--admin-border); border-radius: var(--admin-radius-sm); overflow: hidden;">
-                  <table class="admin-table" style="font-size: 13px;">
-                    <thead style="background: #F9FAFB;">
-                      <tr>
-                        <th style="padding: 8px 12px; width: 40px;"><input type="checkbox" /></th>
-                        <th style="padding: 8px 12px; text-transform: none; color: var(--admin-text); font-weight: 500;">Variant</th>
-                        <th style="padding: 8px 12px; text-transform: none; color: var(--admin-text); font-weight: 500;">Price</th>
-                        <th style="padding: 8px 12px; text-transform: none; color: var(--admin-text); font-weight: 500;">Available</th>
-                        <th style="padding: 8px 12px; text-transform: none; color: var(--admin-text); font-weight: 500;">SKU</th>
-                        <th style="padding: 8px 12px; width: 60px;"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td style="padding: 8px 12px;"><input type="checkbox" checked /></td>
-                        <td style="padding: 8px 12px; font-weight: 500;">
-                          <div style="display:flex; align-items:center; gap:8px;">
-                            <div style="width:32px; height:32px; border:1px dashed #C9CCCF; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#8C9196; background:#FFF; cursor:pointer;"><i data-lucide="image" style="width:16px;height:16px;"></i></div>
-                            Gold / 8
-                          </div>
-                        </td>
-                        <td style="padding: 8px 12px;"><input type="text" class="form-input" style="padding:4px 8px; width:100px;" value="18500.00" /></td>
-                        <td style="padding: 8px 12px;"><input type="text" class="form-input" style="padding:4px 8px; width:80px;" value="10" /></td>
-                        <td style="padding: 8px 12px;"><input type="text" class="form-input" style="padding:4px 8px; width:120px;" value="RJ-G-8" /></td>
-                        <td style="padding: 8px 12px; text-align:center;"><button type="button" style="background:none; border:none; cursor:pointer; color:#6D7175;"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button></td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 8px 12px;"><input type="checkbox" checked /></td>
-                        <td style="padding: 8px 12px; font-weight: 500;">
-                          <div style="display:flex; align-items:center; gap:8px;">
-                            <div style="width:32px; height:32px; border:1px dashed #C9CCCF; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#8C9196; background:#FFF; cursor:pointer;"><i data-lucide="image" style="width:16px;height:16px;"></i></div>
-                            Gold / 10
-                          </div>
-                        </td>
-                        <td style="padding: 8px 12px;"><input type="text" class="form-input" style="padding:4px 8px; width:100px;" value="19000.00" /></td>
-                        <td style="padding: 8px 12px;"><input type="text" class="form-input" style="padding:4px 8px; width:80px;" value="5" /></td>
-                        <td style="padding: 8px 12px;"><input type="text" class="form-input" style="padding:4px 8px; width:120px;" value="RJ-G-10" /></td>
-                        <td style="padding: 8px 12px; text-align:center;"><button type="button" style="background:none; border:none; cursor:pointer; color:#6D7175;"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button></td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 8px 12px;"><input type="checkbox" checked /></td>
-                        <td style="padding: 8px 12px; font-weight: 500;">
-                          <div style="display:flex; align-items:center; gap:8px;">
-                            <div style="width:32px; height:32px; border:1px dashed #C9CCCF; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#8C9196; background:#FFF; cursor:pointer;"><i data-lucide="image" style="width:16px;height:16px;"></i></div>
-                            Silver / 8
-                          </div>
-                        </td>
-                        <td style="padding: 8px 12px;"><input type="text" class="form-input" style="padding:4px 8px; width:100px;" value="4500.00" /></td>
-                        <td style="padding: 8px 12px;"><input type="text" class="form-input" style="padding:4px 8px; width:80px;" value="20" /></td>
-                        <td style="padding: 8px 12px;"><input type="text" class="form-input" style="padding:4px 8px; width:120px;" value="RJ-S-8" /></td>
-                        <td style="padding: 8px 12px; text-align:center;"><button type="button" style="background:none; border:none; cursor:pointer; color:#6D7175;"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+            <div class="admin-card" style="padding: 16px;">
+              <h3 style="font-size:14px; font-weight:600; margin-bottom:12px;">Variants</h3>
+              <button class="btn-admin-secondary" style="font-size:13px; padding:4px 12px; border-radius:4px; display:flex; align-items:center; gap:4px;"><i data-lucide="plus" style="width:14px;height:14px;"></i> Add options like size or color</button>
             </div>
             
             <!-- Jewellery Specific Fields -->
@@ -500,41 +300,8 @@
           </div>
         </div>
       </div>
-</main>
-  </div>
+`;
 
-  <div id="admin-toast-container" class="admin-toast-container"></div>
-
-  <!-- QUICK ADD COLLECTION MODAL -->
-  <div id="quick-add-collection-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center;">
-    <div style="background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: 12px; width: 90%; max-width: 440px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3 style="font-size: 16px; font-weight: 700; color: var(--admin-text-main); margin: 0;">Create New Collection</h3>
-        <button type="button" onclick="closeAddCollectionModal()" style="background: none; border: none; font-size: 20px; color: var(--admin-text-muted); cursor: pointer;">✕</button>
-      </div>
-      <div class="form-group" style="margin-bottom: 14px;">
-        <label class="form-label">Collection Name <span class="required">*</span></label>
-        <input type="text" id="new-collection-name" class="form-input" placeholder="e.g. Royal Solitaires 2026" />
-      </div>
-      <div class="form-group" style="margin-bottom: 18px;">
-        <label class="form-label">Slug / Key</label>
-        <input type="text" id="new-collection-slug" class="form-input" placeholder="e.g. royal-solitaires" />
-      </div>
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button type="button" class="btn-admin-secondary" onclick="closeAddCollectionModal()">Cancel</button>
-        <button type="button" class="btn-admin-primary" onclick="saveNewCollectionFromModal()">Add Collection</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="../config.js"></script>
-  <script src="../supabase.js"></script>
-  <script src="admin.js"></script>
-  <script src="ops.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      window.initProductForm();
-    });
-  </script>
-</body>
-</html>
+content = content.replace(/<div class="admin-content">[\s\S]*?(?=<\/main>)/, newContent);
+fs.writeFileSync(file, content, 'utf8');
+console.log('Updated product-form.html body');
