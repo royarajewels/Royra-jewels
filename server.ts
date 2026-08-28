@@ -5,6 +5,7 @@ import sql from 'mssql';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import cpanelRouter from './server/cpanel';
+import aiRouter from './server/ai';
 
 dotenv.config();
 
@@ -81,6 +82,9 @@ app.use(express.json());
 
 // Mount C-Panel Hosting & Server Administration API
 app.use('/api/cpanel', cpanelRouter);
+
+// Mount AI Jewellery Product Content Generator API
+app.use('/api/ai', aiRouter);
 
 // SQL Server Configuration from Environment Variables
 const sqlConfig: sql.config = {

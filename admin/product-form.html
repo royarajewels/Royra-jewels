@@ -210,6 +210,158 @@
                 </div>
               </div>
 
+              <!-- AI PRODUCT CONTENT GENERATOR -->
+              <div class="ai-product-section" id="ai-product-content-card">
+                <div class="ai-section-header">
+                  <div class="ai-header-title-wrap">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                    </svg>
+                    <div>
+                      <h3 style="font-size: 15px; font-weight: 700; color: #3A3225; margin: 0; display: flex; align-items: center; gap: 8px;">
+                        AI PRODUCT CONTENT
+                        <span class="ai-badge-gemini">✨ Gemini 3.7 Flash</span>
+                        <span class="ai-badge-variant">🏷️ Variant Aware</span>
+                      </h3>
+                      <p style="font-size: 12px; color: #736B5E; margin: 3px 0 0 0;">
+                        Generate luxury jewellery storytelling, craft descriptions, and short SEO summaries using verified product attributes.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- AI Parameters -->
+                <div class="ai-controls-grid">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label for="ai-tone" class="form-label" style="font-size: 11.5px; font-weight: 600; color: #5A5040;">Tone & Voice</label>
+                    <select id="ai-tone" class="form-select" style="padding: 7px 10px; font-size: 12.5px;">
+                      <option value="Luxury" selected>Luxury (Regal & Opulent)</option>
+                      <option value="Minimal">Minimal (Clean & Modern)</option>
+                      <option value="Romantic">Romantic (Poetic & Emotional)</option>
+                      <option value="Modern">Modern (Bold & Architectural)</option>
+                      <option value="Heritage">Heritage (Royal Heirloom)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label for="ai-length" class="form-label" style="font-size: 11.5px; font-weight: 600; color: #5A5040;">Content Length</label>
+                    <select id="ai-length" class="form-select" style="padding: 7px 10px; font-size: 12.5px;">
+                      <option value="Short">Short (Punchy & Concise)</option>
+                      <option value="Standard" selected>Standard (Balanced Elegance)</option>
+                      <option value="Detailed">Detailed (Full Storytelling)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label for="ai-language" class="form-label" style="font-size: 11.5px; font-weight: 600; color: #5A5040;">Language</label>
+                    <select id="ai-language" class="form-select" style="padding: 7px 10px; font-size: 12.5px;">
+                      <option value="English" selected>English (Luxury Fine Copy)</option>
+                      <option value="Hindi">Hindi (Shuddh Fine Jewellery)</option>
+                      <option value="Hinglish">Hinglish (Modern Urban Luxury)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label for="ai-variant-target" class="form-label" style="font-size: 11.5px; font-weight: 600; color: #5A5040;">Variant Focus</label>
+                    <select id="ai-variant-target" class="form-select" style="padding: 7px 10px; font-size: 12.5px;">
+                      <option value="all" selected>All Active Variants (General)</option>
+                      <option value="Gold">🟡 Yellow Gold Focused</option>
+                      <option value="Silver">⚪ 925 Silver Focused</option>
+                      <option value="Rose Gold">🌸 Rose Gold Focused</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Verification Constraint Checkbox -->
+                <label class="ai-checkbox-wrap">
+                  <input type="checkbox" id="ai-verified-only" checked />
+                  <div>
+                    <span style="font-weight: 600; color: #332B1E;">Use only verified product information</span>
+                    <div style="font-size: 11.5px; color: #7B7365; margin-top: 1px;">
+                      Strict Accuracy Rule: The AI will NEVER invent metal purity, gemstone carat/quality, BIS certification, weight, or dimensions unless specified.
+                    </div>
+                  </div>
+                </label>
+
+                <!-- Generation Action Buttons -->
+                <div class="ai-buttons-row">
+                  <button type="button" class="btn-ai-generate" id="btn-ai-gen-both" onclick="triggerAiGeneration('both')">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    Generate Both
+                  </button>
+                  <button type="button" class="btn-ai-generate-secondary" id="btn-ai-gen-short" onclick="triggerAiGeneration('short')">
+                    ✨ Generate Short Description
+                  </button>
+                  <button type="button" class="btn-ai-generate-secondary" id="btn-ai-gen-story" onclick="triggerAiGeneration('full')">
+                    📖 Generate Full Product Story
+                  </button>
+                </div>
+
+                <!-- AI Loading State -->
+                <div id="ai-loading-indicator" class="ai-loading-state" style="display: none;">
+                  <div class="ai-loading-spinner"></div>
+                  <div style="font-weight: 700; color: #5A4826; font-size: 13.5px;">Generating product content...</div>
+                  <div style="font-size: 12px; color: #8A7B63; margin-top: 4px;">Crafting luxury jewellery descriptions with Gemini AI</div>
+                </div>
+
+                <!-- AI Generated Results Previews / Editors -->
+                <div id="ai-results-container" class="ai-preview-grid" style="display: none;">
+                  
+                  <!-- Short Description Result Box -->
+                  <div class="ai-result-card" id="ai-short-card">
+                    <div class="ai-result-header">
+                      <div class="ai-result-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                        Short Description (2–3 Sentences)
+                      </div>
+                      <div class="ai-result-actions">
+                        <button type="button" class="btn-ai-action" onclick="triggerAiGeneration('short')" title="Regenerate short description">
+                          🔄 Regenerate
+                        </button>
+                        <button type="button" class="btn-ai-action" onclick="focusAiEditor('ai-short-output')" title="Edit text">
+                          ✏️ Edit
+                        </button>
+                        <button type="button" class="btn-ai-action apply" onclick="applyAiShortDescription()" title="Apply to product form">
+                          ✓ Apply to Product
+                        </button>
+                      </div>
+                    </div>
+                    <textarea id="ai-short-output" class="ai-result-editor" rows="3" placeholder="Generated short description will appear here..."></textarea>
+                  </div>
+
+                  <!-- Full Story Result Box -->
+                  <div class="ai-result-card" id="ai-story-card">
+                    <div class="ai-result-header">
+                      <div class="ai-result-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        Full Product Story & Craftsmanship (Markdown)
+                      </div>
+                      <div class="ai-result-actions">
+                        <button type="button" class="btn-ai-action" onclick="triggerAiGeneration('full')" title="Regenerate full product story">
+                          🔄 Regenerate
+                        </button>
+                        <button type="button" class="btn-ai-action" onclick="focusAiEditor('ai-story-output')" title="Edit text">
+                          ✏️ Edit
+                        </button>
+                        <button type="button" class="btn-ai-action apply" onclick="applyAiFullStory()" title="Apply to product form">
+                          ✓ Apply to Product
+                        </button>
+                      </div>
+                    </div>
+                    <textarea id="ai-story-output" class="ai-result-editor" rows="9" placeholder="Generated product story will appear here..."></textarea>
+                  </div>
+
+                  <!-- Quick Apply Both Button -->
+                  <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn-admin-primary" style="padding: 9px 18px; font-size: 13px;" onclick="applyBothAiDescriptions()">
+                      ✓ Apply Both Descriptions to Product
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+
               <!-- 2. PRODUCT MASTER GALLERY & VARIANT IMAGES MATRIX -->
               <div class="form-section">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -505,6 +657,44 @@
                     <label for="input-weight" class="form-label">Weight</label>
                     <input type="text" id="input-weight" class="form-input" placeholder="e.g. 3.20g approx" />
                   </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="input-style" class="form-label">Design / Style / Motif</label>
+                    <input type="text" id="input-style" class="form-input" placeholder="e.g. Architectural Art Deco Solitaire" />
+                  </div>
+                  <div class="form-group">
+                    <label for="input-occasion" class="form-label">Occasion / Styling</label>
+                    <input type="text" id="input-occasion" class="form-input" placeholder="e.g. Bridal, Anniversary, Luxury Everyday" />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="input-dimensions" class="form-label">Dimensions / Band Width</label>
+                    <input type="text" id="input-dimensions" class="form-input" placeholder="e.g. 2.2mm comfort-fit band, 8mm head" />
+                  </div>
+                  <div class="form-group">
+                    <label for="input-certification" class="form-label">Certification / Hallmark</label>
+                    <input type="text" id="input-certification" class="form-input" placeholder="e.g. BIS Hallmarked, SGL/IGI Certified" />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="input-craftsmanship" class="form-label">Craftsmanship Details</label>
+                    <input type="text" id="input-craftsmanship" class="form-input" placeholder="e.g. Hand-set micro-pave with mirror-polished edges" />
+                  </div>
+                  <div class="form-group">
+                    <label for="input-care-instructions" class="form-label">Care Instructions</label>
+                    <input type="text" id="input-care-instructions" class="form-input" placeholder="e.g. Store in plush Royra pouch; wipe with soft cloth" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="input-seo-keywords" class="form-label">SEO Keywords</label>
+                  <input type="text" id="input-seo-keywords" class="form-input" placeholder="e.g. luxury diamond engagement ring, 18k solid gold solitaire, bridal fine jewellery" />
                 </div>
               </div>
 

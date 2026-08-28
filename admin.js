@@ -418,6 +418,90 @@
     let productImages = [];
     let primaryImageIndex = 0;
 
+    // Advanced Jewellery Variant Matrix State
+    let currentMetalOptions = ['Gold', 'Silver', 'Rose Gold'];
+    let currentSizeOptions = ['4', '5', '6', '7', '8', '9', '10', '11', '12'];
+    let variantMatrixCombinations = [];
+    let currentMatrixFilter = 'all';
+
+    // Rich Text Formatting for Descriptions
+    window.applyRichFormat = function (targetId, prefix, suffix) {
+      const el = document.getElementById(targetId);
+      if (!el) return;
+      const start = el.selectionStart || 0;
+      const end = el.selectionEnd || 0;
+      const val = el.value || '';
+      const selected = val.substring(start, end);
+      const replacement = prefix + (selected || 'text') + (suffix || '');
+      el.value = val.substring(0, start) + replacement + val.substring(end);
+      el.focus();
+      el.setSelectionRange(start + prefix.length, start + prefix.length + (selected ? selected.length : 4));
+      
+      const preview = document.getElementById('desc-preview-container');
+      if (preview && preview.style.display !== 'none') {
+        renderDescPreviewContent();
+      }
+    };
+
+    window.clearRichFormat = function (targetId) {
+      const el = document.getElementById(targetId);
+      if (!el) return;
+      el.value = el.value.replace(/[*#✦•`_\[\]\(\)]/g, '').replace(/https?:\/\/[^\s]+/g, '');
+      const preview = document.getElementById('desc-preview-container');
+      if (preview && preview.style.display !== 'none') {
+        renderDescPreviewContent();
+      }
+    };
+
+    function renderDescPreviewContent() {
+      const el = document.getElementById('input-full-desc');
+      const preview = document.getElementById('desc-preview-container');
+      if (!el || !preview) return;
+      let text = el.value || '';
+      if (!text) {
+        preview.innerHTML = '<span style="color: #999; font-style: italic;">Description preview will appear here...</span>';
+        return;
+      }
+      let html = text
+        .replace(/### (.*?)\n/g, '<h4 style="margin: 8px 0 4px; font-weight: 700; color: #111;">$1</h4>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/✦ (.*?)\n/g, '<li style="list-style: none; margin-bottom: 4px;">✦ $1</li>')
+        .replace(/• (.*?)\n/g, '<li style="margin-left: 18px; margin-bottom: 4px;">$1</li>')
+        .replace(/\n\n/g, '<p style="margin: 8px 0;"></p>')
+        .replace(/\n/g, '<br/>');
+      preview.innerHTML = html;
+    }
+
+    window.toggleDescPreview = function () {
+      const preview = document.getElementById('desc-preview-container');
+      if (!preview) return;
+      if (preview.style.display === 'none' || !preview.style.display) {
+        renderDescPreviewContent();
+        preview.style.display = 'block';
+      } else {
+        preview.style.display = 'none';
+      }
+    };
+
+    // Load collections into dropdown
+    async function loadCollectionsIntoSelect(selectedSlug) {
+      const collectionSelect = document.getElementById('input-collection');
+      if (!collectionSelect) return;
+      try {
+        const collections = await window.RoyraDB.getCollections();
+        if (collections && collections.length > 0) {
+          const currentVal = selectedSlug || collectionSelect.value;
+          collectionSelect.innerHTML = collections.map(c => `
+            <option value="${c.slug}">${c.name}</option>
+          `).join('');
+          if (currentVal) collectionSelect.value = currentVal;
+        }
+      } catch (err) {
+        console.warn('Error loading collections into select:', err);
+      }
+    }
+
     if (pageTitleEl) pageTitleEl.textContent = isEdit ? 'EDIT PRODUCT' : 'ADD NEW PRODUCT';
     if (saveBtnText) saveBtnText.textContent = isEdit ? 'Save Changes' : 'Create Product';
 
@@ -426,6 +510,372 @@
       const categories = await window.RoyraDB.getCategories();
       categorySelect.innerHTML = categories.map(c => `<option value="${c.slug}">${c.name}</option>`).join('');
     }
+
+    await loadCollectionsIntoSelect();
+
+    // Option Chips Handlers
+    function renderMetalChips() {
+      const container = document.getElementById('metal-chips-wrap');
+      if (!container) return;
+      if (currentMetalOptions.length === 0) {
+        container.innerHTML = '<span style="font-size: 12px; color: #888;">No metals defined. Click quick presets or add a metal.</span>';
+        return;
+      }
+      container.innerHTML = currentMetalOptions.map((metal, idx) => {
+        let badgeColor = '#D4A359';
+        if (/silver|white|platinum|rhodium/i.test(metal)) badgeColor = '#718096';
+        if (/rose/i.test(metal)) badgeColor = '#D53F8C';
+        return `
+          <div class="option-chip" style="border-left: 3px solid ${badgeColor};">
+            <span>${metal}</span>
+            <button type="button" class="option-chip-remove" onclick="removeMetalOption(${idx})" title="Remove ${metal}">✕</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderSizeChips() {
+      const container = document.getElementById('size-chips-wrap');
+      if (!container) return;
+      if (currentSizeOptions.length === 0) {
+        container.innerHTML = '<span style="font-size: 12px; color: #888;">No sizes defined. Click quick presets or add a size.</span>';
+        return;
+      }
+      container.innerHTML = currentSizeOptions.map((size, idx) => `
+        <div class="option-chip">
+          <span>${size}</span>
+          <button type="button" class="option-chip-remove" onclick="removeSizeOption(${idx})" title="Remove ${size}">✕</button>
+        </div>
+      `).join('');
+    }
+
+    window.addCustomMetalOption = function () {
+      const input = document.getElementById('new-metal-input');
+      const val = input ? input.value.trim() : '';
+      if (!val) return;
+      if (!currentMetalOptions.includes(val)) {
+        currentMetalOptions.push(val);
+        renderMetalChips();
+        generateVariantMatrix(false);
+      }
+      if (input) input.value = '';
+    };
+
+    window.addPresetMetal = function (metal) {
+      if (!currentMetalOptions.includes(metal)) {
+        currentMetalOptions.push(metal);
+        renderMetalChips();
+        generateVariantMatrix(false);
+      }
+    };
+
+    window.removeMetalOption = function (idx) {
+      if (currentMetalOptions.length <= 1) {
+        window.showAdminToast('A product must have at least one metal option', 'info');
+        return;
+      }
+      currentMetalOptions.splice(idx, 1);
+      renderMetalChips();
+      generateVariantMatrix(false);
+    };
+
+    window.addCustomSizeOption = function () {
+      const input = document.getElementById('new-size-input');
+      const val = input ? input.value.trim() : '';
+      if (!val) return;
+      if (!currentSizeOptions.includes(val)) {
+        currentSizeOptions.push(val);
+        renderSizeChips();
+        generateVariantMatrix(false);
+      }
+      if (input) input.value = '';
+    };
+
+    window.addPresetSizes = function (category) {
+      if (category === 'rings') {
+        currentSizeOptions = ['4', '5', '6', '7', '8', '9', '10', '11', '12'];
+      } else if (category === 'necklaces') {
+        currentSizeOptions = ['16"', '18"', '20"', '22"'];
+      } else if (category === 'bracelets') {
+        currentSizeOptions = ['6"', '6.5"', '7"', '7.5"', '8"'];
+      } else if (category === 'general') {
+        currentSizeOptions = ['Small', 'Medium', 'Large'];
+      }
+      renderSizeChips();
+      generateVariantMatrix(false);
+    };
+
+    window.removeSizeOption = function (idx) {
+      if (currentSizeOptions.length <= 1) {
+        window.showAdminToast('A product must have at least one size option', 'info');
+        return;
+      }
+      currentSizeOptions.splice(idx, 1);
+      renderSizeChips();
+      generateVariantMatrix(false);
+    };
+
+    // GENERATE VARIANT COMBINATIONS MATRIX
+    window.generateVariantMatrix = function (isManualClick = false) {
+      const baseSku = skuInput ? skuInput.value.trim().toUpperCase() : 'ROY-0001';
+      const basePrice = Number(document.getElementById('input-price')?.value || 0);
+      const baseCompare = Number(document.getElementById('input-old-price')?.value || 0);
+      const baseStock = Number(document.getElementById('input-stock')?.value || 10);
+
+      // Create a lookup of previous combinations to preserve custom values
+      const existingMap = new Map();
+      variantMatrixCombinations.forEach(comb => {
+        const key = `${comb.metal}_${comb.size}`;
+        existingMap.set(key, comb);
+      });
+
+      const newCombinations = [];
+
+      currentMetalOptions.forEach(metal => {
+        let metalCode = 'GLD';
+        if (/silver|white|platinum|rhodium/i.test(metal)) metalCode = 'SLV';
+        else if (/rose/i.test(metal)) metalCode = 'RSG';
+        else metalCode = metal.substring(0, 3).toUpperCase();
+
+        let defaultMetalImg = '';
+        if (/rose/i.test(metal)) {
+          defaultMetalImg = document.getElementById('v-rose-primary-img')?.value.trim() || '';
+        } else if (/silver|white|platinum/i.test(metal)) {
+          defaultMetalImg = document.getElementById('v-silver-primary-img')?.value.trim() || '';
+        } else {
+          defaultMetalImg = document.getElementById('v-gold-primary-img')?.value.trim() || '';
+        }
+
+        currentSizeOptions.forEach(size => {
+          const key = `${metal}_${size}`;
+          const cleanSizeCode = size.replace(/[^a-zA-Z0-9]/g, '');
+          const defaultSku = `${baseSku}-${metalCode}-${cleanSizeCode}`;
+
+          if (existingMap.has(key)) {
+            const prev = existingMap.get(key);
+            newCombinations.push({
+              ...prev,
+              metal,
+              size,
+              sku: prev.sku || defaultSku,
+              price: prev.price || basePrice,
+              comparePrice: prev.comparePrice || baseCompare,
+              stock: prev.stock !== undefined ? prev.stock : baseStock,
+              image: prev.image || defaultMetalImg || (productImages[0]?.url || ''),
+              active: prev.active !== false
+            });
+          } else {
+            newCombinations.push({
+              id: `var_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+              metal,
+              size,
+              sku: defaultSku,
+              price: basePrice,
+              comparePrice: baseCompare || null,
+              stock: baseStock,
+              image: defaultMetalImg || (productImages[0]?.url || ''),
+              active: true
+            });
+          }
+        });
+      });
+
+      variantMatrixCombinations = newCombinations;
+      renderMatrixFilterTabs();
+      renderVariantMatrixTable();
+
+      if (isManualClick) {
+        window.showAdminToast(`Generated ${variantMatrixCombinations.length} variant combinations (${currentMetalOptions.length} metals × ${currentSizeOptions.length} sizes)`, 'success');
+      }
+    };
+
+    function renderMatrixFilterTabs() {
+      const tabsContainer = document.getElementById('matrix-metal-tabs');
+      const countEl = document.getElementById('matrix-total-count');
+      if (countEl) countEl.textContent = variantMatrixCombinations.length;
+      if (!tabsContainer) return;
+
+      let html = `
+        <button type="button" class="matrix-metal-tab ${currentMatrixFilter === 'all' ? 'active' : ''}" data-filter="all" onclick="filterMatrixByMetal('all', this)">
+          All Combinations (${variantMatrixCombinations.length})
+        </button>
+      `;
+
+      currentMetalOptions.forEach(metal => {
+        const count = variantMatrixCombinations.filter(c => c.metal === metal).length;
+        let icon = '🟡';
+        if (/silver|white|platinum/i.test(metal)) icon = '⚪';
+        else if (/rose/i.test(metal)) icon = '🌸';
+        html += `
+          <button type="button" class="matrix-metal-tab ${currentMatrixFilter === metal ? 'active' : ''}" data-filter="${metal}" onclick="filterMatrixByMetal('${metal}', this)">
+            ${icon} ${metal} (${count})
+          </button>
+        `;
+      });
+
+      tabsContainer.innerHTML = html;
+    }
+
+    window.filterMatrixByMetal = function (metalFilter, btnEl) {
+      currentMatrixFilter = metalFilter;
+      document.querySelectorAll('.matrix-metal-tab').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      renderVariantMatrixTable();
+    };
+
+    function renderVariantMatrixTable() {
+      const tbody = document.getElementById('variant-matrix-tbody');
+      if (!tbody) return;
+
+      const filtered = currentMatrixFilter === 'all'
+        ? variantMatrixCombinations
+        : variantMatrixCombinations.filter(c => c.metal === currentMatrixFilter);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 24px; color: var(--admin-text-muted); font-size: 13px;">
+              No variant combinations found. Click "Generate / Refresh Variant Matrix" above.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((item) => {
+        const realIdx = variantMatrixCombinations.indexOf(item);
+        let metalBadgeColor = '#B38E46';
+        let metalBg = 'rgba(212, 163, 89, 0.1)';
+        if (/silver|white|platinum/i.test(item.metal)) {
+          metalBadgeColor = '#718096';
+          metalBg = 'rgba(160, 174, 192, 0.15)';
+        } else if (/rose/i.test(item.metal)) {
+          metalBadgeColor = '#D53F8C';
+          metalBg = 'rgba(229, 124, 142, 0.15)';
+        }
+
+        return `
+          <tr class="${!item.active ? 'variant-row-inactive' : ''}" id="matrix-row-${realIdx}">
+            <td style="text-align: center;">
+              <input type="checkbox" ${item.active ? 'checked' : ''} onchange="toggleVariantActive(${realIdx}, this.checked)" title="Enable/disable on storefront" />
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="badge-metal-tag" style="background: ${metalBg}; color: ${metalBadgeColor}; border: 1px solid ${metalBadgeColor}40;">
+                  ${item.metal}
+                </span>
+                <span style="font-weight: 600; font-size: 12.5px; color: var(--admin-text-main);">Size ${item.size}</span>
+              </div>
+            </td>
+            <td>
+              <input type="text" class="form-input" style="padding: 4px 8px; font-size: 11.5px; font-family: monospace;" value="${item.sku || ''}" onchange="updateMatrixVariantField(${realIdx}, 'sku', this.value)" placeholder="SKU" />
+            </td>
+            <td>
+              <input type="number" class="form-input" style="padding: 4px 8px; font-size: 12px;" value="${item.price || ''}" onchange="updateMatrixVariantField(${realIdx}, 'price', this.value)" placeholder="₹ Price" />
+            </td>
+            <td>
+              <input type="number" class="form-input" style="padding: 4px 8px; font-size: 12px;" value="${item.comparePrice || ''}" onchange="updateMatrixVariantField(${realIdx}, 'comparePrice', this.value)" placeholder="₹ Strike" />
+            </td>
+            <td>
+              <input type="number" class="form-input" style="padding: 4px 8px; font-size: 12px; width: 70px;" value="${item.stock !== undefined ? item.stock : 10}" onchange="updateMatrixVariantField(${realIdx}, 'stock', this.value)" />
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="width: 28px; height: 28px; border-radius: 4px; overflow: hidden; border: 1px solid var(--admin-border); background: #fff; flex-shrink: 0;">
+                  <img src="${resolveAdminImageUrl(item.image || 'assets/products/variant-unavailable.svg')}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='../assets/products/variant-unavailable.svg'" />
+                </div>
+                <button type="button" class="btn-admin-secondary" style="padding: 2px 6px; font-size: 10px;" onclick="pickImageForMatrixRow(${realIdx})">Pick</button>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <button type="button" style="background: none; border: none; color: #E53E3E; cursor: pointer; font-size: 13px;" onclick="removeMatrixCombination(${realIdx})" title="Delete combination">✕</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.updateMatrixVariantField = function (idx, field, val) {
+      if (!variantMatrixCombinations[idx]) return;
+      if (field === 'price' || field === 'comparePrice' || field === 'stock') {
+        variantMatrixCombinations[idx][field] = val !== '' ? Number(val) : null;
+      } else {
+        variantMatrixCombinations[idx][field] = val;
+      }
+    };
+
+    window.toggleVariantActive = function (idx, isChecked) {
+      if (!variantMatrixCombinations[idx]) return;
+      variantMatrixCombinations[idx].active = isChecked;
+      const row = document.getElementById(`matrix-row-${idx}`);
+      if (row) {
+        if (isChecked) row.classList.remove('variant-row-inactive');
+        else row.classList.add('variant-row-inactive');
+      }
+    };
+
+    window.removeMatrixCombination = function (idx) {
+      variantMatrixCombinations.splice(idx, 1);
+      renderMatrixFilterTabs();
+      renderVariantMatrixTable();
+    };
+
+    window.pickImageForMatrixRow = function (idx) {
+      if (productImages.length === 0) {
+        window.showAdminToast('Upload photos to Master Gallery first', 'info');
+        return;
+      }
+      const primaryUrl = productImages[primaryImageIndex]?.url || productImages[0]?.url;
+      variantMatrixCombinations[idx].image = primaryUrl;
+      renderVariantMatrixTable();
+      window.showAdminToast(`Assigned ${primaryUrl.split('/').pop()} to variant`, 'success');
+    };
+
+    // BULK MATRIX ACTIONS
+    window.bulkApplyBasePrice = function () {
+      const basePrice = Number(document.getElementById('input-price')?.value || 0);
+      if (!basePrice) {
+        window.showAdminToast('Enter a regular price in the Pricing card first', 'error');
+        return;
+      }
+      variantMatrixCombinations.forEach(c => {
+        c.price = basePrice;
+      });
+      renderVariantMatrixTable();
+      window.showAdminToast(`Applied ₹${basePrice} to all ${variantMatrixCombinations.length} variants`, 'success');
+    };
+
+    window.bulkApplyBaseStock = function () {
+      const baseStock = Number(document.getElementById('input-stock')?.value || 10);
+      variantMatrixCombinations.forEach(c => {
+        c.stock = baseStock;
+      });
+      renderVariantMatrixTable();
+      window.showAdminToast(`Applied stock of ${baseStock} units to all variants`, 'success');
+    };
+
+    window.bulkRegenerateSkus = function () {
+      const baseSku = skuInput ? skuInput.value.trim().toUpperCase() : 'ROY-0001';
+      variantMatrixCombinations.forEach(c => {
+        let metalCode = 'GLD';
+        if (/silver|white|platinum/i.test(c.metal)) metalCode = 'SLV';
+        else if (/rose/i.test(c.metal)) metalCode = 'RSG';
+        else metalCode = c.metal.substring(0, 3).toUpperCase();
+
+        const cleanSizeCode = c.size.replace(/[^a-zA-Z0-9]/g, '');
+        c.sku = `${baseSku}-${metalCode}-${cleanSizeCode}`;
+      });
+      renderVariantMatrixTable();
+      window.showAdminToast('Auto-generated unique SKUs for all combinations', 'success');
+    };
+
+    window.toggleAllVariantsActive = function (activeState) {
+      variantMatrixCombinations.forEach(c => {
+        c.active = activeState;
+      });
+      renderVariantMatrixTable();
+      window.showAdminToast(`All variants set to ${activeState ? 'Enabled' : 'Disabled'}`, 'success');
+    };
 
     // Load existing product if Edit mode
     let existingProduct = null;
@@ -457,7 +907,91 @@
       document.getElementById('input-plating').value = existingProduct.plating || '';
       document.getElementById('input-stone').value = existingProduct.stone || '';
       document.getElementById('input-weight').value = existingProduct.weight || '';
-      document.getElementById('input-collection').value = existingProduct.collection || 'everyday';
+      
+      if (document.getElementById('input-style')) {
+        document.getElementById('input-style').value = existingProduct.style || existingProduct.specifications?.style || '';
+      }
+      if (document.getElementById('input-occasion')) {
+        document.getElementById('input-occasion').value = existingProduct.occasion || existingProduct.specifications?.occasion || '';
+      }
+      if (document.getElementById('input-dimensions')) {
+        document.getElementById('input-dimensions').value = existingProduct.dimensions || existingProduct.specifications?.dimensions || '';
+      }
+      if (document.getElementById('input-certification')) {
+        document.getElementById('input-certification').value = existingProduct.certification || existingProduct.specifications?.certification || '';
+      }
+      if (document.getElementById('input-craftsmanship')) {
+        document.getElementById('input-craftsmanship').value = existingProduct.craftsmanship || existingProduct.specifications?.craftsmanship || '';
+      }
+      if (document.getElementById('input-care-instructions')) {
+        document.getElementById('input-care-instructions').value = existingProduct.careInstructions || existingProduct.specifications?.care || '';
+      }
+      if (document.getElementById('input-seo-keywords')) {
+        document.getElementById('input-seo-keywords').value = existingProduct.seoKeywords || existingProduct.seo_keywords || '';
+      }
+      
+      if (existingProduct.collection) {
+        await loadCollectionsIntoSelect(existingProduct.collection);
+      }
+
+      // Populate Option chips
+      if (existingProduct.finishes && Array.isArray(existingProduct.finishes) && existingProduct.finishes.length > 0) {
+        currentMetalOptions = [...existingProduct.finishes];
+      }
+      if (existingProduct.sizes && Array.isArray(existingProduct.sizes) && existingProduct.sizes.length > 0) {
+        currentSizeOptions = [...existingProduct.sizes];
+      }
+
+      renderMetalChips();
+      renderSizeChips();
+
+      // Populate Variant Matrix if exists
+      const variants = existingProduct.variants || {};
+      
+      // Gold Variant
+      const goldV = variants['Gold'] || variants['gold'] || {};
+      if (document.getElementById('v-gold-sku')) {
+        document.getElementById('v-gold-sku').value = goldV.sku || (existingProduct.sku ? `${existingProduct.sku}-GLD` : '');
+        document.getElementById('v-gold-price').value = goldV.price || '';
+        document.getElementById('v-gold-stock').value = goldV.stock ?? existingProduct.stock ?? 10;
+        document.getElementById('v-gold-primary-img').value = goldV.primary || existingProduct.image || '';
+        document.getElementById('v-gold-gallery').value = (goldV.gallery && Array.isArray(goldV.gallery)) ? goldV.gallery.join(', ') : '';
+        document.getElementById('v-gold-active').checked = goldV.active !== false;
+      }
+
+      // Silver Variant
+      const silverV = variants['Silver'] || variants['silver'] || {};
+      if (document.getElementById('v-silver-sku')) {
+        document.getElementById('v-silver-sku').value = silverV.sku || (existingProduct.sku ? `${existingProduct.sku}-SLV` : '');
+        document.getElementById('v-silver-price').value = silverV.price || '';
+        document.getElementById('v-silver-stock').value = silverV.stock ?? 10;
+        document.getElementById('v-silver-primary-img').value = silverV.primary || existingProduct.secondImage || '';
+        document.getElementById('v-silver-gallery').value = (silverV.gallery && Array.isArray(silverV.gallery)) ? silverV.gallery.join(', ') : '';
+        document.getElementById('v-silver-active').checked = silverV.active !== false;
+      }
+
+      // Rose Gold Variant
+      const roseV = variants['Rose Gold'] || variants['rose gold'] || variants['Rose'] || {};
+      if (document.getElementById('v-rose-sku')) {
+        document.getElementById('v-rose-sku').value = roseV.sku || (existingProduct.sku ? `${existingProduct.sku}-RSG` : '');
+        document.getElementById('v-rose-price').value = roseV.price || '';
+        document.getElementById('v-rose-stock').value = roseV.stock ?? 10;
+        document.getElementById('v-rose-primary-img').value = roseV.primary || '';
+        document.getElementById('v-rose-gallery').value = (roseV.gallery && Array.isArray(roseV.gallery)) ? roseV.gallery.join(', ') : '';
+        document.getElementById('v-rose-active').checked = roseV.active !== false;
+      }
+
+      // Refresh preview strips
+      ['gold', 'silver', 'rose'].forEach(v => updateVariantPreview(v));
+
+      // Load matrix combinations if stored
+      if (existingProduct.variants_matrix && Array.isArray(existingProduct.variants_matrix) && existingProduct.variants_matrix.length > 0) {
+        variantMatrixCombinations = existingProduct.variants_matrix;
+        renderMatrixFilterTabs();
+        renderVariantMatrixTable();
+      } else {
+        generateVariantMatrix(false);
+      }
 
       // Load multiple gallery images
       if (existingProduct.gallery && existingProduct.gallery.length > 0) {
@@ -472,9 +1006,16 @@
       primaryImageIndex = 0;
       renderImagePreviews();
     } else {
+      renderMetalChips();
+      renderSizeChips();
       if (skuInput && !skuInput.value) {
-        skuInput.value = `ROY-${Math.floor(1000 + Math.random() * 9000)}`;
+        const baseSku = `ROY-${Math.floor(1000 + Math.random() * 9000)}`;
+        skuInput.value = baseSku;
+        if (document.getElementById('v-gold-sku')) document.getElementById('v-gold-sku').value = `${baseSku}-GLD`;
+        if (document.getElementById('v-silver-sku')) document.getElementById('v-silver-sku').value = `${baseSku}-SLV`;
+        if (document.getElementById('v-rose-sku')) document.getElementById('v-rose-sku').value = `${baseSku}-RSG`;
       }
+      generateVariantMatrix(false);
     }
 
     // SKU Live DB Validation
@@ -497,6 +1038,136 @@
       }, 300));
     }
 
+    // VARIANT MATRIX HELPERS & UI CONTROLLERS
+    window.switchVariantTab = function (vtab, btn) {
+      document.querySelectorAll('.variant-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.querySelectorAll('.variant-panel').forEach(p => p.style.display = 'none');
+      const panel = document.getElementById(`vpanel-${vtab}`);
+      if (panel) panel.style.display = 'block';
+    };
+
+    window.updateVariantPreview = function (metalKey) {
+      const primaryInput = document.getElementById(`v-${metalKey}-primary-img`);
+      const galleryInput = document.getElementById(`v-${metalKey}-gallery`);
+      const previewStrip = document.getElementById(`v-${metalKey}-preview-strip`);
+      if (!previewStrip) return;
+
+      const primary = primaryInput ? primaryInput.value.trim() : '';
+      const gallery = galleryInput ? galleryInput.value.split(',').map(s => s.trim()).filter(Boolean) : [];
+      const allUrls = primary ? [primary, ...gallery.filter(g => g !== primary)] : gallery;
+
+      if (allUrls.length === 0) {
+        previewStrip.innerHTML = '<span style="font-size: 11px; color: #888;">No images assigned to this variant yet.</span>';
+        return;
+      }
+
+      previewStrip.innerHTML = allUrls.map((url, idx) => `
+        <div style="position: relative; width: 50px; height: 50px; border-radius: 4px; overflow: hidden; border: 1px solid var(--admin-border); flex-shrink: 0; background: #fff;">
+          <img src="${resolveAdminImageUrl(url)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='../assets/products/variant-unavailable.svg'" />
+          ${idx === 0 ? '<span style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: #fff; font-size: 8px; text-align: center; font-weight: 700;">MAIN</span>' : ''}
+        </div>
+      `).join('');
+    };
+
+    window.pickFromMasterGallery = function (metalKey, type) {
+      if (productImages.length === 0) {
+        window.showAdminToast('Upload images to Master Gallery first, or paste image path directly', 'info');
+        return;
+      }
+      const primaryUrl = productImages[primaryImageIndex]?.url || productImages[0]?.url;
+      if (type === 'primary') {
+        const input = document.getElementById(`v-${metalKey}-primary-img`);
+        if (input && primaryUrl) {
+          input.value = primaryUrl;
+          updateVariantPreview(metalKey);
+          window.showAdminToast(`Assigned ${primaryUrl.split('/').pop()} to ${metalKey.toUpperCase()} primary`, 'success');
+        }
+      }
+    };
+
+    // Assign master gallery photo directly to a specific metal
+    window.assignImageToMetal = function (imgIndex, metalKey) {
+      const img = productImages[imgIndex];
+      if (!img) return;
+      const input = document.getElementById(`v-${metalKey}-primary-img`);
+      if (input) {
+        input.value = img.url;
+        updateVariantPreview(metalKey);
+        // Also update any combinations with this metal
+        const targetMetalName = metalKey === 'gold' ? 'Gold' : (metalKey === 'silver' ? 'Silver' : 'Rose Gold');
+        variantMatrixCombinations.forEach(c => {
+          if (c.metal.toLowerCase().includes(metalKey)) {
+            c.image = img.url;
+          }
+        });
+        renderVariantMatrixTable();
+        window.showAdminToast(`Assigned image to ${targetMetalName} Primary & Variants`, 'success');
+      }
+    };
+
+    // QUICK ADD COLLECTION MODAL LOGIC
+    window.openAddCollectionModal = function () {
+      const modal = document.getElementById('quick-add-collection-modal');
+      if (modal) modal.style.display = 'flex';
+      const nameInput = document.getElementById('new-collection-name');
+      if (nameInput) {
+        nameInput.value = '';
+        nameInput.focus();
+      }
+      const slugInput = document.getElementById('new-collection-slug');
+      if (slugInput) slugInput.value = '';
+    };
+
+    window.closeAddCollectionModal = function () {
+      const modal = document.getElementById('quick-add-collection-modal');
+      if (modal) modal.style.display = 'none';
+    };
+
+    window.saveNewCollectionFromModal = async function () {
+      const nameInput = document.getElementById('new-collection-name');
+      const slugInput = document.getElementById('new-collection-slug');
+      const name = nameInput ? nameInput.value.trim() : '';
+      if (!name) {
+        window.showAdminToast('Please enter a collection name', 'error');
+        return;
+      }
+      let slug = slugInput ? slugInput.value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') : '';
+      if (!slug) slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+      const collectionPayload = {
+        name,
+        slug,
+        description: `Handcrafted ${name} curated signature jewellery selection.`,
+        status: 'Active',
+        sortOrder: 1
+      };
+
+      try {
+        const res = await window.RoyraDB.saveCollection(collectionPayload);
+        if (res.success || res.data) {
+          await loadCollectionsIntoSelect(slug);
+          window.closeAddCollectionModal();
+          window.showAdminToast(`Collection "${name}" saved to database & selected`, 'success');
+        } else {
+          // Fallback UI insert
+          const collectionSelect = document.getElementById('input-collection');
+          if (collectionSelect) {
+            const opt = document.createElement('option');
+            opt.value = slug;
+            opt.textContent = name;
+            collectionSelect.appendChild(opt);
+            collectionSelect.value = slug;
+          }
+          window.closeAddCollectionModal();
+          window.showAdminToast(`Collection "${name}" added`, 'success');
+        }
+      } catch (err) {
+        console.error('Error saving collection:', err);
+        window.closeAddCollectionModal();
+      }
+    };
+
     // Multi-Image Gallery Rendering & Controls
     function renderImagePreviews() {
       if (!imagePreviewGrid) return;
@@ -511,12 +1182,12 @@
 
       imagePreviewGrid.innerHTML = productImages.map((img, idx) => `
         <div class="preview-item">
-          ${idx === primaryImageIndex ? `<span class="preview-badge-primary">PRIMARY</span>` : ''}
+          ${idx === primaryImageIndex ? `<span class="preview-badge-primary">PRIMARY COVER</span>` : ''}
           <img src="${resolveAdminImageUrl(img.url)}" alt="Preview ${idx + 1}" />
           
           <div class="preview-actions">
             ${idx !== primaryImageIndex ? `
-              <button type="button" class="preview-btn star" onclick="setPrimaryImage(${idx})" title="Set as primary image">★ Main</button>
+              <button type="button" class="preview-btn star" onclick="setPrimaryImage(${idx})" title="Set as primary catalogue cover">★ Main</button>
             ` : '<span></span>'}
             
             <div style="display: flex; gap: 2px;">
@@ -524,6 +1195,12 @@
               ${idx < productImages.length - 1 ? `<button type="button" class="preview-btn" onclick="moveImage(${idx}, 1)" title="Move right">→</button>` : ''}
               <button type="button" class="preview-btn delete" onclick="removeImage(${idx})" title="Delete image">✕</button>
             </div>
+          </div>
+
+          <div class="preview-metal-assign-bar">
+            <button type="button" class="assign-badge-btn gold" onclick="assignImageToMetal(${idx}, 'gold')" title="Assign as Yellow Gold primary photo">🟡 Gold</button>
+            <button type="button" class="assign-badge-btn silver" onclick="assignImageToMetal(${idx}, 'silver')" title="Assign as Silver primary photo">⚪ Silver</button>
+            <button type="button" class="assign-badge-btn rose" onclick="assignImageToMetal(${idx}, 'rose')" title="Assign as Rose Gold primary photo">🌸 Rose</button>
           </div>
         </div>
       `).join('');
@@ -603,7 +1280,7 @@
         const name = document.getElementById('input-name').value.trim();
         const sku = skuInput ? skuInput.value.trim().toUpperCase() : '';
         const price = document.getElementById('input-price').value;
-        const submitBtn = document.getElementById('btn-save-product');
+        const submitBtn = document.querySelector('button[type="submit"]');
 
         if (!name || !sku || !price) {
           window.showAdminToast('Please fill in all required fields (*)', 'error');
@@ -639,6 +1316,51 @@
         const galleryUrls = orderedImages.map(img => img.url);
         const mainImageUrl = galleryUrls[0] || (existingProduct ? existingProduct.image : 'assets/products/product-01.jpg');
 
+        // Extract Variant Matrix
+        const goldPrimary = document.getElementById('v-gold-primary-img')?.value.trim() || '';
+        const silverPrimary = document.getElementById('v-silver-primary-img')?.value.trim() || '';
+        const rosePrimary = document.getElementById('v-rose-primary-img')?.value.trim() || '';
+
+        const goldGallery = document.getElementById('v-gold-gallery')?.value.split(',').map(s => s.trim()).filter(Boolean) || [];
+        const silverGallery = document.getElementById('v-silver-gallery')?.value.split(',').map(s => s.trim()).filter(Boolean) || [];
+        const roseGallery = document.getElementById('v-rose-gallery')?.value.split(',').map(s => s.trim()).filter(Boolean) || [];
+
+        const goldActive = document.getElementById('v-gold-active')?.checked ?? true;
+        const silverActive = document.getElementById('v-silver-active')?.checked ?? true;
+        const roseActive = document.getElementById('v-rose-active')?.checked ?? true;
+
+        const variantsPayload = {
+          "Gold": {
+            sku: document.getElementById('v-gold-sku')?.value.trim() || `${sku}-GLD`,
+            price: document.getElementById('v-gold-price')?.value ? Number(document.getElementById('v-gold-price').value) : Number(price),
+            stock: Number(document.getElementById('v-gold-stock')?.value || 10),
+            primary: goldPrimary || mainImageUrl,
+            gallery: goldGallery.length > 0 ? (goldPrimary ? [goldPrimary, ...goldGallery.filter(g => g !== goldPrimary)] : goldGallery) : [goldPrimary || mainImageUrl],
+            active: goldActive
+          },
+          "Silver": {
+            sku: document.getElementById('v-silver-sku')?.value.trim() || `${sku}-SLV`,
+            price: document.getElementById('v-silver-price')?.value ? Number(document.getElementById('v-silver-price').value) : Number(price),
+            stock: Number(document.getElementById('v-silver-stock')?.value || 10),
+            primary: silverPrimary || '',
+            gallery: silverGallery.length > 0 ? (silverPrimary ? [silverPrimary, ...silverGallery.filter(g => g !== silverPrimary)] : silverGallery) : (silverPrimary ? [silverPrimary] : []),
+            active: silverActive
+          },
+          "Rose Gold": {
+            sku: document.getElementById('v-rose-sku')?.value.trim() || `${sku}-RSG`,
+            price: document.getElementById('v-rose-price')?.value ? Number(document.getElementById('v-rose-price').value) : Number(price),
+            stock: Number(document.getElementById('v-rose-stock')?.value || 10),
+            primary: rosePrimary || '',
+            gallery: roseGallery.length > 0 ? (rosePrimary ? [rosePrimary, ...roseGallery.filter(g => g !== rosePrimary)] : roseGallery) : (rosePrimary ? [rosePrimary] : []),
+            active: roseActive
+          }
+        };
+
+        const activeFinishes = [];
+        if (goldActive) activeFinishes.push("Gold");
+        if (silverActive) activeFinishes.push("Silver");
+        if (roseActive) activeFinishes.push("Rose Gold");
+
         const productPayload = {
           id: productId || null,
           name,
@@ -657,11 +1379,22 @@
           plating: document.getElementById('input-plating').value,
           stone: document.getElementById('input-stone').value,
           weight: document.getElementById('input-weight').value,
+          style: document.getElementById('input-style')?.value || '',
+          occasion: document.getElementById('input-occasion')?.value || '',
+          dimensions: document.getElementById('input-dimensions')?.value || '',
+          certification: document.getElementById('input-certification')?.value || '',
+          craftsmanship: document.getElementById('input-craftsmanship')?.value || '',
+          careInstructions: document.getElementById('input-care-instructions')?.value || '',
+          seoKeywords: document.getElementById('input-seo-keywords')?.value || '',
           collection: document.getElementById('input-collection').value,
           image: mainImageUrl,
-          secondImage: galleryUrls[1] || null,
+          secondImage: silverPrimary || galleryUrls[1] || null,
           images: orderedImages,
-          gallery: galleryUrls.length > 0 ? galleryUrls : [mainImageUrl]
+          gallery: galleryUrls.length > 0 ? galleryUrls : [mainImageUrl],
+          variants: variantsPayload,
+          variants_matrix: variantMatrixCombinations,
+          finishes: currentMetalOptions.length > 0 ? currentMetalOptions : (activeFinishes.length > 0 ? activeFinishes : ["Gold", "Silver", "Rose Gold"]),
+          sizes: currentSizeOptions
         };
 
         const result = await window.RoyraDB.saveProduct(productPayload, isEdit);
@@ -786,5 +1519,233 @@
       timer = setTimeout(() => fn.apply(this, args), delay);
     };
   }
+
+  // ==========================================================================
+  // AI JEWELLERY PRODUCT CONTENT GENERATOR CONTROLLERS
+  // ==========================================================================
+  window.triggerAiGeneration = async function(target = 'both') {
+    const nameInput = document.getElementById('input-name');
+    const name = nameInput ? nameInput.value.trim() : '';
+
+    if (!name) {
+      window.showAdminToast('Please enter a Product Name first before generating AI content', 'warning');
+      if (nameInput) nameInput.focus();
+      return;
+    }
+
+    const tone = document.getElementById('ai-tone')?.value || 'Luxury';
+    const length = document.getElementById('ai-length')?.value || 'Standard';
+    const language = document.getElementById('ai-language')?.value || 'English';
+    const selectedVariant = document.getElementById('ai-variant-target')?.value || 'all';
+    const verifiedOnly = document.getElementById('ai-verified-only')?.checked ?? true;
+
+    // Extract all product fields from form
+    const productType = document.getElementById('input-product-type')?.value?.trim() || '';
+    const categorySelect = document.getElementById('input-category');
+    const category = categorySelect ? categorySelect.value : '';
+    const collectionSelect = document.getElementById('input-collection');
+    const collection = collectionSelect ? collectionSelect.value : '';
+    const metal = document.getElementById('input-metal')?.value?.trim() || '';
+    const plating = document.getElementById('input-plating')?.value?.trim() || '';
+    const stone = document.getElementById('input-stone')?.value?.trim() || '';
+    const weight = document.getElementById('input-weight')?.value?.trim() || '';
+    const style = document.getElementById('input-style')?.value?.trim() || '';
+    const occasion = document.getElementById('input-occasion')?.value?.trim() || '';
+    const dimensions = document.getElementById('input-dimensions')?.value?.trim() || '';
+    const certification = document.getElementById('input-certification')?.value?.trim() || '';
+    const craftsmanship = document.getElementById('input-craftsmanship')?.value?.trim() || '';
+    const careInstructions = document.getElementById('input-care-instructions')?.value?.trim() || '';
+    const seoKeywords = document.getElementById('input-seo-keywords')?.value?.trim() || '';
+    const existingShortDesc = document.getElementById('input-short-desc')?.value?.trim() || '';
+    const existingFullDesc = document.getElementById('input-full-desc')?.value?.trim() || '';
+
+    // Collect Variant Matrix Data
+    const variantsPayload = {
+      "Gold": {
+        sku: document.getElementById('v-gold-sku')?.value?.trim() || '',
+        price: document.getElementById('v-gold-price')?.value ? Number(document.getElementById('v-gold-price').value) : null,
+        stock: Number(document.getElementById('v-gold-stock')?.value || 10),
+        active: document.getElementById('v-gold-active')?.checked ?? true
+      },
+      "Silver": {
+        sku: document.getElementById('v-silver-sku')?.value?.trim() || '',
+        price: document.getElementById('v-silver-price')?.value ? Number(document.getElementById('v-silver-price').value) : null,
+        stock: Number(document.getElementById('v-silver-stock')?.value || 10),
+        active: document.getElementById('v-silver-active')?.checked ?? true
+      },
+      "Rose Gold": {
+        sku: document.getElementById('v-rose-sku')?.value?.trim() || '',
+        price: document.getElementById('v-rose-price')?.value ? Number(document.getElementById('v-rose-price').value) : null,
+        stock: Number(document.getElementById('v-rose-stock')?.value || 10),
+        active: document.getElementById('v-rose-active')?.checked ?? true
+      }
+    };
+
+    const payload = {
+      name,
+      productType,
+      category,
+      collection,
+      metal,
+      plating,
+      stone,
+      weight,
+      style,
+      occasion,
+      dimensions,
+      certification,
+      craftsmanship,
+      careInstructions,
+      seoKeywords,
+      existingShortDesc,
+      existingFullDesc,
+      finishes: (typeof currentMetalOptions !== 'undefined' && currentMetalOptions.length > 0) ? currentMetalOptions : ["Gold", "Silver", "Rose Gold"],
+      sizes: (typeof currentSizeOptions !== 'undefined') ? currentSizeOptions : [],
+      variants: variantsPayload,
+      selectedVariant: selectedVariant !== 'all' ? selectedVariant : undefined,
+      tone,
+      length,
+      language,
+      verifiedOnly,
+      target
+    };
+
+    const loadingEl = document.getElementById('ai-loading-indicator');
+    const resultsContainer = document.getElementById('ai-results-container');
+    const shortCard = document.getElementById('ai-short-card');
+    const storyCard = document.getElementById('ai-story-card');
+    const shortOutput = document.getElementById('ai-short-output');
+    const storyOutput = document.getElementById('ai-story-output');
+    const btnBoth = document.getElementById('btn-ai-gen-both');
+    const btnShort = document.getElementById('btn-ai-gen-short');
+    const btnStory = document.getElementById('btn-ai-gen-story');
+
+    if (loadingEl) loadingEl.style.display = 'flex';
+    if (btnBoth) btnBoth.disabled = true;
+    if (btnShort) btnShort.disabled = true;
+    if (btnStory) btnStory.disabled = true;
+
+    try {
+      let endpoint = '/api/ai/generate-product-content';
+      const customBase = window.__ENV__?.API_BASE?.trim();
+      if (customBase && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
+        endpoint = `${customBase.replace(/\/+$/, '')}/api/ai/generate-product-content`;
+      }
+
+      let response = null;
+      try {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (netErr) {
+        if (endpoint.startsWith('http')) {
+          response = await fetch('/api/ai/generate-product-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          throw netErr;
+        }
+      }
+
+      if (!response || !response.ok) {
+        const errText = response ? await response.text() : 'Server communication failure';
+        throw new Error(`AI generation request failed: ${errText}`);
+      }
+
+      const data = await response.json();
+      if (!data.success && !data.data) {
+        throw new Error(data.error || 'Failed to generate AI product content');
+      }
+
+      const result = data.data || {};
+      if (resultsContainer) resultsContainer.style.display = 'flex';
+
+      if (target === 'both' || target === 'short') {
+        if (shortOutput && result.shortDescription) {
+          shortOutput.value = result.shortDescription;
+        }
+        if (shortCard) shortCard.style.display = 'block';
+      } else if (shortCard && target === 'full') {
+        if (!shortOutput?.value) shortCard.style.display = 'none';
+      }
+
+      if (target === 'both' || target === 'full') {
+        if (storyOutput && result.fullStory) {
+          storyOutput.value = result.fullStory;
+        }
+        if (storyCard) storyCard.style.display = 'block';
+      } else if (storyCard && target === 'short') {
+        if (!storyOutput?.value) storyCard.style.display = 'none';
+      }
+
+      window.showAdminToast(`✨ Product content generated (${data.source === 'gemini_ai' ? 'Gemini 3.7 Flash' : 'Fine Jewellery AI'})`, 'success');
+      resultsContainer?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    } catch (err) {
+      console.error('AI Generation Error:', err);
+      window.showAdminToast(err.message || 'Could not generate AI content. Existing content preserved.', 'error');
+    } finally {
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (btnBoth) btnBoth.disabled = false;
+      if (btnShort) btnShort.disabled = false;
+      if (btnStory) btnStory.disabled = false;
+    }
+  };
+
+  window.applyAiShortDescription = function() {
+    const shortOutput = document.getElementById('ai-short-output');
+    const shortInput = document.getElementById('input-short-desc');
+    if (!shortOutput || !shortInput) return;
+    const val = shortOutput.value.trim();
+    if (!val) {
+      window.showAdminToast('No generated short description to apply', 'warning');
+      return;
+    }
+    shortInput.value = val;
+    shortInput.classList.remove('field-highlight-pulse');
+    void shortInput.offsetWidth;
+    shortInput.classList.add('field-highlight-pulse');
+    window.showAdminToast('Short description applied to product form', 'success');
+  };
+
+  window.applyAiFullStory = function() {
+    const storyOutput = document.getElementById('ai-story-output');
+    const fullDescInput = document.getElementById('input-full-desc');
+    if (!storyOutput || !fullDescInput) return;
+    const val = storyOutput.value.trim();
+    if (!val) {
+      window.showAdminToast('No generated product story to apply', 'warning');
+      return;
+    }
+    fullDescInput.value = val;
+    fullDescInput.classList.remove('field-highlight-pulse');
+    void fullDescInput.offsetWidth;
+    fullDescInput.classList.add('field-highlight-pulse');
+
+    const preview = document.getElementById('desc-preview-container');
+    if (preview && preview.style.display !== 'none' && typeof window.renderRichMarkdown === 'function') {
+      preview.innerHTML = window.renderRichMarkdown(val);
+    }
+
+    window.showAdminToast('Full product story applied to product form', 'success');
+  };
+
+  window.applyBothAiDescriptions = function() {
+    window.applyAiShortDescription();
+    window.applyAiFullStory();
+    window.showAdminToast('Both AI descriptions successfully applied to product form', 'success');
+  };
+
+  window.focusAiEditor = function(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) {
+      el.focus();
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  };
 
 })();

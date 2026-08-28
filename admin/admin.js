@@ -908,6 +908,28 @@
       document.getElementById('input-stone').value = existingProduct.stone || '';
       document.getElementById('input-weight').value = existingProduct.weight || '';
       
+      if (document.getElementById('input-style')) {
+        document.getElementById('input-style').value = existingProduct.style || existingProduct.specifications?.style || '';
+      }
+      if (document.getElementById('input-occasion')) {
+        document.getElementById('input-occasion').value = existingProduct.occasion || existingProduct.specifications?.occasion || '';
+      }
+      if (document.getElementById('input-dimensions')) {
+        document.getElementById('input-dimensions').value = existingProduct.dimensions || existingProduct.specifications?.dimensions || '';
+      }
+      if (document.getElementById('input-certification')) {
+        document.getElementById('input-certification').value = existingProduct.certification || existingProduct.specifications?.certification || '';
+      }
+      if (document.getElementById('input-craftsmanship')) {
+        document.getElementById('input-craftsmanship').value = existingProduct.craftsmanship || existingProduct.specifications?.craftsmanship || '';
+      }
+      if (document.getElementById('input-care-instructions')) {
+        document.getElementById('input-care-instructions').value = existingProduct.careInstructions || existingProduct.specifications?.care || '';
+      }
+      if (document.getElementById('input-seo-keywords')) {
+        document.getElementById('input-seo-keywords').value = existingProduct.seoKeywords || existingProduct.seo_keywords || '';
+      }
+      
       if (existingProduct.collection) {
         await loadCollectionsIntoSelect(existingProduct.collection);
       }
@@ -1357,6 +1379,13 @@
           plating: document.getElementById('input-plating').value,
           stone: document.getElementById('input-stone').value,
           weight: document.getElementById('input-weight').value,
+          style: document.getElementById('input-style')?.value || '',
+          occasion: document.getElementById('input-occasion')?.value || '',
+          dimensions: document.getElementById('input-dimensions')?.value || '',
+          certification: document.getElementById('input-certification')?.value || '',
+          craftsmanship: document.getElementById('input-craftsmanship')?.value || '',
+          careInstructions: document.getElementById('input-care-instructions')?.value || '',
+          seoKeywords: document.getElementById('input-seo-keywords')?.value || '',
           collection: document.getElementById('input-collection').value,
           image: mainImageUrl,
           secondImage: silverPrimary || galleryUrls[1] || null,
@@ -1490,5 +1519,233 @@
       timer = setTimeout(() => fn.apply(this, args), delay);
     };
   }
+
+  // ==========================================================================
+  // AI JEWELLERY PRODUCT CONTENT GENERATOR CONTROLLERS
+  // ==========================================================================
+  window.triggerAiGeneration = async function(target = 'both') {
+    const nameInput = document.getElementById('input-name');
+    const name = nameInput ? nameInput.value.trim() : '';
+
+    if (!name) {
+      window.showAdminToast('Please enter a Product Name first before generating AI content', 'warning');
+      if (nameInput) nameInput.focus();
+      return;
+    }
+
+    const tone = document.getElementById('ai-tone')?.value || 'Luxury';
+    const length = document.getElementById('ai-length')?.value || 'Standard';
+    const language = document.getElementById('ai-language')?.value || 'English';
+    const selectedVariant = document.getElementById('ai-variant-target')?.value || 'all';
+    const verifiedOnly = document.getElementById('ai-verified-only')?.checked ?? true;
+
+    // Extract all product fields from form
+    const productType = document.getElementById('input-product-type')?.value?.trim() || '';
+    const categorySelect = document.getElementById('input-category');
+    const category = categorySelect ? categorySelect.value : '';
+    const collectionSelect = document.getElementById('input-collection');
+    const collection = collectionSelect ? collectionSelect.value : '';
+    const metal = document.getElementById('input-metal')?.value?.trim() || '';
+    const plating = document.getElementById('input-plating')?.value?.trim() || '';
+    const stone = document.getElementById('input-stone')?.value?.trim() || '';
+    const weight = document.getElementById('input-weight')?.value?.trim() || '';
+    const style = document.getElementById('input-style')?.value?.trim() || '';
+    const occasion = document.getElementById('input-occasion')?.value?.trim() || '';
+    const dimensions = document.getElementById('input-dimensions')?.value?.trim() || '';
+    const certification = document.getElementById('input-certification')?.value?.trim() || '';
+    const craftsmanship = document.getElementById('input-craftsmanship')?.value?.trim() || '';
+    const careInstructions = document.getElementById('input-care-instructions')?.value?.trim() || '';
+    const seoKeywords = document.getElementById('input-seo-keywords')?.value?.trim() || '';
+    const existingShortDesc = document.getElementById('input-short-desc')?.value?.trim() || '';
+    const existingFullDesc = document.getElementById('input-full-desc')?.value?.trim() || '';
+
+    // Collect Variant Matrix Data
+    const variantsPayload = {
+      "Gold": {
+        sku: document.getElementById('v-gold-sku')?.value?.trim() || '',
+        price: document.getElementById('v-gold-price')?.value ? Number(document.getElementById('v-gold-price').value) : null,
+        stock: Number(document.getElementById('v-gold-stock')?.value || 10),
+        active: document.getElementById('v-gold-active')?.checked ?? true
+      },
+      "Silver": {
+        sku: document.getElementById('v-silver-sku')?.value?.trim() || '',
+        price: document.getElementById('v-silver-price')?.value ? Number(document.getElementById('v-silver-price').value) : null,
+        stock: Number(document.getElementById('v-silver-stock')?.value || 10),
+        active: document.getElementById('v-silver-active')?.checked ?? true
+      },
+      "Rose Gold": {
+        sku: document.getElementById('v-rose-sku')?.value?.trim() || '',
+        price: document.getElementById('v-rose-price')?.value ? Number(document.getElementById('v-rose-price').value) : null,
+        stock: Number(document.getElementById('v-rose-stock')?.value || 10),
+        active: document.getElementById('v-rose-active')?.checked ?? true
+      }
+    };
+
+    const payload = {
+      name,
+      productType,
+      category,
+      collection,
+      metal,
+      plating,
+      stone,
+      weight,
+      style,
+      occasion,
+      dimensions,
+      certification,
+      craftsmanship,
+      careInstructions,
+      seoKeywords,
+      existingShortDesc,
+      existingFullDesc,
+      finishes: (typeof currentMetalOptions !== 'undefined' && currentMetalOptions.length > 0) ? currentMetalOptions : ["Gold", "Silver", "Rose Gold"],
+      sizes: (typeof currentSizeOptions !== 'undefined') ? currentSizeOptions : [],
+      variants: variantsPayload,
+      selectedVariant: selectedVariant !== 'all' ? selectedVariant : undefined,
+      tone,
+      length,
+      language,
+      verifiedOnly,
+      target
+    };
+
+    const loadingEl = document.getElementById('ai-loading-indicator');
+    const resultsContainer = document.getElementById('ai-results-container');
+    const shortCard = document.getElementById('ai-short-card');
+    const storyCard = document.getElementById('ai-story-card');
+    const shortOutput = document.getElementById('ai-short-output');
+    const storyOutput = document.getElementById('ai-story-output');
+    const btnBoth = document.getElementById('btn-ai-gen-both');
+    const btnShort = document.getElementById('btn-ai-gen-short');
+    const btnStory = document.getElementById('btn-ai-gen-story');
+
+    if (loadingEl) loadingEl.style.display = 'flex';
+    if (btnBoth) btnBoth.disabled = true;
+    if (btnShort) btnShort.disabled = true;
+    if (btnStory) btnStory.disabled = true;
+
+    try {
+      let endpoint = '/api/ai/generate-product-content';
+      const customBase = window.__ENV__?.API_BASE?.trim();
+      if (customBase && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
+        endpoint = `${customBase.replace(/\/+$/, '')}/api/ai/generate-product-content`;
+      }
+
+      let response = null;
+      try {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (netErr) {
+        if (endpoint.startsWith('http')) {
+          response = await fetch('/api/ai/generate-product-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          throw netErr;
+        }
+      }
+
+      if (!response || !response.ok) {
+        const errText = response ? await response.text() : 'Server communication failure';
+        throw new Error(`AI generation request failed: ${errText}`);
+      }
+
+      const data = await response.json();
+      if (!data.success && !data.data) {
+        throw new Error(data.error || 'Failed to generate AI product content');
+      }
+
+      const result = data.data || {};
+      if (resultsContainer) resultsContainer.style.display = 'flex';
+
+      if (target === 'both' || target === 'short') {
+        if (shortOutput && result.shortDescription) {
+          shortOutput.value = result.shortDescription;
+        }
+        if (shortCard) shortCard.style.display = 'block';
+      } else if (shortCard && target === 'full') {
+        if (!shortOutput?.value) shortCard.style.display = 'none';
+      }
+
+      if (target === 'both' || target === 'full') {
+        if (storyOutput && result.fullStory) {
+          storyOutput.value = result.fullStory;
+        }
+        if (storyCard) storyCard.style.display = 'block';
+      } else if (storyCard && target === 'short') {
+        if (!storyOutput?.value) storyCard.style.display = 'none';
+      }
+
+      window.showAdminToast(`✨ Product content generated (${data.source === 'gemini_ai' ? 'Gemini 3.7 Flash' : 'Fine Jewellery AI'})`, 'success');
+      resultsContainer?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    } catch (err) {
+      console.error('AI Generation Error:', err);
+      window.showAdminToast(err.message || 'Could not generate AI content. Existing content preserved.', 'error');
+    } finally {
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (btnBoth) btnBoth.disabled = false;
+      if (btnShort) btnShort.disabled = false;
+      if (btnStory) btnStory.disabled = false;
+    }
+  };
+
+  window.applyAiShortDescription = function() {
+    const shortOutput = document.getElementById('ai-short-output');
+    const shortInput = document.getElementById('input-short-desc');
+    if (!shortOutput || !shortInput) return;
+    const val = shortOutput.value.trim();
+    if (!val) {
+      window.showAdminToast('No generated short description to apply', 'warning');
+      return;
+    }
+    shortInput.value = val;
+    shortInput.classList.remove('field-highlight-pulse');
+    void shortInput.offsetWidth;
+    shortInput.classList.add('field-highlight-pulse');
+    window.showAdminToast('Short description applied to product form', 'success');
+  };
+
+  window.applyAiFullStory = function() {
+    const storyOutput = document.getElementById('ai-story-output');
+    const fullDescInput = document.getElementById('input-full-desc');
+    if (!storyOutput || !fullDescInput) return;
+    const val = storyOutput.value.trim();
+    if (!val) {
+      window.showAdminToast('No generated product story to apply', 'warning');
+      return;
+    }
+    fullDescInput.value = val;
+    fullDescInput.classList.remove('field-highlight-pulse');
+    void fullDescInput.offsetWidth;
+    fullDescInput.classList.add('field-highlight-pulse');
+
+    const preview = document.getElementById('desc-preview-container');
+    if (preview && preview.style.display !== 'none' && typeof window.renderRichMarkdown === 'function') {
+      preview.innerHTML = window.renderRichMarkdown(val);
+    }
+
+    window.showAdminToast('Full product story applied to product form', 'success');
+  };
+
+  window.applyBothAiDescriptions = function() {
+    window.applyAiShortDescription();
+    window.applyAiFullStory();
+    window.showAdminToast('Both AI descriptions successfully applied to product form', 'success');
+  };
+
+  window.focusAiEditor = function(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) {
+      el.focus();
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  };
 
 })();
