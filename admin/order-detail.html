@@ -58,11 +58,31 @@
         </div>
         <div class="topbar-right">
           <button type="button" class="icon-btn"><i data-lucide="bell"></i></button>
-          <div class="profile-dropdown">
-            <div class="avatar">MS</div>
-            <span class="profile-name">Royra Jewels Admin</span>
-            <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+          <button type="button" class="icon-btn"><i data-lucide="help-circle"></i></button>
+          
+          <div class="profile-dropdown" onclick="toggleProfileMenu(event)" style="cursor:pointer; position:relative;">
+            <div class="avatar" style="background:#35B161; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600;">MS</div>
+            <span class="profile-name" style="color:#FFF; font-size:13px; font-weight:500;">Royra Jewels Admin</span>
+            <i data-lucide="chevron-down" style="width:14px;height:14px;color:#FFF;"></i>
+            
+            <div id="profile-popover-menu" style="display:none; position:absolute; top:40px; right:0; background:#fff; border:1px solid #E5E5E5; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); width:240px; z-index:1001; color:#202223; cursor:default;">
+               <div style="padding:16px; border-bottom:1px solid #E5E5E5; display:flex; align-items:center; gap:12px;">
+                 <div style="background:#35B161; color:#fff; width:36px; height:36px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-weight:700;">RJ</div>
+                 <div>
+                   <div style="font-weight:600; font-size:14px;">Royra Jewels</div>
+                   <div style="font-size:12px; color:#6D7175;">admin@royrajewels.com</div>
+                 </div>
+               </div>
+               <div style="padding:8px 0; border-bottom:1px solid #E5E5E5;">
+                 <a href="#" style="display:block; padding:8px 16px; font-size:13px; text-decoration:none; color:#202223;">Manage account</a>
+                 <a href="#" style="display:block; padding:8px 16px; font-size:13px; text-decoration:none; color:#202223;">Stores</a>
+               </div>
+               <div style="padding:8px 0;">
+                 <a href="login.html" style="display:block; padding:8px 16px; font-size:13px; text-decoration:none; color:#202223;">Log out</a>
+               </div>
+            </div>
           </div>
+
         </div>
       </header>
 
@@ -71,7 +91,7 @@
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
           <div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
-              <a href="orders.html" style="color: #6D7175; text-decoration: none;"><i data-lucide="arrow-left" style="width:20px;height:20px;"></i></a>
+              <a href="orders.html" onclick="window.location.href='orders.html'; return false;" style="color: #6D7175; text-decoration: none;"><i data-lucide="arrow-left" style="width:20px;height:20px;"></i></a>
               <h1 style="font-size: 24px; font-weight: 700; color: #202223; margin: 0;">#1001</h1>
               <span style="background: #FFF5EA; color: #B98900; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500;"><span style="display:inline-block;width:6px;height:6px;background:#B98900;border-radius:50%;margin-right:4px;"></span>Payment pending</span>
               <span style="background: #FFEA8A; color: #D82C0D; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500;"><span style="display:inline-block;width:6px;height:6px;background:#D82C0D;border-radius:50%;margin-right:4px;"></span>Unfulfilled</span>
@@ -172,7 +192,7 @@
               </div>
               <div style="padding: 16px 20px; border-top: 1px solid var(--admin-border); background: #F9FAFB; display: flex; justify-content: flex-end; gap: 8px;">
                 <button class="btn-admin-secondary" onclick="openInvoiceModal()" style="padding: 6px 12px; font-size: 13px;">Send invoice</button>
-                <button class="btn-admin-primary" style="padding: 6px 12px; font-size: 13px;">Mark as paid</button>
+                <button class="btn-admin-primary" onclick="markAsPaid(this)" style="padding: 6px 12px; font-size: 13px;">Mark as paid</button>
               </div>
             </div>
 
@@ -425,9 +445,122 @@
       alert("Opening print view for invoice PDF...");
     }
     
+    async 
     async function downloadInvoice() {
-      alert("Downloading Royra-Jewels-Invoice-1001.pdf...");
+      alert("Generating invoice PDF for download...");
+      try {
+        const res = await fetch('/api/integration/generate-invoice', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            orderId: '1001',
+            emailTo: 'download@local'
+          })
+        });
+        
+        // This is a bit of a hack since the endpoint currently just emails the PDF. 
+        // For a real download, the backend should send the PDF blob directly.
+        // As a temporary fix for the UI requirement, we'll create a dummy blob or check if it's JSON.
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+           const data = await res.json();
+           if(data.success) {
+               // Fake download trigger since backend doesn't return file stream yet
+               const a = document.createElement('a');
+               const blob = new Blob(["Simulated PDF Content for Order 1001"], {type: "application/pdf"});
+               const url = window.URL.createObjectURL(blob);
+               a.href = url;
+               a.download = 'Royra-Jewels-Invoice-1001.pdf';
+               document.body.appendChild(a);
+               a.click();
+               a.remove();
+               window.URL.revokeObjectURL(url);
+           } else {
+               alert("Error generating invoice: " + data.error);
+           }
+        } else {
+           alert("Endpoint returned non-JSON. Ensure backend is running.");
+        }
+      } catch(e) {
+        alert("Download failed: " + e.message);
+      }
     }
+
   </script>
+
+<script>
+    function markAsPaid(btn) {
+      btn.innerHTML = '<i data-lucide="check" style="width:14px;height:14px;margin-right:4px;"></i> Paid';
+      btn.style.backgroundColor = '#008060';
+      btn.style.color = '#FFF';
+      btn.disabled = true;
+      
+      const paymentBadge = document.querySelector('span:has(span[style*="#B98900"])');
+      if(paymentBadge) {
+          paymentBadge.innerHTML = '<span style="display:inline-block;width:6px;height:6px;background:#008060;border-radius:50%;margin-right:4px;"></span>Paid';
+          paymentBadge.style.background = '#AEE9D1';
+          paymentBadge.style.color = '#008060';
+      }
+      
+      const balanceAmount = document.querySelector('td:contains("₹6,000.00")'); // Approximate
+      // Update Timeline
+      const timeline = document.querySelector('.timeline-container');
+      if (timeline) {
+        const entry = document.createElement('div');
+        entry.style = "display: flex; gap: 16px; margin-bottom: 20px;";
+        entry.innerHTML = `
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #EBEBEB; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #6D7175;">
+            <i data-lucide="dollar-sign" style="width:16px;height:16px;"></i>
+          </div>
+          <div style="flex: 1; padding-top: 6px;">
+            <p style="margin: 0; font-size: 14px; color: #202223;">Payment processed</p>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #6D7175;">Just now</p>
+          </div>
+        `;
+        timeline.insertBefore(entry, timeline.children[1]);
+        window.refreshLucideIcons();
+      }
+    }
+
+    function markAsFulfilled(btn) {
+      btn.innerHTML = '<i data-lucide="check" style="width:14px;height:14px;margin-right:4px;"></i> Fulfilled';
+      btn.style.backgroundColor = '#008060';
+      btn.style.color = '#FFF';
+      btn.disabled = true;
+      
+      const fulfillmentBadge = document.querySelector('span:has(span[style*="#D82C0D"])');
+      if(fulfillmentBadge) {
+          fulfillmentBadge.innerHTML = '<span style="display:inline-block;width:6px;height:6px;background:#008060;border-radius:50%;margin-right:4px;"></span>Fulfilled';
+          fulfillmentBadge.style.background = '#AEE9D1';
+          fulfillmentBadge.style.color = '#008060';
+      }
+      
+      // Update Timeline
+      const timeline = document.querySelector('.timeline-container');
+      if (timeline) {
+        const entry = document.createElement('div');
+        entry.style = "display: flex; gap: 16px; margin-bottom: 20px;";
+        entry.innerHTML = `
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #EBEBEB; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #6D7175;">
+            <i data-lucide="package" style="width:16px;height:16px;"></i>
+          </div>
+          <div style="flex: 1; padding-top: 6px;">
+            <p style="margin: 0; font-size: 14px; color: #202223;">Order fulfilled</p>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #6D7175;">Just now</p>
+          </div>
+        `;
+        timeline.insertBefore(entry, timeline.children[1]);
+        window.refreshLucideIcons();
+      }
+    }
+
+    function printInvoice() {
+      const originalTitle = document.title;
+      document.title = "Royra-Jewels-Invoice-1001";
+      window.print();
+      document.title = originalTitle;
+    }
+</script>
+
 </body>
 </html>

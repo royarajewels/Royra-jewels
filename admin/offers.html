@@ -22,7 +22,7 @@
         <a href="index.html" class="nav-link"><i data-lucide="home"></i><span>Home</span></a>
         
         <div class="nav-group">
-          <a href="orders.html" class="nav-link"><i data-lucide="inbox"></i><span>Orders</span></a>
+          <a href="orders.html" onclick="window.location.href='orders.html'; return false;" class="nav-link"><i data-lucide="inbox"></i><span>Orders</span></a>
           <div class="nav-sub">
             <a href="#">Drafts</a>
             <a href="#">Abandoned checkouts</a>
@@ -30,7 +30,7 @@
         </div>
         
         <div class="nav-group">
-          <a href="products.html" class="nav-link"><i data-lucide="tag"></i><span>Products</span></a>
+          <a href="products.html" onclick="window.location.href='products.html'; return false;" class="nav-link"><i data-lucide="tag"></i><span>Products</span></a>
           <div class="nav-sub">
             <a href="collections.html">Collections</a>
             <a href="inventory.html">Inventory</a>
@@ -98,11 +98,30 @@
         <div class="topbar-right">
           <button type="button" class="icon-btn"><i data-lucide="bell"></i></button>
           <button type="button" class="icon-btn"><i data-lucide="help-circle"></i></button>
-          <div class="profile-dropdown">
-            <div class="avatar">MS</div>
-            <span class="profile-name">Royra Jewels Admin</span>
-            <i data-lucide="chevron-down"></i>
+          
+          <div class="profile-dropdown" onclick="toggleProfileMenu(event)" style="cursor:pointer; position:relative;">
+            <div class="avatar" style="background:#35B161; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600;">MS</div>
+            <span class="profile-name" style="color:#FFF; font-size:13px; font-weight:500;">Royra Jewels Admin</span>
+            <i data-lucide="chevron-down" style="width:14px;height:14px;color:#FFF;"></i>
+            
+            <div id="profile-popover-menu" style="display:none; position:absolute; top:40px; right:0; background:#fff; border:1px solid #E5E5E5; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); width:240px; z-index:1001; color:#202223; cursor:default;">
+               <div style="padding:16px; border-bottom:1px solid #E5E5E5; display:flex; align-items:center; gap:12px;">
+                 <div style="background:#35B161; color:#fff; width:36px; height:36px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-weight:700;">RJ</div>
+                 <div>
+                   <div style="font-weight:600; font-size:14px;">Royra Jewels</div>
+                   <div style="font-size:12px; color:#6D7175;">admin@royrajewels.com</div>
+                 </div>
+               </div>
+               <div style="padding:8px 0; border-bottom:1px solid #E5E5E5;">
+                 <a href="#" style="display:block; padding:8px 16px; font-size:13px; text-decoration:none; color:#202223;">Manage account</a>
+                 <a href="#" style="display:block; padding:8px 16px; font-size:13px; text-decoration:none; color:#202223;">Stores</a>
+               </div>
+               <div style="padding:8px 0;">
+                 <a href="login.html" style="display:block; padding:8px 16px; font-size:13px; text-decoration:none; color:#202223;">Log out</a>
+               </div>
+            </div>
           </div>
+
         </div>
       </header>
 <div class="admin-content ops-page"><form id="offer-form" class="ops-form"><input type="hidden" name="id"><div class="ops-form-grid"><label>Name *<input name="name" required></label><label>Offer Type *<select name="offer_type"><option value="percentage">Percentage</option><option value="fixed">Fixed Amount</option><option value="free_shipping">Free Shipping</option></select></label><label>Discount Value<input name="discount_value" type="number" step="0.01"></label><label>Minimum Order<input name="minimum_order_value" type="number" step="0.01"></label><label>Minimum Quantity<input name="minimum_quantity" type="number" value="1"></label><label>Priority<input name="priority" type="number" value="100"></label><label>Category<input name="applicable_category" placeholder="rings"></label><label>Start Date<input name="starts_at" type="datetime-local"></label><label>Expiry Date<input name="expires_at" type="datetime-local"></label><label class="full">Description<textarea name="description" rows="2"></textarea></label><label><span>Active</span><input name="active" type="checkbox" checked></label></div><div class="ops-actions" style="margin-top:14px"><button class="btn-admin-primary" type="submit">Save Offer</button><button class="btn-admin-secondary" type="reset">Clear</button></div></form><div class="ops-table-wrap"><table class="admin-table"><thead><tr><th>Offer</th><th>Type</th><th>Value</th><th>Priority</th><th>Status</th><th>Actions</th></tr></thead><tbody id="offers-tbody"></tbody></table></div></div></main></div><script src="../config.js"></script><script src="../supabase.js"></script><script src="admin.js"></script><script src="ops.js"></script><script>document.addEventListener("DOMContentLoaded",()=>{initOffersPage();});</script>  <div id="admin-toast-container" class="admin-toast-container"></div>

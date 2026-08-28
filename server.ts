@@ -372,7 +372,7 @@ app.post('/api/integration/generate-invoice', async (req, res) => {
     doc.text('--------------------------------------------------');
     doc.text('Subtotal: ₹11,000.00');
     doc.text('Discount: -₹5,000.00');
-    doc.fontSize(14).text('Total: ₹6,000.00', { bold: true });
+    doc.font('Helvetica-Bold').fontSize(14).text('Total: ₹6,000.00');
     
     doc.end();
     

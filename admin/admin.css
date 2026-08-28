@@ -12,11 +12,11 @@
 :root {
   --admin-bg: #F7F7F7;
   --admin-surface: #FFFFFF;
-  --admin-sidebar-bg: #1F1F1F;
-  --admin-sidebar-text: #E5E5E5;
-  --admin-sidebar-muted: #8E8E8E;
-  --admin-sidebar-active: #2C2C2C;
-  --admin-sidebar-hover: #262626;
+  --admin-sidebar-bg: #EBEBEB;
+  --admin-sidebar-text: #303030;
+  --admin-sidebar-muted: #616161;
+  --admin-sidebar-active: #FFFFFF;
+  --admin-sidebar-hover: #DCDCDC;
   
   --admin-text: #1F1F1F;
   --admin-text-secondary: #6A6A6A;
@@ -53,6 +53,8 @@
   padding: 0;
 }
 
+a { text-decoration: none; color: inherit; }
+
 body.admin-body {
   font-family: var(--admin-font);
   background-color: var(--admin-bg);
@@ -81,7 +83,7 @@ body.admin-body {
   flex-direction: column;
   flex-shrink: 0;
   position: fixed;
-  top: 0;
+  top: var(--admin-header-height);
   bottom: 0;
   left: 0;
   z-index: 100;
@@ -147,7 +149,7 @@ body.admin-body {
   align-items: center;
   gap: 12px;
   padding: 11px 14px;
-  color: var(--admin-sidebar-text);
+  color: #303030;
   text-decoration: none;
   font-weight: 500;
   font-size: 13.5px;
@@ -164,22 +166,22 @@ body.admin-body {
 
 .nav-link:hover {
   background-color: var(--admin-sidebar-hover);
-  color: #FFFFFF;
+  color: #303030;
 }
 
 .nav-link:hover svg {
-  stroke: #FFFFFF;
+  stroke: #303030;
 }
 
 .nav-link.active {
   background-color: var(--admin-sidebar-active);
-  color: #FFFFFF;
+  color: #303030;
   font-weight: 600;
-  border-left: 3px solid var(--admin-accent);
+  border-radius: 6px;
 }
 
 .nav-link.active svg {
-  stroke: var(--admin-accent);
+  stroke: #303030;
 }
 
 .sidebar-footer {
@@ -282,8 +284,8 @@ body.admin-body {
 /* ADMIN TOP BAR */
 .admin-topbar {
   height: var(--admin-header-height);
-  background-color: var(--admin-surface);
-  border-bottom: 1px solid var(--admin-border);
+  background-color: #1A1A1A; /* Black header */
+  border-bottom: none;
   padding: 0 28px;
   display: flex;
   align-items: center;
@@ -311,7 +313,7 @@ body.admin-body {
 .topbar-title {
   font-size: 18px;
   font-weight: 700;
-  color: var(--admin-text);
+  color: #FFFFFF;
 }
 
 .topbar-right {
@@ -1975,3 +1977,81 @@ svg.lucide {
 }
 
 
+
+/* Nav Submenu */
+.nav-group {
+  display: flex;
+  flex-direction: column;
+}
+.nav-sub {
+  display: flex;
+  flex-direction: column;
+  padding-left: 32px;
+  margin-top: 2px;
+  gap: 4px;
+}
+.nav-sub a {
+  font-size: 13px;
+  color: #616161;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.1s;
+}
+.nav-sub a:hover {
+  background-color: #DCDCDC;
+  color: #303030;
+}
+
+/* Topbar Brand & Colors */
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+.brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #35B161; /* Shopify green icon style */
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-family: var(--admin-font-serif);
+  font-size: 16px;
+}
+.brand-text {
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+}
+
+.topbar-right .icon-btn svg,
+.topbar-right .profile-dropdown i,
+.topbar-right .profile-name,
+.mobile-menu-toggle {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+}
+
+.global-search {
+  background-color: #2F2F2F !important;
+  border: 1px solid #424242 !important;
+}
+.global-search input {
+  color: #FFFFFF !important;
+}
+.global-search .search-icon {
+  stroke: #8C8C8C !important;
+}
+.global-search .search-shortcut {
+  background-color: #1A1A1A !important;
+  color: #8C8C8C !important;
+  border-color: #424242 !important;
+}
+.profile-dropdown:hover {
+  background-color: #2F2F2F !important;
+}
